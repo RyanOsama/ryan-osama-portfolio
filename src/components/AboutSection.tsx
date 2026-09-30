@@ -1,29 +1,32 @@
 'use client';
 
 import React from 'react';
-import { ShieldCheck, Cpu, Database, Zap, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Cpu, Database, Zap } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function AboutSection() {
+  const { t } = useLanguage();
+
   const highlights = [
     {
       icon: ShieldCheck,
-      title: 'أمان البيانات أولاً',
-      desc: 'حماية كاملة من ثغرات الحقن (SQLi/XSS/CSRF) مع تشفير الجلسات والمصادقة المتقدمة.',
+      title: t.about.securityTitle,
+      desc: t.about.securityDesc,
     },
     {
       icon: Cpu,
-      title: 'بنية برمجية نظيفة (Clean Architecture)',
-      desc: 'كود منظم وقابل للتوسع والصيانة بسهولة تامة مع الالتزام بأفضل الممارسات العالمية.',
+      title: t.about.archTitle,
+      desc: t.about.archDesc,
     },
     {
       icon: Database,
-      title: 'قواعد بيانات محسنة وسريعة',
-      desc: 'تصميم فهارس ذكية وعلاقات متينة مع استعلامات فورية في أجزاء من الثانية.',
+      title: t.about.dbTitle,
+      desc: t.about.dbDesc,
     },
     {
       icon: Zap,
-      title: 'واجهات فائقة السرعة والتفاعل',
-      desc: 'تجربة مستخدم حديثة وتوافق تام مع كافة أحجام الشاشات والهواتف الذكية.',
+      title: t.about.performanceTitle,
+      desc: t.about.performanceDesc,
     },
   ];
 
@@ -31,19 +34,17 @@ export function AboutSection() {
     <section id="about" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>منهجية العمل الهندسية</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.about.badge}</span>
           </div>
-          <h2 className="section-title">نبذة عن خبراتي ومبادئ التطوير</h2>
-          <p className="section-subtitle">
-            أركز على بناء حلول برمجية واقعية تجمع بين الأداء الخارق وتجربة المستخدم الأنيقة والأمان المشدد
-          </p>
+          <h2 className="section-title">{t.about.title}</h2>
+          <p className="section-subtitle">{t.about.subtitle}</p>
         </div>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
             gap: '24px',
           }}
         >
@@ -52,30 +53,32 @@ export function AboutSection() {
             return (
               <div
                 key={idx}
-                className="glass-card"
+                className="white-card"
                 style={{
                   padding: '30px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '16px',
+                  gap: '14px',
                 }}
               >
                 <div
                   style={{
-                    width: '50px',
-                    height: '50px',
-                    borderRadius: '14px',
-                    background: 'rgba(56, 189, 248, 0.1)',
-                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '12px',
+                    background: 'var(--primary-blue-light)',
+                    border: '1px solid var(--primary-blue-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--primary-glow)',
+                    color: 'var(--primary-blue)',
                   }}
                 >
-                  <Icon size={26} />
+                  <Icon size={24} />
                 </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>{item.title}</h3>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {item.title}
+                </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7 }}>
                   {item.desc}
                 </p>

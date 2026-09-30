@@ -23,7 +23,6 @@ import {
   RefreshCw,
   ExternalLink,
   ShieldAlert,
-  ArrowRight,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 
@@ -115,8 +114,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       if (srv.success) setServices(srv.data);
       if (skl.success) setSkills(skl.data);
       if (sett.success) setSiteSettings(sett.data);
-    } catch (err) {
-      showToast('حدث خطأ أثناء تحميل البيانات', 'error');
+    } catch {
+      showToast('Error loading dashboard data', 'error');
     } finally {
       setLoading(false);
     }
@@ -129,7 +128,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
-      showToast('تم تسجيل الخروج بنجاح', 'success');
+      showToast('Logged out successfully', 'success');
       router.push('/admin/login');
       router.refresh();
     } catch {
@@ -154,12 +153,12 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       const data = await res.json();
       if (data.success) {
         setProjectForm((prev) => ({ ...prev, coverImage: data.data.url }));
-        showToast('تم رفع الصورة بنجاح!', 'success');
+        showToast('Image uploaded successfully!', 'success');
       } else {
-        showToast(data.message || 'فشل رفع الصورة', 'error');
+        showToast(data.message || 'Upload failed', 'error');
       }
     } catch {
-      showToast('حدث خطأ أثناء رفع الصورة', 'error');
+      showToast('Error uploading image', 'error');
     } finally {
       setUploadingImage(false);
     }
@@ -227,30 +226,30 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
       const data = await res.json();
       if (data.success) {
-        showToast(editingProject ? 'تم تحديث المشروع بنجاح' : 'تم إضافة المشروع بنجاح', 'success');
+        showToast(editingProject ? 'Project updated' : 'Project added', 'success');
         setProjectModalOpen(false);
         loadAllData();
       } else {
-        showToast(data.message || 'حدث خطأ أثناء حفظ المشروع', 'error');
+        showToast(data.message || 'Error saving project', 'error');
       }
     } catch {
-      showToast('حدث خطأ في الاتصال بالخادم', 'error');
+      showToast('Server error', 'error');
     }
   };
 
   const handleDeleteProject = async (id: string, title: string) => {
-    if (!confirm(`هل أنت متأكد من حذف المشروع "${title}" نهائياً؟`)) return;
+    if (!confirm(`Delete project "${title}" permanently?`)) return;
     try {
       const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        showToast('تم حذف المشروع بنجاح', 'success');
+        showToast('Project deleted successfully', 'success');
         loadAllData();
       } else {
-        showToast(data.message || 'فشل حذف المشروع', 'error');
+        showToast(data.message || 'Delete failed', 'error');
       }
     } catch {
-      showToast('تعذر حذف المشروع', 'error');
+      showToast('Error deleting project', 'error');
     }
   };
 
@@ -264,27 +263,25 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       });
       const data = await res.json();
       if (data.success) {
-        showToast(status === 'approved' ? 'تمت الموافقة على التعليق ونشره' : 'تم رفض التعليق', 'success');
+        showToast(status === 'approved' ? 'Review approved & published' : 'Review rejected', 'success');
         loadAllData();
-      } else {
-        showToast(data.message || 'فشل تحديث حالة التعليق', 'error');
       }
     } catch {
-      showToast('تعذر تحديث التعليق', 'error');
+      showToast('Error updating review', 'error');
     }
   };
 
   const handleDeleteReview = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا التعليق نهائياً؟')) return;
+    if (!confirm('Delete review permanently?')) return;
     try {
       const res = await fetch(`/api/admin/reviews/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        showToast('تم حذف التعليق نهائياً', 'success');
+        showToast('Review deleted', 'success');
         loadAllData();
       }
     } catch {
-      showToast('تعذر حذف التعليق', 'error');
+      showToast('Error deleting review', 'error');
     }
   };
 
@@ -301,23 +298,23 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       });
       const data = await res.json();
       if (data.success) {
-        showToast('تم حفظ الخدمة بنجاح', 'success');
+        showToast('Service saved', 'success');
         setServiceModalOpen(false);
         loadAllData();
       }
     } catch {
-      showToast('تعذر حفظ الخدمة', 'error');
+      showToast('Error saving service', 'error');
     }
   };
 
   const handleDeleteService = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذه الخدمة؟')) return;
+    if (!confirm('Delete service?')) return;
     try {
       await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
-      showToast('تم حذف الخدمة', 'success');
+      showToast('Service deleted', 'success');
       loadAllData();
     } catch {
-      showToast('تعذر حذف الخدمة', 'error');
+      showToast('Error deleting service', 'error');
     }
   };
 
@@ -334,23 +331,23 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       });
       const data = await res.json();
       if (data.success) {
-        showToast('تم حفظ المهارة بنجاح', 'success');
+        showToast('Skill saved', 'success');
         setSkillModalOpen(false);
         loadAllData();
       }
     } catch {
-      showToast('تعذر حفظ المهارة', 'error');
+      showToast('Error saving skill', 'error');
     }
   };
 
   const handleDeleteSkill = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذه المهارة؟')) return;
+    if (!confirm('Delete skill?')) return;
     try {
       await fetch(`/api/admin/skills/${id}`, { method: 'DELETE' });
-      showToast('تم حذف المهارة', 'success');
+      showToast('Skill deleted', 'success');
       loadAllData();
     } catch {
-      showToast('تعذر حذف المهارة', 'error');
+      showToast('Error deleting skill', 'error');
     }
   };
 
@@ -365,12 +362,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       });
       const data = await res.json();
       if (data.success) {
-        showToast('تم حفظ إعدادات الموقع بنجاح', 'success');
-      } else {
-        showToast(data.message || 'فشل حفظ الإعدادات', 'error');
+        showToast('Site settings updated', 'success');
       }
     } catch {
-      showToast('تعذر حفظ الإعدادات', 'error');
+      showToast('Error updating settings', 'error');
     }
   };
 
@@ -382,13 +377,13 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const pendingCount = reviews.filter((r) => r.status === 'pending').length;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#090d16' }}>
-      {/* Sidebar Navigation */}
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+      {/* Sidebar */}
       <aside
         style={{
           width: '260px',
-          background: 'rgba(15, 23, 42, 0.95)',
-          borderLeft: '1px solid var(--border-glass)',
+          background: '#ffffff',
+          borderRight: '1px solid var(--border-color)',
           padding: '24px 16px',
           display: 'flex',
           flexDirection: 'column',
@@ -399,37 +394,36 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         }}
       >
         <div>
-          {/* Dashboard Header */}
-          <div style={{ padding: '0 12px 24px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <div style={{ fontWeight: 800, fontSize: '1.15rem' }}>لوحة التحكم المركزية</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--primary-glow)', marginTop: '4px' }}>
-              المسؤول: {adminUser.username}
+          <div style={{ padding: '0 12px 20px 12px', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-main)' }}>Admin Dashboard</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--primary-blue)', fontWeight: 600, marginTop: '2px' }}>
+              User: {adminUser.username}
             </div>
           </div>
 
-          {/* Navigation Items */}
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '20px' }}>
+          {/* Nav Items */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '16px' }}>
             <button
               onClick={() => setActiveTab('overview')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'overview' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'overview' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'overview' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
-              <LayoutDashboard size={18} />
-              <span>نظرة عامة وإحصائيات</span>
+              <LayoutDashboard size={17} />
+              <span>Overview</span>
             </button>
 
             <button
@@ -438,21 +432,21 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'projects' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'projects' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'projects' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
-              <FolderGit2 size={18} />
-              <span>إدارة المشاريع ({projects.length})</span>
+              <FolderGit2 size={17} />
+              <span>Projects ({projects.length})</span>
             </button>
 
             <button
@@ -461,27 +455,27 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'reviews' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'reviews' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'reviews' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <MessageSquareCheck size={18} />
-                <span>مراجعة التقييمات</span>
+                <MessageSquareCheck size={17} />
+                <span>Reviews</span>
               </div>
               {pendingCount > 0 && (
                 <span
                   style={{
-                    background: '#f43f5e',
+                    background: '#e11d48',
                     color: '#ffffff',
                     fontSize: '0.75rem',
                     padding: '2px 8px',
@@ -500,21 +494,21 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'services' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'services' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'services' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
-              <Wrench size={18} />
-              <span>الخدمات ({services.length})</span>
+              <Wrench size={17} />
+              <span>Services ({services.length})</span>
             </button>
 
             <button
@@ -523,21 +517,21 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'skills' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'skills' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'skills' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
-              <Cpu size={18} />
-              <span>المهارات والتقنيات ({skills.length})</span>
+              <Cpu size={17} />
+              <span>Skills ({skills.length})</span>
             </button>
 
             <button
@@ -546,81 +540,77 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 14px',
-                borderRadius: '10px',
+                padding: '11px 14px',
+                borderRadius: '8px',
                 border: 'none',
-                background: activeTab === 'settings' ? 'var(--primary-gradient)' : 'transparent',
+                background: activeTab === 'settings' ? 'var(--primary-blue)' : 'transparent',
                 color: activeTab === 'settings' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.92rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                textAlign: 'right',
+                textAlign: 'left',
                 width: '100%',
               }}
             >
-              <Settings size={18} />
-              <span>إعدادات الموقع وSEO</span>
+              <Settings size={17} />
+              <span>Settings</span>
             </button>
           </nav>
         </div>
 
         {/* Bottom Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
           <Link
             href="/"
             target="_blank"
             className="btn btn-secondary btn-sm"
-            style={{ width: '100%', justifyContent: 'flex-start', padding: '10px 14px' }}
+            style={{ width: '100%', justifyContent: 'flex-start', padding: '9px 12px' }}
           >
-            <Eye size={16} />
-            <span>معاينة الموقع للعامة</span>
+            <Eye size={15} />
+            <span>View Public Site</span>
           </Link>
 
           <button
             onClick={handleLogout}
             className="btn btn-danger btn-sm"
-            style={{ width: '100%', justifyContent: 'flex-start', padding: '10px 14px' }}
+            style={{ width: '100%', justifyContent: 'flex-start', padding: '9px 12px' }}
           >
-            <LogOut size={16} />
-            <span>تسجيل الخروج الآمن</span>
+            <LogOut size={15} />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Area */}
       <main style={{ flex: 1, padding: '36px 40px', overflowY: 'auto' }}>
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-            <Loader2 size={36} className="animate-spin" color="var(--primary-glow)" />
+            <Loader2 size={32} className="animate-spin" color="var(--primary-blue)" />
           </div>
         ) : (
           <>
-            {/* Top Bar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
               <div>
-                <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
-                  {activeTab === 'overview' && 'لوحة المعلومات والإحصائيات'}
-                  {activeTab === 'projects' && 'إدارة سابقة الأعمال والمشاريع'}
-                  {activeTab === 'reviews' && 'مركز مراجعة واعتماد التقييمات'}
-                  {activeTab === 'services' && 'إدارة الخدمات والحلول'}
-                  {activeTab === 'skills' && 'إدارة المهارات والنسب'}
-                  {activeTab === 'settings' && 'إعدادات الموقع والبيانات التعريفية'}
+                <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                  {activeTab === 'overview' && 'System Overview & Metrics'}
+                  {activeTab === 'projects' && 'Projects Management'}
+                  {activeTab === 'reviews' && 'Reviews Moderation Center'}
+                  {activeTab === 'services' && 'Services Management'}
+                  {activeTab === 'skills' && 'Skills Management'}
+                  {activeTab === 'settings' && 'Site & Profile Settings'}
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: '4px' }}>
-                  تحكم كامل وشامل في جميع عناصر المنصة وقواعد البيانات
-                </p>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={loadAllData} className="btn btn-secondary btn-sm" title="تحديث البيانات">
-                  <RefreshCw size={16} />
-                  <span>تحديث</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={loadAllData} className="btn btn-secondary btn-sm" title="Refresh">
+                  <RefreshCw size={14} />
+                  <span>Refresh</span>
                 </button>
                 {activeTab === 'projects' && (
                   <button onClick={openNewProjectModal} className="btn btn-primary btn-sm">
-                    <Plus size={16} />
-                    <span>إضافة مشروع جديد</span>
+                    <Plus size={15} />
+                    <span>New Project</span>
                   </button>
                 )}
                 {activeTab === 'services' && (
@@ -632,8 +622,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                     }}
                     className="btn btn-primary btn-sm"
                   >
-                    <Plus size={16} />
-                    <span>إضافة خدمة جديدة</span>
+                    <Plus size={15} />
+                    <span>New Service</span>
                   </button>
                 )}
                 {activeTab === 'skills' && (
@@ -645,8 +635,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                     }}
                     className="btn btn-primary btn-sm"
                   >
-                    <Plus size={16} />
-                    <span>إضافة مهارة جديدة</span>
+                    <Plus size={15} />
+                    <span>New Skill</span>
                   </button>
                 )}
               </div>
@@ -655,83 +645,81 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             {/* TAB: OVERVIEW */}
             {activeTab === 'overview' && (
               <div>
-                {/* Stats Grid */}
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
                     gap: '20px',
-                    marginBottom: '35px',
+                    marginBottom: '30px',
                   }}
                 >
-                  <div className="glass-card" style={{ padding: '24px' }}>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', fontWeight: 600 }}>إجمالي المشاريع</div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: 'var(--primary-glow)', marginTop: '6px' }}>
+                  <div className="white-card" style={{ padding: '24px' }}>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', fontWeight: 600 }}>Total Projects</div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: 'var(--primary-blue)', marginTop: '4px' }}>
                       {dashboardData?.stats?.totalProjects ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#10b981', marginTop: '4px' }}>
-                      {dashboardData?.stats?.featuredProjects ?? 0} مشاريع مميزة
+                    <div style={{ fontSize: '0.8rem', color: '#059669', marginTop: '2px', fontWeight: 600 }}>
+                      {dashboardData?.stats?.featuredProjects ?? 0} Featured
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '24px' }}>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', fontWeight: 600 }}>التقييمات المعلقة</div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: pendingCount > 0 ? '#f43f5e' : '#10b981', marginTop: '6px' }}>
+                  <div className="white-card" style={{ padding: '24px' }}>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', fontWeight: 600 }}>Pending Reviews</div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: pendingCount > 0 ? '#e11d48' : '#059669', marginTop: '4px' }}>
                       {dashboardData?.stats?.pendingReviews ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      بانتظار موافقتك للنشر
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      Awaiting moderation
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '24px' }}>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', fontWeight: 600 }}>متوسط التقييم العام</div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#f59e0b', marginTop: '6px' }}>
+                  <div className="white-card" style={{ padding: '24px' }}>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', fontWeight: 600 }}>Average Rating</div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#d97706', marginTop: '4px' }}>
                       {dashboardData?.stats?.averageRating ?? 5.0} / 5
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      من {dashboardData?.stats?.approvedReviews ?? 0} تقييم معتمد
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      From {dashboardData?.stats?.approvedReviews ?? 0} approved reviews
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '24px' }}>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', fontWeight: 600 }}>الخدمات والمهارات</div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#a855f7', marginTop: '6px' }}>
+                  <div className="white-card" style={{ padding: '24px' }}>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', fontWeight: 600 }}>Services & Skills</div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: 'var(--accent-sky)', marginTop: '4px' }}>
                       {dashboardData?.stats?.totalServices ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      و {dashboardData?.stats?.totalSkills ?? 0} مهارة معروضة
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      & {dashboardData?.stats?.totalSkills ?? 0} skills configured
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Moderation Box */}
                 {pendingCount > 0 && (
                   <div
-                    className="glass-card"
+                    className="white-card"
                     style={{
-                      padding: '24px',
-                      background: 'rgba(244, 63, 94, 0.08)',
-                      borderColor: 'rgba(244, 63, 94, 0.25)',
+                      padding: '20px 24px',
+                      background: '#fff1f2',
+                      borderColor: '#fecdd3',
                       marginBottom: '30px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                      <ShieldAlert size={26} color="#f43f5e" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <ShieldAlert size={24} color="#e11d48" />
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fda4af' }}>
-                          يوجد {pendingCount} تقييمات جديدة تحتاج إلى المراجعة والاعتماد
+                        <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#9f1239' }}>
+                          You have {pendingCount} new review(s) waiting for approval
                         </div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                          لن تظهر هذه التقييمات للعامة حتى توافق عليها لضمان الموثوقية
+                        <div style={{ fontSize: '0.84rem', color: '#be123c' }}>
+                          Reviews will not appear publicly until approved.
                         </div>
                       </div>
                     </div>
                     <button onClick={() => setActiveTab('reviews')} className="btn btn-danger btn-sm">
-                      مراجعة الآن
+                      Moderate Now
                     </button>
                   </div>
                 )}
@@ -740,55 +728,53 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
             {/* TAB: PROJECTS */}
             {activeTab === 'projects' && (
-              <div className="glass-card" style={{ padding: '24px', overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+              <div className="white-card" style={{ padding: '20px', overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-                      <th style={{ padding: '14px' }}>المشروع</th>
-                      <th style={{ padding: '14px' }}>التصنيف</th>
-                      <th style={{ padding: '14px' }}>الحالة</th>
-                      <th style={{ padding: '14px' }}>التقييمات</th>
-                      <th style={{ padding: '14px' }}>الروابط</th>
-                      <th style={{ padding: '14px', textAlign: 'center' }}>الإجراءات</th>
+                    <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                      <th style={{ padding: '12px' }}>Project</th>
+                      <th style={{ padding: '12px' }}>Category</th>
+                      <th style={{ padding: '12px' }}>Status</th>
+                      <th style={{ padding: '12px' }}>Reviews</th>
+                      <th style={{ padding: '12px' }}>Links</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {projects.map((proj) => (
-                      <tr key={proj.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding: '16px' }}>
-                          <div style={{ fontWeight: 700, fontSize: '0.96rem' }}>{proj.title}</div>
+                      <tr key={proj.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '14px 12px' }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>{proj.title}</div>
                           <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>/projects/{proj.slug}</div>
                         </td>
-                        <td style={{ padding: '16px', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-                          {proj.category?.name || 'غير محدد'}
+                        <td style={{ padding: '14px 12px', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+                          {proj.category?.name || 'Uncategorized'}
                         </td>
-                        <td style={{ padding: '16px' }}>
+                        <td style={{ padding: '14px 12px' }}>
                           <span className={proj.status === 'COMPLETED' ? 'badge badge-success' : 'badge badge-warning'}>
                             {proj.status}
                           </span>
                           {proj.isFeatured && (
-                            <span className="badge badge-warning" style={{ marginRight: '6px' }}>
-                              مميز
+                            <span className="badge badge-warning" style={{ marginLeft: '4px' }}>
+                              Featured
                             </span>
                           )}
                         </td>
-                        <td style={{ padding: '16px', fontSize: '0.88rem' }}>
-                          {proj._count?.reviews || 0} تقييم
+                        <td style={{ padding: '14px 12px', fontSize: '0.88rem' }}>
+                          {proj._count?.reviews || 0} reviews
                         </td>
-                        <td style={{ padding: '16px' }}>
-                          <div style={{ display: 'flex', gap: '6px' }}>
-                            <Link href={`/projects/${proj.slug}`} target="_blank" className="btn btn-secondary btn-sm" title="عرض الصفحة">
-                              <ExternalLink size={14} />
-                            </Link>
-                          </div>
+                        <td style={{ padding: '14px 12px' }}>
+                          <Link href={`/projects/${proj.slug}`} target="_blank" className="btn btn-secondary btn-sm" title="View Page">
+                            <ExternalLink size={13} />
+                          </Link>
                         </td>
-                        <td style={{ padding: '16px', textAlign: 'center' }}>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                            <button onClick={() => openEditProjectModal(proj)} className="btn btn-secondary btn-sm" title="تعديل">
-                              <Edit2 size={14} />
+                        <td style={{ padding: '14px 12px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                            <button onClick={() => openEditProjectModal(proj)} className="btn btn-secondary btn-sm" title="Edit">
+                              <Edit2 size={13} />
                             </button>
-                            <button onClick={() => handleDeleteProject(proj.id, proj.title)} className="btn btn-danger btn-sm" title="حذف">
-                              <Trash2 size={14} />
+                            <button onClick={() => handleDeleteProject(proj.id, proj.title)} className="btn btn-danger btn-sm" title="Delete">
+                              <Trash2 size={13} />
                             </button>
                           </div>
                         </td>
@@ -799,41 +785,40 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
               </div>
             )}
 
-            {/* TAB: REVIEWS MODERATION */}
+            {/* TAB: REVIEWS */}
             {activeTab === 'reviews' && (
               <div>
-                {/* Filter Tabs */}
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
                   {(['all', 'pending', 'approved', 'rejected'] as const).map((st) => (
                     <button
                       key={st}
                       onClick={() => setReviewFilter(st)}
                       style={{
-                        padding: '8px 18px',
+                        padding: '7px 16px',
                         borderRadius: '9999px',
-                        border: reviewFilter === st ? '1px solid var(--primary-glow)' : '1px solid rgba(255,255,255,0.1)',
-                        background: reviewFilter === st ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.04)',
+                        border: reviewFilter === st ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
+                        background: reviewFilter === st ? 'var(--primary-blue)' : '#ffffff',
                         color: reviewFilter === st ? '#ffffff' : 'var(--text-secondary)',
                         fontFamily: 'inherit',
-                        fontSize: '0.88rem',
+                        fontSize: '0.86rem',
                         fontWeight: 600,
                         cursor: 'pointer',
                       }}
                     >
-                      {st === 'all' && `جميع التقييمات (${reviews.length})`}
-                      {st === 'pending' && `المعلقة (${reviews.filter((r) => r.status === 'pending').length})`}
-                      {st === 'approved' && `المعتمدة (${reviews.filter((r) => r.status === 'approved').length})`}
-                      {st === 'rejected' && `المرفوضة (${reviews.filter((r) => r.status === 'rejected').length})`}
+                      {st === 'all' && `All Reviews (${reviews.length})`}
+                      {st === 'pending' && `Pending (${reviews.filter((r) => r.status === 'pending').length})`}
+                      {st === 'approved' && `Approved (${reviews.filter((r) => r.status === 'approved').length})`}
+                      {st === 'rejected' && `Rejected (${reviews.filter((r) => r.status === 'rejected').length})`}
                     </button>
                   ))}
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
                   {filteredReviews.map((rev) => (
-                    <div key={rev.id} className="glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div key={rev.id} className="white-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                          <div style={{ fontWeight: 700, fontSize: '1rem' }}>{rev.name}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.98rem', color: 'var(--text-main)' }}>{rev.name}</div>
                           <span
                             className={
                               rev.status === 'approved'
@@ -843,43 +828,41 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                                 : 'badge badge-danger'
                             }
                           >
-                            {rev.status === 'approved' && 'معتمد ومنشور'}
-                            {rev.status === 'pending' && 'معلق (بانتظار المراجعة)'}
-                            {rev.status === 'rejected' && 'مرفوض'}
+                            {rev.status}
                           </span>
                         </div>
 
                         {rev.project && (
-                          <div style={{ fontSize: '0.82rem', color: 'var(--primary-glow)', marginBottom: '8px' }}>
-                            مشروع: {rev.project.title}
+                          <div style={{ fontSize: '0.82rem', color: 'var(--primary-blue)', marginBottom: '8px', fontWeight: 600 }}>
+                            Project: {rev.project.title}
                           </div>
                         )}
 
-                        <div style={{ display: 'flex', gap: '2px', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', gap: '2px', marginBottom: '10px' }}>
                           {[1, 2, 3, 4, 5].map((s) => (
                             <Star
                               key={s}
-                              size={15}
-                              fill={s <= rev.rating ? '#f59e0b' : 'none'}
-                              color={s <= rev.rating ? '#f59e0b' : '#475569'}
+                              size={14}
+                              fill={s <= rev.rating ? '#d97706' : 'none'}
+                              color={s <= rev.rating ? '#d97706' : '#cbd5e1'}
                             />
                           ))}
                         </div>
 
-                        <p style={{ color: 'var(--text-primary)', fontSize: '0.92rem', lineHeight: 1.7, fontStyle: 'italic', marginBottom: '16px' }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7, fontStyle: 'italic', marginBottom: '16px' }}>
                           "{rev.comment}"
                         </p>
                       </div>
 
-                      <div style={{ display: 'flex', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div style={{ display: 'flex', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
                         {rev.status !== 'approved' && (
                           <button
                             onClick={() => handleUpdateReviewStatus(rev.id, 'approved')}
                             className="btn btn-success btn-sm"
                             style={{ flex: 1 }}
                           >
-                            <CheckCircle2 size={15} />
-                            <span>موافقة ونشر</span>
+                            <CheckCircle2 size={14} />
+                            <span>Approve</span>
                           </button>
                         )}
                         {rev.status !== 'rejected' && (
@@ -888,16 +871,16 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                             className="btn btn-secondary btn-sm"
                             style={{ flex: 1 }}
                           >
-                            <XCircle size={15} />
-                            <span>رفض</span>
+                            <XCircle size={14} />
+                            <span>Reject</span>
                           </button>
                         )}
                         <button
                           onClick={() => handleDeleteReview(rev.id)}
                           className="btn btn-danger btn-sm"
-                          title="حذف نهائي"
+                          title="Delete"
                         >
-                          <Trash2 size={15} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
@@ -910,9 +893,9 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             {activeTab === 'services' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
                 {services.map((srv) => (
-                  <div key={srv.id} className="glass-card" style={{ padding: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                      <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{srv.title}</h3>
+                  <div key={srv.id} className="white-card" style={{ padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>{srv.title}</h3>
                       <div style={{ display: 'flex', gap: '6px' }}>
                         <button
                           onClick={() => {
@@ -928,10 +911,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                           }}
                           className="btn btn-secondary btn-sm"
                         >
-                          <Edit2 size={14} />
+                          <Edit2 size={13} />
                         </button>
                         <button onClick={() => handleDeleteService(srv.id)} className="btn btn-danger btn-sm">
-                          <Trash2 size={14} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>
@@ -947,14 +930,14 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             {activeTab === 'skills' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                 {skills.map((skl) => (
-                  <div key={skl.id} className="glass-card" style={{ padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <div key={skl.id} className="white-card" style={{ padding: '18px 20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <div style={{ fontWeight: 700 }}>{skl.name}</div>
+                        <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{skl.name}</div>
                         <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{skl.category}</div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 800, color: 'var(--primary-glow)', fontSize: '0.9rem' }}>{skl.level}%</span>
+                        <span style={{ fontWeight: 800, color: 'var(--primary-blue)', fontSize: '0.9rem' }}>{skl.level}%</span>
                         <button
                           onClick={() => {
                             setEditingSkill(skl);
@@ -988,10 +971,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
             {/* TAB: SETTINGS */}
             {activeTab === 'settings' && (
-              <div className="glass-card" style={{ padding: '36px', maxWidth: '850px' }}>
+              <div className="white-card" style={{ padding: '36px', maxWidth: '850px' }}>
                 <form onSubmit={handleSaveSettings}>
                   <div className="form-group">
-                    <label className="form-label">اسم صاحب الموقع (Owner Name)</label>
+                    <label className="form-label">Owner Name</label>
                     <input
                       type="text"
                       className="form-input"
@@ -1001,7 +984,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">العنوان الرئيسي التعريفي (Headline)</label>
+                    <label className="form-label">Headline</label>
                     <input
                       type="text"
                       className="form-input"
@@ -1011,7 +994,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">نبذة عن المطور (Bio)</label>
+                    <label className="form-label">Bio</label>
                     <textarea
                       rows={4}
                       className="form-textarea"
@@ -1022,7 +1005,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div className="form-group">
-                      <label className="form-label">البريد الإلكتروني</label>
+                      <label className="form-label">Email</label>
                       <input
                         type="email"
                         className="form-input"
@@ -1031,7 +1014,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                       />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">رقم الهاتف / الواتساب</label>
+                      <label className="form-label">Phone / WhatsApp</label>
                       <input
                         type="text"
                         className="form-input"
@@ -1041,29 +1024,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div className="form-group">
-                      <label className="form-label">رابط GitHub</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={siteSettings['github_url'] || ''}
-                        onChange={(e) => setSiteSettings({ ...siteSettings, github_url: e.target.value })}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">رابط LinkedIn</label>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={siteSettings['linkedin_url'] || ''}
-                        onChange={(e) => setSiteSettings({ ...siteSettings, linkedin_url: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
                   <button type="submit" className="btn btn-primary" style={{ marginTop: '16px' }}>
-                    <span>حفظ التعديلات</span>
+                    <span>Save Settings</span>
                   </button>
                 </form>
               </div>
@@ -1072,15 +1034,15 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         )}
       </main>
 
-      {/* PROJECT ADD / EDIT MODAL */}
+      {/* PROJECT MODAL */}
       {projectModalOpen && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(0,0,0,0.8)',
-            backdropFilter: 'blur(8px)',
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(4px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1089,25 +1051,25 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
           onClick={() => setProjectModalOpen(false)}
         >
           <div
-            className="glass-card animate-fade-in"
+            className="white-card animate-fade-in"
             style={{
               width: '100%',
               maxWidth: '750px',
               maxHeight: '90vh',
               overflowY: 'auto',
-              background: 'rgba(15, 23, 42, 0.98)',
+              background: '#ffffff',
               padding: '30px',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '20px' }}>
-              {editingProject ? 'تعديل بيانات المشروع' : 'إضافة مشروع جديد'}
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '20px', color: 'var(--text-main)' }}>
+              {editingProject ? 'Edit Project' : 'Add New Project'}
             </h2>
 
             <form onSubmit={handleSaveProject}>
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
                 <div className="form-group">
-                  <label className="form-label">عنوان المشروع *</label>
+                  <label className="form-label">Project Title *</label>
                   <input
                     type="text"
                     required
@@ -1117,7 +1079,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">الـ Slug *</label>
+                  <label className="form-label">Slug *</label>
                   <input
                     type="text"
                     required
@@ -1129,7 +1091,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">الوصف المختصر (Short Description) *</label>
+                <label className="form-label">Short Description *</label>
                 <input
                   type="text"
                   required
@@ -1140,7 +1102,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">الوصف الكامل والمفصل *</label>
+                <label className="form-label">Full Description *</label>
                 <textarea
                   rows={4}
                   required
@@ -1152,7 +1114,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">
-                  <label className="form-label">المشكلة والتحدي (The Problem)</label>
+                  <label className="form-label">The Problem / Challenge</label>
                   <textarea
                     rows={3}
                     className="form-textarea"
@@ -1161,7 +1123,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">الحل الهندسي (The Solution)</label>
+                  <label className="form-label">The Solution</label>
                   <textarea
                     rows={3}
                     className="form-textarea"
@@ -1171,9 +1133,9 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
-              {/* Cover Image & Upload */}
+              {/* Cover Image */}
               <div className="form-group">
-                <label className="form-label">صورة الغلاف (Cover Image URL أو رفع مباشر)</label>
+                <label className="form-label">Cover Image URL / Upload</label>
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <input
                     type="text"
@@ -1187,7 +1149,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                     style={{ cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}
                   >
                     <UploadCloud size={16} />
-                    <span>{uploadingImage ? 'جاري الرفع...' : 'رفع صورة'}</span>
+                    <span>{uploadingImage ? 'Uploading...' : 'Upload'}</span>
                     <input
                       type="file"
                       accept="image/png, image/jpeg, image/webp"
@@ -1199,20 +1161,20 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
-              {/* Links and Status */}
+              {/* Links & Category */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px' }}>
                 <div className="form-group">
-                  <label className="form-label">رابط Live Demo</label>
+                  <label className="form-label">Live Demo URL</label>
                   <input
                     type="url"
                     className="form-input"
-                    placeholder="https://example.com"
+                    placeholder="https://..."
                     value={projectForm.liveUrl}
                     onChange={(e) => setProjectForm({ ...projectForm, liveUrl: e.target.value })}
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">رابط GitHub</label>
+                  <label className="form-label">GitHub URL</label>
                   <input
                     type="url"
                     className="form-input"
@@ -1222,13 +1184,13 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">التصنيف</label>
+                  <label className="form-label">Category</label>
                   <select
                     className="form-select"
                     value={projectForm.categoryId}
                     onChange={(e) => setProjectForm({ ...projectForm, categoryId: e.target.value })}
                   >
-                    <option value="">بدون تصنيف</option>
+                    <option value="">None</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -1238,9 +1200,9 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
-              {/* Technologies Selection */}
+              {/* Tech stack buttons */}
               <div className="form-group">
-                <label className="form-label">التقنيات المستخدمة في المشروع</label>
+                <label className="form-label">Technologies</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {technologies.map((t) => {
                     const isSelected = projectForm.technologyIds.includes(t.id);
@@ -1259,8 +1221,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         style={{
                           padding: '6px 14px',
                           borderRadius: '8px',
-                          border: isSelected ? '1px solid var(--primary-glow)' : '1px solid rgba(255,255,255,0.1)',
-                          background: isSelected ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.04)',
+                          border: isSelected ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
+                          background: isSelected ? 'var(--primary-blue)' : '#ffffff',
                           color: isSelected ? '#ffffff' : 'var(--text-secondary)',
                           fontSize: '0.84rem',
                           fontWeight: 600,
@@ -1274,23 +1236,23 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '24px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.92rem' }}>
                   <input
                     type="checkbox"
                     checked={projectForm.isFeatured}
                     onChange={(e) => setProjectForm({ ...projectForm, isFeatured: e.target.checked })}
                   />
-                  <span>تمييز المشروع في الواجهة (Featured)</span>
+                  <span>Feature on homepage</span>
                 </label>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                 <button type="button" onClick={() => setProjectModalOpen(false)} className="btn btn-secondary">
-                  إلغاء
+                  Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  حفظ المشروع
+                  Save Project
                 </button>
               </div>
             </form>
@@ -1305,7 +1267,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(0,0,0,0.8)',
+            background: 'rgba(15, 23, 42, 0.6)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1314,16 +1276,16 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
           onClick={() => setServiceModalOpen(false)}
         >
           <div
-            className="glass-card"
-            style={{ width: '100%', maxWidth: '500px', background: 'rgba(15, 23, 42, 0.98)', padding: '30px' }}
+            className="white-card"
+            style={{ width: '100%', maxWidth: '500px', background: '#ffffff', padding: '30px' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '20px' }}>
-              {editingService ? 'تعديل الخدمة' : 'إضافة خدمة جديدة'}
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '20px', color: 'var(--text-main)' }}>
+              {editingService ? 'Edit Service' : 'New Service'}
             </h2>
             <form onSubmit={handleSaveService}>
               <div className="form-group">
-                <label className="form-label">عنوان الخدمة</label>
+                <label className="form-label">Service Title</label>
                 <input
                   type="text"
                   required
@@ -1333,7 +1295,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">وصف الخدمة</label>
+                <label className="form-label">Description</label>
                 <textarea
                   rows={3}
                   required
@@ -1344,10 +1306,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
               </div>
               <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
                 <button type="button" onClick={() => setServiceModalOpen(false)} className="btn btn-secondary">
-                  إلغاء
+                  Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  حفظ
+                  Save
                 </button>
               </div>
             </form>
@@ -1362,7 +1324,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(0,0,0,0.8)',
+            background: 'rgba(15, 23, 42, 0.6)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1371,16 +1333,16 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
           onClick={() => setSkillModalOpen(false)}
         >
           <div
-            className="glass-card"
-            style={{ width: '100%', maxWidth: '460px', background: 'rgba(15, 23, 42, 0.98)', padding: '30px' }}
+            className="white-card"
+            style={{ width: '100%', maxWidth: '460px', background: '#ffffff', padding: '30px' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '20px' }}>
-              {editingSkill ? 'تعديل المهارة' : 'إضافة مهارة جديدة'}
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '20px', color: 'var(--text-main)' }}>
+              {editingSkill ? 'Edit Skill' : 'New Skill'}
             </h2>
             <form onSubmit={handleSaveSkill}>
               <div className="form-group">
-                <label className="form-label">اسم المهارة أو التقنية</label>
+                <label className="form-label">Skill / Technology Name</label>
                 <input
                   type="text"
                   required
@@ -1390,7 +1352,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">القسم (Category)</label>
+                <label className="form-label">Category</label>
                 <input
                   type="text"
                   required
@@ -1401,7 +1363,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">نسبة الإتقان ({skillForm.level}%)</label>
+                <label className="form-label">Proficiency ({skillForm.level}%)</label>
                 <input
                   type="range"
                   min="1"
@@ -1413,10 +1375,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
               </div>
               <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
                 <button type="button" onClick={() => setSkillModalOpen(false)} className="btn btn-secondary">
-                  إلغاء
+                  Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  حفظ
+                  Save
                 </button>
               </div>
             </form>

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Star, MessageSquarePlus, Quote, ShieldCheck } from 'lucide-react';
 import { ReviewModal } from './ReviewModal';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ReviewItem {
   id: string;
@@ -22,19 +23,18 @@ interface ReviewsSectionProps {
 }
 
 export function ReviewsSection({ reviews }: ReviewsSectionProps) {
+  const { t } = useLanguage();
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <section id="reviews" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '45px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>آراء العملاء والشركاء</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.reviews.badge}</span>
           </div>
-          <h2 className="section-title">تقييمات وتجارب حقيقية</h2>
-          <p className="section-subtitle">
-            انطباعات العملاء والمؤسسات التي تشرفت بالعمل معهم على بناء أنظمتهم البرمجية
-          </p>
+          <h2 className="section-title">{t.reviews.title}</h2>
+          <p className="section-subtitle">{t.reviews.subtitle}</p>
 
           <button
             onClick={() => setModalOpen(true)}
@@ -42,13 +42,13 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
             style={{ padding: '10px 22px' }}
           >
             <MessageSquarePlus size={18} />
-            <span>أضف تقييمك وانطباعك</span>
+            <span>{t.reviews.addReviewBtn}</span>
           </button>
         </div>
 
         {reviews.length === 0 ? (
           <div
-            className="glass-card"
+            className="white-card"
             style={{
               padding: '40px',
               textAlign: 'center',
@@ -57,10 +57,10 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
             }}
           >
             <p style={{ color: 'var(--text-secondary)', marginBottom: '15px' }}>
-              كن أول من يشاركنا رأيه في جودة الأعمال والخدمات المقدمة!
+              {t.reviews.firstToReview}
             </p>
             <button onClick={() => setModalOpen(true)} className="btn btn-secondary btn-sm">
-              كتابة أول تقييم
+              {t.reviews.beTheFirst}
             </button>
           </div>
         ) : (
@@ -74,7 +74,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
             {reviews.map((rev) => (
               <div
                 key={rev.id}
-                className="glass-card"
+                className="white-card"
                 style={{
                   padding: '28px',
                   display: 'flex',
@@ -98,18 +98,18 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                         <Star
                           key={s}
                           size={16}
-                          fill={s <= rev.rating ? '#f59e0b' : 'none'}
-                          color={s <= rev.rating ? '#f59e0b' : '#475569'}
+                          fill={s <= rev.rating ? '#d97706' : 'none'}
+                          color={s <= rev.rating ? '#d97706' : '#cbd5e1'}
                         />
                       ))}
                     </div>
-                    <Quote size={24} color="var(--primary-glow)" style={{ opacity: 0.4 }} />
+                    <Quote size={24} color="var(--primary-blue)" style={{ opacity: 0.3 }} />
                   </div>
 
                   {/* Comment */}
                   <p
                     style={{
-                      color: 'var(--text-primary)',
+                      color: 'var(--text-main)',
                       fontSize: '0.94rem',
                       lineHeight: 1.75,
                       marginBottom: '20px',
@@ -127,7 +127,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     paddingTop: '16px',
-                    borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                    borderTop: '1px solid var(--border-color)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -136,7 +136,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                         width: '38px',
                         height: '38px',
                         borderRadius: '50%',
-                        background: 'var(--primary-gradient)',
+                        background: 'var(--primary-blue)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -148,16 +148,16 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                       {rev.name.charAt(0)}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{rev.name}</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-main)' }}>{rev.name}</div>
                       {rev.project && (
-                        <div style={{ fontSize: '0.78rem', color: 'var(--primary-glow)' }}>
-                          مشروع: {rev.project.title}
+                        <div style={{ fontSize: '0.78rem', color: 'var(--primary-blue)' }}>
+                          {t.reviews.projectLabel}: {rev.project.title}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <span title="تقييم معتمد" style={{ color: '#10b981', display: 'flex', alignItems: 'center' }}>
+                  <span title={t.reviews.verifiedReview} style={{ color: '#059669', display: 'flex', alignItems: 'center' }}>
                     <ShieldCheck size={18} />
                   </span>
                 </div>

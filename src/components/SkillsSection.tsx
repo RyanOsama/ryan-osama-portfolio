@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface SkillItem {
   id: string;
@@ -14,6 +15,7 @@ interface SkillsSectionProps {
 }
 
 export function SkillsSection({ skills }: SkillsSectionProps) {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('All');
 
   const categories = ['All', ...Array.from(new Set(skills.map((s) => s.category)))];
@@ -27,20 +29,18 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
     <section id="skills" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>الكفاءات التقنية</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.skills.badge}</span>
           </div>
-          <h2 className="section-title">المهارات والتقنيات البرمجية</h2>
-          <p className="section-subtitle">
-            مجموعة متكاملة من التقنيات والأطر البرمجية التي أعتمد عليها في بناء الأنظمة المتطورة
-          </p>
+          <h2 className="section-title">{t.skills.title}</h2>
+          <p className="section-subtitle">{t.skills.subtitle}</p>
 
           {/* Filter Tabs */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '10px',
+              gap: '8px',
               justifyContent: 'center',
               marginBottom: '35px',
             }}
@@ -52,17 +52,18 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                 style={{
                   padding: '8px 18px',
                   borderRadius: '9999px',
-                  border: activeCategory === cat ? '1px solid var(--primary-glow)' : '1px solid rgba(255,255,255,0.1)',
-                  background: activeCategory === cat ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.04)',
+                  border: activeCategory === cat ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
+                  background: activeCategory === cat ? 'var(--primary-blue)' : '#ffffff',
                   color: activeCategory === cat ? '#ffffff' : 'var(--text-secondary)',
                   fontFamily: 'inherit',
                   fontSize: '0.88rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                {cat === 'All' ? 'جميع المهارات' : cat}
+                {cat === 'All' ? t.skills.all : cat}
               </button>
             ))}
           </div>
@@ -72,7 +73,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '20px',
+            gap: '16px',
             maxWidth: '960px',
             margin: '0 auto',
           }}
@@ -80,9 +81,9 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
           {filteredSkills.map((skill) => (
             <div
               key={skill.id}
-              className="glass-card"
+              className="white-card"
               style={{
-                padding: '20px 24px',
+                padding: '18px 22px',
               }}
             >
               <div
@@ -90,20 +91,20 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginBottom: '10px',
+                  marginBottom: '8px',
                 }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{skill.name}</span>
-                <span style={{ fontSize: '0.82rem', color: 'var(--primary-glow)', fontWeight: 700 }}>
+                <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-main)' }}>{skill.name}</span>
+                <span style={{ fontSize: '0.84rem', color: 'var(--primary-blue)', fontWeight: 700 }}>
                   {skill.level}%
                 </span>
               </div>
               <div
                 style={{
                   width: '100%',
-                  height: '8px',
+                  height: '7px',
                   borderRadius: '4px',
-                  background: 'rgba(255,255,255,0.06)',
+                  background: '#e2e8f0',
                   overflow: 'hidden',
                 }}
               >
@@ -112,7 +113,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                     width: `${skill.level}%`,
                     height: '100%',
                     borderRadius: '4px',
-                    background: 'var(--primary-gradient)',
+                    background: 'var(--primary-blue)',
                     transition: 'width 0.8s ease-in-out',
                   }}
                 />

@@ -3,31 +3,32 @@
 import React from 'react';
 import { Mail, MapPin, MessageCircle } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './Icons';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ContactSectionProps {
   settings?: Record<string, string>;
 }
 
 export function ContactSection({ settings }: ContactSectionProps) {
+  const { t } = useLanguage();
+
   const email = settings?.email || 'ryan.osama.dev@gmail.com';
   const phone = settings?.phone || '+967770000000';
-  const location = settings?.location || 'اليمن - حضرموت (ومتاح للعمل عن بعد عالمياً)';
+  const location = settings?.location || 'Yemen - Hadramout (Available Remotely Worldwide)';
   const githubUrl = settings?.github_url || 'https://github.com/ryan-osama';
   const linkedinUrl = settings?.linkedin_url || 'https://linkedin.com/in/ryan-osama';
 
   const whatsappClean = phone.replace(/[^0-9]/g, '');
 
   return (
-    <section id="contact" style={{ padding: '80px 0' }}>
+    <section id="contact" style={{ padding: '80px 0', background: 'rgba(241, 245, 249, 0.5)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>بدء التعاون البرمجي</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.contact.badge}</span>
           </div>
-          <h2 className="section-title">دعنا نحول فكرتك إلى نظام واقعي</h2>
-          <p className="section-subtitle">
-            هل لديك فكرة مشروع جديد، أو تحتاج إلى تطوير منصة سحابية آمنة؟ تواصل معي مباشرة عبر القنوات التالية
-          </p>
+          <h2 className="section-title">{t.contact.title}</h2>
+          <p className="section-subtitle">{t.contact.subtitle}</p>
         </div>
 
         <div
@@ -41,118 +42,118 @@ export function ContactSection({ settings }: ContactSectionProps) {
         >
           {/* WhatsApp Card */}
           <div
-            className="glass-card"
+            className="white-card"
             style={{
-              padding: '30px',
+              padding: '32px 24px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '14px',
+              gap: '12px',
             }}
           >
             <div
               style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '16px',
-                background: 'rgba(16, 185, 129, 0.15)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                background: '#ecfdf5',
+                border: '1px solid #a7f3d0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#10b981',
+                color: '#059669',
               }}
             >
-              <MessageCircle size={28} />
+              <MessageCircle size={26} />
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>واتساب (WhatsApp)</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>{t.contact.whatsappTitle}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-              محادثة مباشرة وسريعة لمناقشة المتطلبات الفنية
+              {t.contact.whatsappDesc}
             </p>
             <a
               href={`https://wa.me/${whatsappClean}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-success btn-sm"
-              style={{ width: '100%', marginTop: '8px' }}
+              style={{ width: '100%', marginTop: '6px' }}
             >
-              <span>محادثة فورية على واتساب</span>
+              <span>{t.contact.whatsappAction}</span>
             </a>
           </div>
 
           {/* Email Card */}
           <div
-            className="glass-card"
+            className="white-card"
             style={{
-              padding: '30px',
+              padding: '32px 24px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '14px',
+              gap: '12px',
             }}
           >
             <div
               style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '16px',
-                background: 'rgba(56, 189, 248, 0.15)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                background: 'var(--primary-blue-light)',
+                border: '1px solid var(--primary-blue-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--primary-glow)',
+                color: 'var(--primary-blue)',
               }}
             >
-              <Mail size={28} />
+              <Mail size={26} />
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>البريد الإلكتروني</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>{t.contact.emailTitle}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
               {email}
             </p>
             <a
               href={`mailto:${email}`}
               className="btn btn-primary btn-sm"
-              style={{ width: '100%', marginTop: '8px' }}
+              style={{ width: '100%', marginTop: '6px' }}
             >
-              <span>إرسال بريد إلكتروني</span>
+              <span>{t.contact.emailAction}</span>
             </a>
           </div>
 
           {/* Location & Profiles */}
           <div
-            className="glass-card"
+            className="white-card"
             style={{
-              padding: '30px',
+              padding: '32px 24px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '14px',
+              gap: '12px',
             }}
           >
             <div
               style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '16px',
-                background: 'rgba(168, 85, 247, 0.15)',
-                border: '1px solid rgba(168, 85, 247, 0.3)',
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                background: '#f1f5f9',
+                border: '1px solid var(--border-color)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#c084fc',
+                color: 'var(--accent-sky)',
               }}
             >
-              <MapPin size={28} />
+              <MapPin size={26} />
             </div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>الموقع والعمل</h3>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>{t.contact.locationTitle}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
               {location}
             </p>
-            <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '6px' }}>
               <a
                 href={githubUrl}
                 target="_blank"
@@ -160,7 +161,7 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 className="btn btn-secondary btn-sm"
                 style={{ flex: 1 }}
               >
-                <GithubIcon size={16} />
+                <GithubIcon size={15} />
                 <span>GitHub</span>
               </a>
               <a
@@ -170,7 +171,7 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 className="btn btn-secondary btn-sm"
                 style={{ flex: 1 }}
               >
-                <LinkedinIcon size={16} />
+                <LinkedinIcon size={15} />
                 <span>LinkedIn</span>
               </a>
             </div>

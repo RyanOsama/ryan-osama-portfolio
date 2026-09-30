@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Layers, ShieldCheck, Database, Cpu, Globe, Server, CheckCircle2 } from 'lucide-react';
+import { Layers, ShieldCheck, Database, Cpu, Server, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ServiceItem {
   id: string;
@@ -15,32 +16,33 @@ interface ServicesSectionProps {
 }
 
 export function ServicesSection({ services }: ServicesSectionProps) {
+  const { t, dir } = useLanguage();
+  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+
   const getIcon = (iconName?: string | null) => {
     switch (iconName) {
       case 'shield-check':
-        return <ShieldCheck size={28} />;
+        return <ShieldCheck size={26} />;
       case 'database':
-        return <Database size={28} />;
+        return <Database size={26} />;
       case 'cpu':
-        return <Cpu size={28} />;
+        return <Cpu size={26} />;
       case 'server':
-        return <Server size={28} />;
+        return <Server size={26} />;
       default:
-        return <Layers size={28} />;
+        return <Layers size={26} />;
     }
   };
 
   return (
-    <section id="services" style={{ padding: '80px 0' }}>
+    <section id="services" style={{ padding: '80px 0', background: 'rgba(241, 245, 249, 0.5)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>الخدمات الاحترافية</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.services.badge}</span>
           </div>
-          <h2 className="section-title">ما الذي يمكنني تقديمه لمشروعك؟</h2>
-          <p className="section-subtitle">
-            خدمات متكاملة تغطي كافة مراحل تطوير البرمجيات من الفكرة والتصميم وحتى النشر والحماية
-          </p>
+          <h2 className="section-title">{t.services.title}</h2>
+          <p className="section-subtitle">{t.services.subtitle}</p>
         </div>
 
         <div
@@ -53,11 +55,9 @@ export function ServicesSection({ services }: ServicesSectionProps) {
           {services.map((srv) => (
             <div
               key={srv.id}
-              className="glass-card"
+              className="white-card"
               style={{
                 padding: '32px 26px',
-                position: 'relative',
-                overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -66,21 +66,21 @@ export function ServicesSection({ services }: ServicesSectionProps) {
               <div>
                 <div
                   style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '16px',
-                    background: 'var(--primary-gradient)',
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '12px',
+                    background: 'var(--primary-blue)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#ffffff',
                     marginBottom: '20px',
-                    boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
+                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
                   }}
                 >
                   {getIcon(srv.icon)}
                 </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-main)' }}>
                   {srv.title}
                 </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.75 }}>
@@ -88,21 +88,21 @@ export function ServicesSection({ services }: ServicesSectionProps) {
                 </p>
               </div>
 
-              <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
                 <a
                   href="#contact"
                   style={{
-                    color: 'var(--primary-glow)',
+                    color: 'var(--primary-blue)',
                     textDecoration: 'none',
                     fontSize: '0.88rem',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
                   }}
                 >
-                  <span>طلب هذه الخدمة</span>
-                  <span>←</span>
+                  <span>{t.services.requestService}</span>
+                  <ArrowIcon size={14} />
                 </a>
               </div>
             </div>

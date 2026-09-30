@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
+  ArrowLeft,
   ExternalLink,
   Star,
   CheckCircle2,
@@ -15,12 +16,15 @@ import {
 } from 'lucide-react';
 import { GithubIcon } from '@/components/Icons';
 import { ReviewModal } from '@/components/ReviewModal';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ProjectDetailsProps {
   project: any;
 }
 
 export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
+  const { t, dir } = useLanguage();
+  const ArrowBackIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const [modalOpen, setModalOpen] = useState(false);
 
   const totalRating = project.reviews.reduce((acc: number, curr: any) => acc + curr.rating, 0);
@@ -37,46 +41,48 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            color: 'var(--text-secondary)',
+            color: 'var(--primary-blue)',
             textDecoration: 'none',
             fontSize: '0.92rem',
-            fontWeight: 600,
+            fontWeight: 700,
           }}
         >
-          <ArrowRight size={18} />
-          <span>العودة إلى كافة المشاريع</span>
+          <ArrowBackIcon size={16} />
+          <span>{t.projectDetails.backToProjects}</span>
         </Link>
       </div>
 
-      {/* Hero Header */}
+      {/* Hero Header Card */}
       <div
-        className="glass-card"
+        className="white-card"
         style={{
           padding: '40px',
-          marginBottom: '40px',
-          background: 'linear-gradient(135deg, rgba(16,24,40,0.9) 0%, rgba(15,23,42,0.7) 100%)',
+          marginBottom: '35px',
+          background: '#ffffff',
+          boxShadow: 'var(--shadow-md)',
         }}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
           {project.category && (
-            <span className="badge badge-glow">{project.category.name}</span>
+            <span className="badge badge-blue">{project.category.name}</span>
           )}
           {project.isFeatured && (
             <span className="badge badge-warning">
-              <Star size={12} fill="#f59e0b" /> مشروع مميز
+              <Star size={12} fill="#d97706" color="#d97706" /> {t.projects.featured}
             </span>
           )}
           <span className="badge badge-success">
-            <CheckCircle2 size={12} /> {project.status === 'COMPLETED' ? 'مكتمل بنجاح' : project.status}
+            <CheckCircle2 size={12} /> {project.status === 'COMPLETED' ? t.projects.completed : project.status}
           </span>
         </div>
 
         <h1
           style={{
-            fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
             fontWeight: 800,
             marginBottom: '16px',
             lineHeight: 1.3,
+            color: 'var(--text-main)',
           }}
         >
           {project.title}
@@ -84,7 +90,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
 
         <p
           style={{
-            fontSize: '1.1rem',
+            fontSize: '1.08rem',
             color: 'var(--text-secondary)',
             lineHeight: 1.8,
             maxWidth: '850px',
@@ -95,7 +101,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
         </p>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
           {project.liveUrl && (
             <a
               href={project.liveUrl}
@@ -103,8 +109,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               rel="noopener noreferrer"
               className="btn btn-primary"
             >
-              <span>مشاهدة النظام الحي (Live Demo)</span>
-              <ExternalLink size={18} />
+              <span>{t.projects.liveDemo}</span>
+              <ExternalLink size={16} />
             </a>
           )}
 
@@ -115,14 +121,14 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               rel="noopener noreferrer"
               className="btn btn-secondary"
             >
-              <GithubIcon size={18} />
-              <span>مستودع الكود (GitHub)</span>
+              <GithubIcon size={16} />
+              <span>{t.projects.githubRepo}</span>
             </a>
           )}
 
           <button onClick={() => setModalOpen(true)} className="btn btn-secondary">
-            <MessageSquare size={18} color="var(--primary-glow)" />
-            <span>إضافة تقييم حول المشروع</span>
+            <MessageSquare size={16} color="var(--primary-blue)" />
+            <span>{t.projectDetails.writeReview}</span>
           </button>
         </div>
       </div>
@@ -134,15 +140,15 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
             gap: '24px',
-            marginBottom: '40px',
+            marginBottom: '35px',
           }}
         >
           {project.problem && (
             <div
-              className="glass-card"
+              className="white-card"
               style={{
                 padding: '30px',
-                borderLeft: '4px solid #f43f5e',
+                borderTop: '4px solid #e11d48',
               }}
             >
               <div
@@ -151,11 +157,11 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#fda4af',
+                  color: '#e11d48',
                 }}
               >
                 <AlertTriangle size={22} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>التحدي والمشكلة (The Problem)</h3>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{t.projectDetails.problemTitle}</h3>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.96rem', lineHeight: 1.8 }}>
                 {project.problem}
@@ -165,10 +171,10 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
 
           {project.solution && (
             <div
-              className="glass-card"
+              className="white-card"
               style={{
                 padding: '30px',
-                borderLeft: '4px solid #10b981',
+                borderTop: '4px solid #059669',
               }}
             >
               <div
@@ -177,11 +183,11 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#6ee7b7',
+                  color: '#059669',
                 }}
               >
                 <Lightbulb size={22} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>الحل الهندسي (The Solution)</h3>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{t.projectDetails.solutionTitle}</h3>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.96rem', lineHeight: 1.8 }}>
                 {project.solution}
@@ -197,23 +203,23 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
           gap: '24px',
-          marginBottom: '50px',
+          marginBottom: '40px',
         }}
       >
         {/* Features list */}
         {project.features && project.features.length > 0 && (
-          <div className="glass-card" style={{ padding: '30px' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '20px' }}>
-              أبرز مزايا ووظائف النظام
+          <div className="white-card" style={{ padding: '30px' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px', color: 'var(--text-main)' }}>
+              {t.projectDetails.featuresTitle}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {project.features.map((feat: any) => (
                 <div key={feat.id} style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ color: 'var(--primary-glow)', flexShrink: 0, marginTop: '3px' }}>
+                  <div style={{ color: 'var(--primary-blue)', flexShrink: 0, marginTop: '2px' }}>
                     <CheckCircle2 size={18} />
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '3px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '3px', color: 'var(--text-main)' }}>
                       {feat.title}
                     </div>
                     {feat.description && (
@@ -229,37 +235,37 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
         )}
 
         {/* Tech Stack */}
-        <div className="glass-card" style={{ padding: '30px' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '20px' }}>
-            التقنيات والأدوات المستخدمة
+        <div className="white-card" style={{ padding: '30px' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px', color: 'var(--text-main)' }}>
+            {t.projectDetails.techStackTitle}
           </h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {project.technologies.map((tech: any) => (
               <div
                 key={tech.id}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  fontSize: '0.92rem',
+                  padding: '6px 14px',
+                  borderRadius: '8px',
+                  background: '#f1f5f9',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '0.88rem',
                   fontWeight: 600,
-                  color: 'var(--text-primary)',
+                  color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                 }}
               >
-                <Layers size={14} color="var(--primary-glow)" />
+                <Layers size={14} color="var(--primary-blue)" />
                 <span>{tech.name}</span>
               </div>
             ))}
           </div>
 
           {/* Detailed Overview */}
-          <div style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '10px' }}>
-              الوصف التفصيلي
+          <div style={{ marginTop: '24px', paddingTop: '18px', borderTop: '1px solid var(--border-color)' }}>
+            <h4 style={{ fontSize: '0.98rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-main)' }}>
+              {t.projectDetails.detailedOverview}
             </h4>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.8 }}>
               {project.description}
@@ -269,7 +275,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
       </div>
 
       {/* Project Reviews Section */}
-      <div className="glass-card" style={{ padding: '36px' }}>
+      <div className="white-card" style={{ padding: '36px' }}>
         <div
           style={{
             display: 'flex',
@@ -277,14 +283,14 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             justifyContent: 'space-between',
             alignItems: 'center',
             gap: '15px',
-            marginBottom: '30px',
+            marginBottom: '26px',
             paddingBottom: '20px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid var(--border-color)',
           }}
         >
           <div>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: 700 }}>
-              تقييمات وآراء المستخدمين حول هذا المشروع
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              {t.projectDetails.reviewsTitle}
             </h3>
             {averageRating && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
@@ -292,40 +298,42 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star
                       key={s}
-                      size={16}
-                      fill={s <= Math.round(Number(averageRating)) ? '#f59e0b' : 'none'}
-                      color={s <= Math.round(Number(averageRating)) ? '#f59e0b' : '#475569'}
+                      size={15}
+                      fill={s <= Math.round(Number(averageRating)) ? '#d97706' : 'none'}
+                      color={s <= Math.round(Number(averageRating)) ? '#d97706' : '#cbd5e1'}
                     />
                   ))}
                 </div>
-                <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>{averageRating} من 5</span>
+                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>
+                  {averageRating} {t.projectDetails.outOf5}
+                </span>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                  ({project.reviews.length} تقييم معتمد)
+                  ({project.reviews.length} {t.projectDetails.approvedReviews})
                 </span>
               </div>
             )}
           </div>
 
           <button onClick={() => setModalOpen(true)} className="btn btn-primary btn-sm">
-            <MessageSquare size={16} />
-            <span>كتابة تقييم</span>
+            <MessageSquare size={15} />
+            <span>{t.projectDetails.writeReview}</span>
           </button>
         </div>
 
         {project.reviews.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)' }}>
-            لا توجد تقييمات منشورة لهذا المشروع بعد. كن أول من يضيف انطباعه!
+            {t.projectDetails.noReviews}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {project.reviews.map((rev: any) => (
               <div
                 key={rev.id}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  padding: '20px',
+                  background: '#f8fafc',
+                  padding: '18px 20px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  border: '1px solid var(--border-color)',
                 }}
               >
                 <div
@@ -333,20 +341,20 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '8px',
+                    marginBottom: '6px',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ fontWeight: 700 }}>{rev.name}</div>
-                    <ShieldCheck size={16} color="#10b981" />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{rev.name}</div>
+                    <ShieldCheck size={15} color="#059669" />
                   </div>
                   <div style={{ display: 'flex', gap: '2px' }}>
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
                         size={14}
-                        fill={s <= rev.rating ? '#f59e0b' : 'none'}
-                        color={s <= rev.rating ? '#f59e0b' : '#475569'}
+                        fill={s <= rev.rating ? '#d97706' : 'none'}
+                        color={s <= rev.rating ? '#d97706' : '#cbd5e1'}
                       />
                     ))}
                   </div>

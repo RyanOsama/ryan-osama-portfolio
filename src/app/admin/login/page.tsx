@@ -2,23 +2,27 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, User, ShieldAlert, ArrowLeft, Loader2, Sparkles } from 'lucide-react';
-import { ToastProvider, useToast } from '@/components/Toast';
+import { Lock, User, ShieldAlert, ArrowRight, ArrowLeft, Loader2, Code2 } from 'lucide-react';
+import { useToast } from '@/components/Toast';
+import { useLanguage } from '@/context/LanguageContext';
 
-function LoginForm() {
+export default function AdminLoginPage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const { dir } = useLanguage();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
 
     if (!username.trim() || !password.trim()) {
-      setErrorMsg('يرجى إدخال اسم المستخدم وكلمة المرور');
+      setErrorMsg('Please enter both username and password');
       return;
     }
 
@@ -32,18 +36,18 @@ function LoginForm() {
 
       const data = await res.json();
       if (data.success) {
-        showToast('تم تسجيل الدخول بنجاح! جاري التوجيه...', 'success');
+        showToast('Login successful! Redirecting...', 'success');
         setTimeout(() => {
           router.push('/admin');
           router.refresh();
-        }, 800);
+        }, 600);
       } else {
-        setErrorMsg(data.message || 'فشل تسجيل الدخول');
-        showToast(data.message || 'فشل تسجيل الدخول', 'error');
+        setErrorMsg(data.message || 'Invalid username or password');
+        showToast(data.message || 'Login failed', 'error');
       }
     } catch (err) {
-      setErrorMsg('تعذر الاتصال بالخادم');
-      showToast('تعذر الاتصال بالخادم', 'error');
+      setErrorMsg('Connection error');
+      showToast('Connection error', 'error');
     } finally {
       setLoading(false);
     }
@@ -57,55 +61,55 @@ function LoginForm() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        background: 'radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 60%), #090d16',
+        background: '#f8fafc',
       }}
     >
       <div
-        className="glass-card animate-fade-in"
+        className="white-card animate-fade-in"
         style={{
           width: '100%',
-          maxWidth: '440px',
+          maxWidth: '420px',
           padding: '40px',
-          background: 'rgba(15, 23, 42, 0.95)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: '#ffffff',
+          boxShadow: 'var(--shadow-lg)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <div
             style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '16px',
-              background: 'var(--primary-gradient)',
+              width: '56px',
+              height: '56px',
+              borderRadius: '14px',
+              background: 'var(--primary-blue)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 10px 25px rgba(56, 189, 248, 0.35)',
+              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
               marginBottom: '16px',
             }}
           >
-            <Lock size={28} color="#ffffff" />
+            <Lock size={26} color="#ffffff" />
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '6px' }}>
-            بوابة الإدارة المركزية
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '6px', color: 'var(--text-main)' }}>
+            Admin Portal
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-            منطقة مخصصة لإدارة المحتوى والأنظمة
+            Central management for projects, reviews & settings
           </p>
         </div>
 
         {errorMsg && (
           <div
             style={{
-              background: 'rgba(244, 63, 94, 0.12)',
-              border: '1px solid rgba(244, 63, 94, 0.3)',
+              background: '#fff1f2',
+              border: '1px solid #fecdd3',
               borderRadius: '10px',
-              padding: '12px 16px',
+              padding: '12px 14px',
               marginBottom: '20px',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
-              color: '#fda4af',
+              color: '#e11d48',
               fontSize: '0.88rem',
             }}
           >
@@ -116,7 +120,7 @@ function LoginForm() {
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label">اسم المستخدم (Username)</label>
+            <label className="form-label">Username</label>
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
@@ -126,18 +130,12 @@ function LoginForm() {
                 placeholder="Ryan_osama"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                style={{ paddingRight: '40px' }}
-              />
-              <User
-                size={18}
-                color="#64748b"
-                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">كلمة المرور (Password)</label>
+            <label className="form-label">Password</label>
             <div style={{ position: 'relative' }}>
               <input
                 type="password"
@@ -147,12 +145,6 @@ function LoginForm() {
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ paddingRight: '40px' }}
-              />
-              <Lock
-                size={18}
-                color="#64748b"
-                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}
               />
             </div>
           </div>
@@ -165,13 +157,13 @@ function LoginForm() {
           >
             {loading ? (
               <>
-                <Loader2 size={18} className="animate-spin" />
-                <span>جاري التحقق والمصادقة...</span>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Verifying...</span>
               </>
             ) : (
               <>
-                <span>تسجيل الدخول الآمن</span>
-                <ArrowLeft size={18} />
+                <span>Secure Sign In</span>
+                <ArrowIcon size={16} />
               </>
             )}
           </button>
@@ -181,27 +173,19 @@ function LoginForm() {
           <a
             href="/"
             style={{
-              color: 'var(--text-secondary)',
+              color: 'var(--primary-blue)',
               fontSize: '0.85rem',
+              fontWeight: 600,
               textDecoration: 'none',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <span>العودة إلى الصفحة الرئيسية</span>
-            <span>←</span>
+            <span>Back to Public Website</span>
           </a>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function AdminLoginPage() {
-  return (
-    <ToastProvider>
-      <LoginForm />
-    </ToastProvider>
   );
 }

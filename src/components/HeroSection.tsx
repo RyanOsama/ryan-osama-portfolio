@@ -1,31 +1,34 @@
 'use client';
 
 import React from 'react';
-import { ArrowLeft, Sparkles, Terminal, Shield, Award, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function HeroSection() {
+  const { t, dir } = useLanguage();
+  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+
   return (
     <section
       id="hero"
       style={{
-        minHeight: '92vh',
+        minHeight: '88vh',
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
-        paddingTop: '100px',
+        paddingTop: '110px',
         paddingBottom: '60px',
-        overflow: 'hidden',
       }}
     >
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ maxWidth: '880px', margin: '0 auto', textAlign: 'center' }}>
           {/* Availability Badge */}
           <div
-            className="badge badge-glow animate-fade-in"
+            className="badge badge-blue animate-fade-in"
             style={{
               marginBottom: '24px',
-              padding: '8px 18px',
-              fontSize: '0.9rem',
+              padding: '6px 18px',
+              fontSize: '0.88rem',
               display: 'inline-flex',
             }}
           >
@@ -34,40 +37,40 @@ export function HeroSection() {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                background: '#10b981',
-                boxShadow: '0 0 10px #10b981',
+                background: '#059669',
               }}
             />
-            <span>متاح لاستقبال مشاريع الأنظمة والاستشارات البرمجية</span>
+            <span>{t.hero.availabilityBadge}</span>
           </div>
 
           {/* Headline */}
           <h1
             style={{
-              fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+              fontSize: 'clamp(2.3rem, 5vw, 3.6rem)',
               fontWeight: 900,
               lineHeight: 1.25,
               marginBottom: '20px',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.025em',
+              color: 'var(--text-main)',
             }}
           >
-            بناء الأنظمة السحابية والحلول الرقمية <br />
-            <span className="gradient-text">بأعلى معايير الأمان والأداء</span>
+            {t.hero.headline} <br />
+            <span className="gradient-text">{t.hero.headlineHighlight}</span>
           </h1>
 
           {/* Subtitle */}
           <p
             style={{
-              fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
               color: 'var(--text-secondary)',
               lineHeight: 1.8,
               marginBottom: '36px',
-              maxWidth: '720px',
+              maxWidth: '740px',
               marginRight: 'auto',
               marginLeft: 'auto',
             }}
           >
-            أنا <strong style={{ color: '#ffffff' }}>ريان أسامة</strong>، مهندس برمجيات متخصص في تطوير المنصات المؤسسية المتكاملة، وتصميم قواعد البيانات المتقدمة، وبناء الواجهات البرمجية الآمنة مع تجربة مستخدم سلسة وعصرية.
+            {t.hero.subheadline}
           </p>
 
           {/* Action CTAs */}
@@ -75,65 +78,66 @@ export function HeroSection() {
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '16px',
+              gap: '14px',
               justifyContent: 'center',
-              marginBottom: '60px',
+              marginBottom: '55px',
             }}
           >
-            <a href="#projects" className="btn btn-primary" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>
-              <span>استكشف سابقة الأعمال</span>
-              <ArrowLeft size={20} />
+            <a href="#projects" className="btn btn-primary" style={{ padding: '14px 30px', fontSize: '1.02rem' }}>
+              <span>{t.hero.exploreProjects}</span>
+              <ArrowIcon size={18} />
             </a>
-            <a href="#contact" className="btn btn-secondary" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>
-              <Sparkles size={20} color="var(--primary-glow)" />
-              <span>تواصل لمناقشة مشروعك</span>
+            <a href="#contact" className="btn btn-secondary" style={{ padding: '14px 28px', fontSize: '1.02rem' }}>
+              <Sparkles size={18} color="var(--primary-blue)" />
+              <span>{t.hero.contactMe}</span>
             </a>
           </div>
 
-          {/* Stats Bar */}
+          {/* Clean White Stats Bar */}
           <div
-            className="glass-card"
+            className="white-card"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
               gap: '20px',
-              padding: '28px 20px',
+              padding: '28px 24px',
               textAlign: 'center',
+              boxShadow: 'var(--shadow-md)',
             }}
           >
             <div>
-              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--primary-glow)', marginBottom: '4px' }}>
-                5+
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--primary-blue)', marginBottom: '4px' }}>
+                {t.hero.statYears}
               </div>
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                سنوات من الخبرة العملية
-              </div>
-            </div>
-
-            <div style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#10b981', marginBottom: '4px' }}>
-                20+
-              </div>
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                أنظمة ومنصات منجزة
+              <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                {t.hero.statYearsLabel}
               </div>
             </div>
 
-            <div style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#f59e0b', marginBottom: '4px' }}>
-                100%
+            <div style={{ borderRight: dir === 'rtl' ? '1px solid var(--border-color)' : 'none', borderLeft: dir === 'ltr' ? '1px solid var(--border-color)' : 'none' }}>
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--accent-sky)', marginBottom: '4px' }}>
+                {t.hero.statProjects}
               </div>
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                أمان وموثوقية عالية
+              <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                {t.hero.statProjectsLabel}
               </div>
             </div>
 
-            <div style={{ borderRight: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#a855f7', marginBottom: '4px' }}>
-                24/7
+            <div style={{ borderRight: dir === 'rtl' ? '1px solid var(--border-color)' : 'none', borderLeft: dir === 'ltr' ? '1px solid var(--border-color)' : 'none' }}>
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#059669', marginBottom: '4px' }}>
+                {t.hero.statQuality}
               </div>
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                دعم وتطوير مستمر
+              <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                {t.hero.statQualityLabel}
+              </div>
+            </div>
+
+            <div style={{ borderRight: dir === 'rtl' ? '1px solid var(--border-color)' : 'none', borderLeft: dir === 'ltr' ? '1px solid var(--border-color)' : 'none' }}>
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#475569', marginBottom: '4px' }}>
+                {t.hero.statSupport}
+              </div>
+              <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                {t.hero.statSupportLabel}
               </div>
             </div>
           </div>

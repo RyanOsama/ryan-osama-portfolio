@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Star, X, Send, ShieldCheck, Loader2 } from 'lucide-react';
 import { useToast } from './Toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -20,6 +21,8 @@ export function ReviewModal({
   onSuccess,
 }: ReviewModalProps) {
   const { showToast } = useToast();
+  const { t } = useLanguage();
+
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [name, setName] = useState('');
@@ -32,7 +35,7 @@ export function ReviewModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !comment.trim()) {
-      showToast('يرجى كتابة اسمك والتعليق', 'error');
+      showToast('Please enter your name and comment', 'error');
       return;
     }
 
@@ -52,7 +55,7 @@ export function ReviewModal({
 
       const data = await res.json();
       if (data.success) {
-        showToast(data.message || 'تم إرسال تقييمك بنجاح! سيظهر بعد مراجعة الإدارة.', 'success');
+        showToast(t.reviewModal.successMessage, 'success');
         setName('');
         setEmail('');
         setComment('');
@@ -60,10 +63,10 @@ export function ReviewModal({
         if (onSuccess) onSuccess();
         onClose();
       } else {
-        showToast(data.message || 'تعذر إرسال التقييم', 'error');
+        showToast(data.message || 'Error submitting review', 'error');
       }
     } catch (err) {
-      showToast('حدث خطأ في الاتصال بالخادم', 'error');
+      showToast('Connection error', 'error');
     } finally {
       setLoading(false);
     }
@@ -75,8 +78,8 @@ export function ReviewModal({
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(8px)',
+        background: 'rgba(15, 23, 42, 0.6)',
+        backdropFilter: 'blur(6px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -85,13 +88,14 @@ export function ReviewModal({
       onClick={onClose}
     >
       <div
-        className="glass-card animate-fade-in"
+        className="white-card animate-fade-in"
         style={{
           width: '100%',
-          maxWidth: '520px',
-          background: 'rgba(15, 23, 42, 0.95)',
-          padding: '30px',
+          maxWidth: '500px',
+          background: '#ffffff',
+          padding: '32px',
           position: 'relative',
+          boxShadow: 'var(--shadow-lg)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -100,8 +104,8 @@ export function ReviewModal({
           style={{
             position: 'absolute',
             top: '20px',
-            left: '20px',
-            background: 'rgba(255, 255, 255, 0.05)',
+            right: '20px',
+            background: '#f1f5f9',
             border: 'none',
             color: 'var(--text-secondary)',
             cursor: 'pointer',
@@ -109,19 +113,19 @@ export function ReviewModal({
             borderRadius: '8px',
           }}
         >
-          <X size={20} />
+          <X size={18} />
         </button>
 
         <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '10px' }}>
+          <div className="badge badge-blue" style={{ marginBottom: '10px' }}>
             <ShieldCheck size={14} />
-            <span>تقييم موثوق ومحمي</span>
+            <span>{t.reviewModal.badge}</span>
           </div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>
-            {projectTitle ? `إضافة رأي حول: ${projectTitle}` : 'شاركنا رأيك وتجربتك'}
+          <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)' }}>
+            {projectTitle ? `${t.reviewModal.modalTitleWithProject} ${projectTitle}` : t.reviewModal.modalTitle}
           </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: '5px' }}>
-            رأيك يهمنا ويخضع للمراجعة للتأكد من الموثوقية
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: '4px' }}>
+            {t.reviewModal.modalSubtitle}
           </p>
         </div>
 
@@ -145,21 +149,21 @@ export function ReviewModal({
                 }}
               >
                 <Star
-                  size={32}
-                  fill={(hoverRating || rating) >= star ? '#f59e0b' : 'none'}
-                  color={(hoverRating || rating) >= star ? '#f59e0b' : '#64748b'}
+                  size={30}
+                  fill={(hoverRating || rating) >= star ? '#d97706' : 'none'}
+                  color={(hoverRating || rating) >= star ? '#d97706' : '#cbd5e1'}
                 />
               </button>
             ))}
           </div>
 
           <div className="form-group">
-            <label className="form-label">الاسم الكامل *</label>
+            <label className="form-label">{t.reviewModal.nameLabel}</label>
             <input
               type="text"
               required
               maxLength={60}
-              placeholder="مثال: المهندس أحمد السالم"
+              placeholder={t.reviewModal.namePlaceholder}
               className="form-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -167,11 +171,11 @@ export function ReviewModal({
           </div>
 
           <div className="form-group">
-            <label className="form-label">البريد الإلكتروني (اختياري)</label>
+            <label className="form-label">{t.reviewModal.emailLabel}</label>
             <input
               type="email"
               maxLength={100}
-              placeholder="email@example.com"
+              placeholder={t.reviewModal.emailPlaceholder}
               className="form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -179,12 +183,12 @@ export function ReviewModal({
           </div>
 
           <div className="form-group">
-            <label className="form-label">رأيك أو ملاحظتك حول العمل *</label>
+            <label className="form-label">{t.reviewModal.commentLabel}</label>
             <textarea
               required
               rows={4}
               maxLength={1000}
-              placeholder="اكتب انطباعك، جودة العمل، والتعامل..."
+              placeholder={t.reviewModal.commentPlaceholder}
               className="form-textarea"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -199,13 +203,13 @@ export function ReviewModal({
           >
             {loading ? (
               <>
-                <Loader2 size={18} className="animate-spin" />
-                <span>جاري الإرسال...</span>
+                <Loader2 size={16} className="animate-spin" />
+                <span>{t.reviewModal.submitting}</span>
               </>
             ) : (
               <>
-                <Send size={18} />
-                <span>إرسال التقييم للمراجعة</span>
+                <Send size={16} />
+                <span>{t.reviewModal.submitBtn}</span>
               </>
             )}
           </button>

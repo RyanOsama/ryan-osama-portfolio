@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, ArrowLeft, Star, Layers, MessageSquare } from 'lucide-react';
+import { ExternalLink, ArrowRight, ArrowLeft, Star, Layers, MessageSquare } from 'lucide-react';
 import { GithubIcon } from './Icons';
 import { ReviewModal } from './ReviewModal';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Technology {
   id: string;
@@ -38,6 +39,9 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ projects, categories }: ProjectsSectionProps) {
+  const { t, dir } = useLanguage();
+  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+
   const [selectedCat, setSelectedCat] = useState('all');
   const [activeReviewProject, setActiveReviewProject] = useState<{ id: string; title: string } | null>(null);
 
@@ -47,23 +51,21 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
       : projects.filter((p) => p.category?.slug === selectedCat);
 
   return (
-    <section id="projects" style={{ padding: '80px 0' }}>
+    <section id="projects" style={{ padding: '80px 0', background: 'rgba(241, 245, 249, 0.5)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
-            <span>معرض الأعمال الحية</span>
+          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+            <span>{t.projects.badge}</span>
           </div>
-          <h2 className="section-title">المشاريع والأنظمة المنجزة</h2>
-          <p className="section-subtitle">
-            استعراض نماذج واقعية من الأنظمة المؤسسية وتطبيقات الويب التي قمت بتطويرها
-          </p>
+          <h2 className="section-title">{t.projects.title}</h2>
+          <p className="section-subtitle">{t.projects.subtitle}</p>
 
           {/* Category Filter */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '10px',
+              gap: '8px',
               justifyContent: 'center',
               marginBottom: '40px',
             }}
@@ -73,17 +75,18 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
               style={{
                 padding: '8px 20px',
                 borderRadius: '9999px',
-                border: selectedCat === 'all' ? '1px solid var(--primary-glow)' : '1px solid rgba(255,255,255,0.1)',
-                background: selectedCat === 'all' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.04)',
+                border: selectedCat === 'all' ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
+                background: selectedCat === 'all' ? 'var(--primary-blue)' : '#ffffff',
                 color: selectedCat === 'all' ? '#ffffff' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.9rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.15s ease',
               }}
             >
-              جميع المشاريع ({projects.length})
+              {t.projects.allProjects} ({projects.length})
             </button>
             {categories.map((cat) => (
               <button
@@ -92,14 +95,15 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 style={{
                   padding: '8px 20px',
                   borderRadius: '9999px',
-                  border: selectedCat === cat.slug ? '1px solid var(--primary-glow)' : '1px solid rgba(255,255,255,0.1)',
-                  background: selectedCat === cat.slug ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.04)',
+                  border: selectedCat === cat.slug ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
+                  background: selectedCat === cat.slug ? 'var(--primary-blue)' : '#ffffff',
                   color: selectedCat === cat.slug ? '#ffffff' : 'var(--text-secondary)',
                   fontFamily: 'inherit',
                   fontSize: '0.9rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 {cat.name}
@@ -113,13 +117,13 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '30px',
+            gap: '28px',
           }}
         >
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="glass-card"
+              className="white-card"
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -127,47 +131,39 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 borderRadius: 'var(--radius-lg)',
               }}
             >
-              {/* Project Image Preview */}
+              {/* Project Image Preview Header */}
               <div
                 style={{
                   position: 'relative',
-                  height: '210px',
-                  background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                  height: '200px',
+                  background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  borderBottom: '1px solid var(--border-color)',
                 }}
               >
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'radial-gradient(circle at center, rgba(56, 189, 248, 0.15) 0%, transparent 70%)',
-                  }}
-                />
-
-                <Layers size={48} color="#38bdf8" style={{ opacity: 0.6 }} />
+                <Layers size={48} color="var(--primary-blue)" style={{ opacity: 0.7 }} />
 
                 {/* Badges Overlay */}
                 <div
                   style={{
                     position: 'absolute',
                     top: '14px',
-                    right: '14px',
+                    ...(dir === 'rtl' ? { right: '14px' } : { left: '14px' }),
                     display: 'flex',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   {project.category && (
-                    <span className="badge badge-glow" style={{ backdropFilter: 'blur(8px)' }}>
+                    <span className="badge badge-blue" style={{ background: '#ffffff', boxShadow: 'var(--shadow-sm)' }}>
                       {project.category.name}
                     </span>
                   )}
                   {project.isFeatured && (
-                    <span className="badge badge-warning" style={{ backdropFilter: 'blur(8px)' }}>
-                      <Star size={12} fill="#f59e0b" /> مميز
+                    <span className="badge badge-warning" style={{ background: '#ffffff', boxShadow: 'var(--shadow-sm)' }}>
+                      <Star size={12} fill="#d97706" color="#d97706" /> {t.projects.featured}
                     </span>
                   )}
                 </div>
@@ -186,10 +182,10 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 <div>
                   <h3
                     style={{
-                      fontSize: '1.3rem',
+                      fontSize: '1.25rem',
                       fontWeight: 700,
                       marginBottom: '10px',
-                      color: 'var(--text-primary)',
+                      color: 'var(--text-main)',
                     }}
                   >
                     {project.title}
@@ -214,9 +210,10 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                           fontSize: '0.78rem',
                           padding: '4px 10px',
                           borderRadius: '6px',
-                          background: 'rgba(255,255,255,0.05)',
-                          color: '#cbd5e1',
-                          border: '1px solid rgba(255,255,255,0.08)',
+                          background: '#f1f5f9',
+                          color: '#334155',
+                          border: '1px solid #e2e8f0',
+                          fontWeight: 600,
                         }}
                       >
                         {t.name}
@@ -232,7 +229,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     paddingTop: '16px',
-                    borderTop: '1px solid rgba(255,255,255,0.06)',
+                    borderTop: '1px solid var(--border-color)',
                   }}
                 >
                   <Link
@@ -240,18 +237,18 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                     className="btn btn-primary btn-sm"
                     style={{ padding: '8px 16px' }}
                   >
-                    <span>تفاصيل المشروع</span>
-                    <ArrowLeft size={16} />
+                    <span>{t.projects.viewDetails}</span>
+                    <ArrowIcon size={14} />
                   </Link>
 
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button
                       onClick={() => setActiveReviewProject({ id: project.id, title: project.title })}
                       className="btn btn-secondary btn-sm"
-                      title="أضف تقييمك للمشروع"
+                      title={t.projects.addReview}
                       style={{ padding: '8px 12px' }}
                     >
-                      <MessageSquare size={16} color="var(--primary-glow)" />
+                      <MessageSquare size={16} color="var(--primary-blue)" />
                     </button>
 
                     {project.githubUrl && (
@@ -260,7 +257,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-secondary btn-sm"
-                        title="GitHub Repo"
+                        title={t.projects.githubRepo}
                         style={{ padding: '8px 12px' }}
                       >
                         <GithubIcon size={16} />
@@ -272,7 +269,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-secondary btn-sm"
-                        title="Live Demo"
+                        title={t.projects.liveDemo}
                         style={{ padding: '8px 12px' }}
                       >
                         <ExternalLink size={16} />

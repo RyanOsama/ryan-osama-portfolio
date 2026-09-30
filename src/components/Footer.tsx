@@ -2,17 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Mail, Heart, Shield } from 'lucide-react';
+import { Mail, Shield } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './Icons';
+import { useLanguage } from '@/context/LanguageContext';
 
 export function Footer() {
+  const { t, lang } = useLanguage();
+
   return (
     <footer
       style={{
-        borderTop: '1px solid var(--border-glass)',
-        background: 'rgba(9, 13, 22, 0.95)',
+        borderTop: '1px solid var(--border-color)',
+        background: '#ffffff',
         padding: '50px 0 30px 0',
-        marginTop: '80px',
+        marginTop: '60px',
       }}
     >
       <div className="container">
@@ -27,15 +30,18 @@ export function Footer() {
           }}
         >
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1.3rem', marginBottom: '6px' }}>
-              ريان أسامة <span className="gradient-text">| Ryan Osama</span>
+            <div style={{ fontWeight: 800, fontSize: '1.25rem', marginBottom: '6px', color: 'var(--text-main)' }}>
+              {lang === 'ar' ? 'ريان أسامة' : 'Ryan Osama'}{' '}
+              <span style={{ color: 'var(--primary-blue)', fontWeight: 600, fontSize: '0.95rem' }}>
+                | Full-Stack Engineer
+              </span>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', maxWidth: '420px' }}>
-              مهندس برمجيات متخصص في بناء وتطوير الأنظمة السحابية المتقدمة وحلول الويب عالية الأمان والكفاءة.
+              {t.footer.bio}
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '14px' }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
             <a
               href="https://github.com/ryan-osama"
               target="_blank"
@@ -43,7 +49,7 @@ export function Footer() {
               className="btn btn-secondary btn-sm"
               style={{ padding: '8px 14px' }}
             >
-              <GithubIcon size={18} />
+              <GithubIcon size={16} />
               <span>GitHub</span>
             </a>
             <a
@@ -53,7 +59,7 @@ export function Footer() {
               className="btn btn-secondary btn-sm"
               style={{ padding: '8px 14px' }}
             >
-              <LinkedinIcon size={18} />
+              <LinkedinIcon size={16} />
               <span>LinkedIn</span>
             </a>
             <a
@@ -61,15 +67,15 @@ export function Footer() {
               className="btn btn-secondary btn-sm"
               style={{ padding: '8px 14px' }}
             >
-              <Mail size={18} />
-              <span>البريد</span>
+              <Mail size={16} />
+              <span>Email</span>
             </a>
           </div>
         </div>
 
         <div
           style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            borderTop: '1px solid var(--border-color)',
             paddingTop: '25px',
             display: 'flex',
             flexWrap: 'wrap',
@@ -81,14 +87,14 @@ export function Footer() {
           }}
         >
           <div>
-            جميع الحقوق محفوظة © {new Date().getFullYear()} — تم التطوير بعناية وهندسة أمان مشددة
+            {t.footer.rights} {new Date().getFullYear()} — Ryan Osama
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <Shield size={15} color="#10b981" /> نظام مؤمن ومحمي بالكامل
+              <Shield size={14} color="#059669" /> {t.footer.securedSystem}
             </span>
             <Link href="/admin" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
-              بوابة الإدارة
+              {t.footer.adminLink}
             </Link>
           </div>
         </div>

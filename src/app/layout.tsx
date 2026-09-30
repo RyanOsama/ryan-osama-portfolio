@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
+import { LanguageProvider } from '@/context/LanguageContext';
+import { ToastProvider } from '@/components/Toast';
 
 export const metadata: Metadata = {
-  title: 'ريان أسامة | مهندس برمجيات ومطور أنظمة سحابية',
-  description: 'الموقع الرسمي ومعرض الأعمال للمطور ريان أسامة - استعراض المشاريع، الأنظمة المؤسسية، والحلول البرمجية المتكاملة.',
-  keywords: ['مهندس برمجيات', 'مطور ويب', 'Next.js', 'PostgreSQL', 'ريان أسامة', 'Full-Stack Developer'],
-  authors: [{ name: 'ريان أسامة' }],
+  title: 'Ryan Osama | Senior Full-Stack Software Engineer',
+  description: 'Official portfolio and systems showcase of Ryan Osama - Architecting enterprise cloud platforms, database solutions, and high-performance applications.',
+  keywords: ['Software Engineer', 'Full-Stack Developer', 'Next.js', 'PostgreSQL', 'Ryan Osama', 'ريان أسامة'],
+  authors: [{ name: 'Ryan Osama' }],
   openGraph: {
-    title: 'ريان أسامة | مهندس برمجيات ومطور أنظمة سحابية',
-    description: 'الموقع الرسمي ومعرض الأعمال للمطور ريان أسامة - استعراض المشاريع، الأنظمة المؤسسية، والحلول البرمجية المتكاملة.',
+    title: 'Ryan Osama | Senior Full-Stack Software Engineer',
+    description: 'Official portfolio and systems showcase of Ryan Osama - Architecting enterprise cloud platforms, database solutions, and high-performance applications.',
     type: 'website',
-    locale: 'ar_AR',
   },
 };
 
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="en" dir="ltr">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,7 +29,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        {children}
+        <LanguageProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
