@@ -89,13 +89,13 @@ export async function POST(request: NextRequest) {
         email: safeEmail,
         rating,
         comment: safeComment,
-        status: 'pending', // Strictly pending until admin moderation
+        status: 'approved', // Immediately approved as requested
       },
     });
 
     return successResponse(
       { id: newReview.id, status: newReview.status },
-      'شكراً لك! تم استلام تقييمك وسيتم نشره بعد مراجعة الإدارة.'
+      'شكراً لك! تم إرسال تقييمك ونشره بنجاح.'
     );
   } catch (error) {
     console.error('Review submit error:', error);
