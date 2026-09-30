@@ -17,15 +17,40 @@ export function HeroSection() {
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
-        backgroundImage: `linear-gradient(to right, rgba(11, 15, 25, 0.85) 0%, rgba(11, 15, 25, 0.55) 50%, rgba(11, 15, 25, 0.25) 100%), url('/images/hero-bg.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
+        overflow: 'hidden',
         paddingTop: '100px',
         paddingBottom: '60px',
         color: '#ffffff',
       }}
     >
+      {/* Background Image Layer (Automatically flipped in RTL/Arabic so character is on the left) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url('/images/hero-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+          transform: dir === 'rtl' ? 'scaleX(-1)' : 'none',
+          zIndex: 1,
+          transition: 'transform 0.3s ease',
+        }}
+      />
+
+      {/* Dark Slate Gradient Overlay (Darker behind the text side) */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            dir === 'rtl'
+              ? 'linear-gradient(to left, rgba(9, 13, 22, 0.92) 0%, rgba(9, 13, 22, 0.65) 50%, rgba(9, 13, 22, 0.2) 100%)'
+              : 'linear-gradient(to right, rgba(9, 13, 22, 0.92) 0%, rgba(9, 13, 22, 0.65) 50%, rgba(9, 13, 22, 0.2) 100%)',
+          zIndex: 1,
+        }}
+      />
+
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         <div
           style={{
