@@ -148,43 +148,41 @@ export default function AdminLoginPage() {
             width: '100%',
           }}
         >
-          {/* Transparent Login Card (Left on EN, Right on AR) */}
+          {/* Completely Seamless Transparent Login Form (No Box / No Borders) */}
           <div
             className="animate-fade-in"
             style={{
               width: '100%',
-              maxWidth: '440px',
-              padding: '40px 32px',
-              background: 'rgba(20, 24, 33, 0.45)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '24px',
-              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.4)',
+              maxWidth: '420px',
+              padding: '10px 0',
+              background: 'transparent',
+              border: 'none',
+              boxShadow: 'none',
               textAlign: dir === 'rtl' ? 'right' : 'left',
             }}
           >
             {/* Header */}
-            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
               <div
                 style={{
                   width: '54px',
                   height: '54px',
                   borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  background: 'rgba(255, 255, 255, 0.07)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
-                  marginBottom: '14px',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                  marginBottom: '16px',
                 }}
               >
                 <Lock size={24} color="#ffffff" />
               </div>
-              <h1 style={{ fontSize: '1.45rem', fontWeight: 800, marginBottom: '6px', color: '#ffffff' }}>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px', color: '#ffffff' }}>
                 {lang === 'ar' ? 'بوابة لوحة التحكم' : 'Admin Portal'}
               </h1>
-              <p style={{ color: '#cbd5e1', fontSize: '0.88rem' }}>
+              <p style={{ color: '#cbd5e1', fontSize: '0.9rem' }}>
                 {lang === 'ar'
                   ? 'تسجيل الدخول الآمن لإدارة المشاريع والتقييمات'
                   : 'Secure access for projects and systems management'}
