@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+
+  @@map("admins")
+}
+
+model LoginAttempt {
+  id           String    @id @default(cuid())
+  ip           String
+  username     String
+  attempts     Int       @default(1)
+  blockedUntil DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([ip, username])
+  @@map("login_attempts")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  projects    Project[]
+
+  @@map("categories")
+}
+
+model Technology {
+  id        String              @id @default(cuid())
+  name      String
+  slug      String              @unique
+  icon      String?
+  category  String?             @default("General")
+  sortOrder Int                 @default(0)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  projects  ProjectTechnology[]
+
+  @@map("technologies")
+}
+
+model Project {
+  id               String              @id @default(cuid())
+  title            String
+  slug             String              @unique
+  shortDescription String
+  description      String              @db.Text
+  problem          String?             @db.Text
+  solution         String?             @db.Text
+  categoryId       String?
+  category         Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  coverImage       String
+  liveUrl          String?
+  githubUrl        String?
+  status           String              @default("COMPLETED")
+  isFeatured       Boolean             @default(false)
+  sortOrder        Int                 @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  images           ProjectImage[]
+  technologies     ProjectTechnology[]
+  features         ProjectFeature[]
+  reviews          Review[]
+
+  @@map("projects")
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  altText   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("project_images")
+}
+
+model ProjectTechnology {
+  projectId    String
+  technologyId String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, technologyId])
+  @@map("project_technologies")
+}
+
+model ProjectFeature {
+  id          String  @id @default(cuid())
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  sortOrder   Int     @default(0)
+
+  @@map("project_features")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  icon      String?
+  level     Int      @default(90)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("skills")
+}
+
+model Experience {
+  id           String    @id @default(cuid())
+  title        String
+  organization String
+  location     String?
+  description  String    @db.Text
+  startDate    DateTime
+  endDate      DateTime?
+  isCurrent    Boolean   @default(false)
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("experiences")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  email     String?
+  rating    Int      @default(5)
+  comment   String   @db.Text
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}
