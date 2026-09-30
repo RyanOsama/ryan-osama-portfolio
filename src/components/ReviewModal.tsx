@@ -150,8 +150,8 @@ export function ReviewModal({
               >
                 <Star
                   size={30}
-                  fill={(hoverRating || rating) >= star ? '#d97706' : 'none'}
-                  color={(hoverRating || rating) >= star ? '#d97706' : '#cbd5e1'}
+                  fill={(hoverRating || rating) >= star ? '#f8fafc' : 'none'}
+                  color={(hoverRating || rating) >= star ? '#f8fafc' : '#475569'}
                 />
               </button>
             ))}

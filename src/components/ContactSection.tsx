@@ -57,12 +57,12 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 width: '52px',
                 height: '52px',
                 borderRadius: '12px',
-                background: 'rgba(16, 185, 129, 0.12)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#34d399',
+                color: '#cbd5e1',
               }}
             >
               <MessageCircle size={26} />
@@ -75,7 +75,7 @@ export function ContactSection({ settings }: ContactSectionProps) {
               href={`https://wa.me/${whatsappClean}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-success btn-sm"
+              className="btn btn-primary btn-sm"
               style={{ width: '100%', marginTop: '6px' }}
             >
               <span>{t.contact.whatsappAction}</span>

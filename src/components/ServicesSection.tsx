@@ -3,6 +3,7 @@
 import React from 'react';
 import { Layers, ShieldCheck, Database, Cpu, Server, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { servicesTranslations } from '@/lib/i18nContent';
 
 interface ServiceItem {
   id: string;
@@ -16,7 +17,7 @@ interface ServicesSectionProps {
 }
 
 export function ServicesSection({ services }: ServicesSectionProps) {
-  const { t, dir } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   const getIcon = (iconName?: string | null) => {
@@ -34,8 +35,28 @@ export function ServicesSection({ services }: ServicesSectionProps) {
     }
   };
 
+  const getLocalizedService = (srv: ServiceItem) => {
+    let key = 'full-stack';
+    if (srv.icon === 'shield-check' || srv.title.includes('API')) key = 'apis';
+    else if (srv.icon === 'database' || srv.title.includes('بيانات')) key = 'database';
+    else if (srv.icon === 'cpu' || srv.title.includes('أتمتة') || srv.title.includes('الذكاء')) key = 'automation';
+
+    const tr = servicesTranslations[key];
+    if (tr) {
+      return {
+        title: lang === 'en' ? tr.en.title : tr.ar.title,
+        description: lang === 'en' ? tr.en.desc : tr.ar.desc,
+      };
+    }
+
+    return {
+      title: srv.title,
+      description: srv.description,
+    };
+  };
+
   return (
-    <section id="services" style={{ padding: '80px 0', background: 'rgba(15, 23, 42, 0.4)' }}>
+    <section id="services" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
           <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
@@ -52,62 +73,65 @@ export function ServicesSection({ services }: ServicesSectionProps) {
             gap: '24px',
           }}
         >
-          {services.map((srv) => (
-            <div
-              key={srv.id}
-              className="white-card"
-              style={{
-                padding: '32px 26px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '12px',
-                    background: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ffffff',
-                    marginBottom: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                  }}
-                >
-                  {getIcon(srv.icon)}
+          {services.map((srv) => {
+            const localized = getLocalizedService(srv);
+            return (
+              <div
+                key={srv.id}
+                className="white-card"
+                style={{
+                  padding: '32px 26px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      width: '52px',
+                      height: '52px',
+                      borderRadius: '12px',
+                      background: '#182235',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#f8fafc',
+                      marginBottom: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                    }}
+                  >
+                    {getIcon(srv.icon)}
+                  </div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>
+                    {localized.title}
+                  </h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.75 }}>
+                    {localized.description}
+                  </p>
                 </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>
-                  {srv.title}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.75 }}>
-                  {srv.description}
-                </p>
-              </div>
 
-              <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-                <a
-                  href="#contact"
-                  style={{
-                    color: '#cbd5e1',
-                    textDecoration: 'none',
-                    fontSize: '0.88rem',
-                    fontWeight: 700,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <span>{t.services.requestService}</span>
-                  <ArrowIcon size={14} />
-                </a>
+                <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+                  <a
+                    href="#contact"
+                    style={{
+                      color: '#cbd5e1',
+                      textDecoration: 'none',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span>{t.services.requestService}</span>
+                    <ArrowIcon size={14} />
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

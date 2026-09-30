@@ -17,13 +17,14 @@ import {
 import { GithubIcon } from '@/components/Icons';
 import { ReviewModal } from '@/components/ReviewModal';
 import { useLanguage } from '@/context/LanguageContext';
+import { projectTranslations, categoryTranslations } from '@/lib/i18nContent';
 
 interface ProjectDetailsProps {
   project: any;
 }
 
 export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
-  const { t, dir } = useLanguage();
+  const { t, lang, dir } = useLanguage();
   const ArrowBackIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -31,8 +32,32 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
   const averageRating =
     project.reviews.length > 0 ? (totalRating / project.reviews.length).toFixed(1) : null;
 
+  const tr = projectTranslations[project.slug];
+  const title = tr ? (lang === 'en' ? tr.en.title : tr.ar.title) : project.title;
+  const shortDescription = tr
+    ? lang === 'en'
+      ? tr.en.shortDescription
+      : tr.ar.shortDescription
+    : project.shortDescription;
+  const description = tr ? (lang === 'en' ? tr.en.description : tr.ar.description) : project.description;
+  const problem = tr ? (lang === 'en' ? tr.en.problem : tr.ar.problem) : project.problem;
+  const solution = tr ? (lang === 'en' ? tr.en.solution : tr.ar.solution) : project.solution;
+
+  const features =
+    tr && tr[lang]?.features
+      ? tr[lang].features
+      : project.features;
+
+  const categoryName = project.category
+    ? categoryTranslations[project.category.slug]
+      ? lang === 'en'
+        ? categoryTranslations[project.category.slug].en
+        : categoryTranslations[project.category.slug].ar
+      : project.category.name
+    : null;
+
   return (
-    <div className="container" style={{ paddingBottom: '80px' }}>
+    <div className="container" style={{ paddingBottom: '80px', paddingTop: '40px' }}>
       {/* Back button */}
       <div style={{ marginBottom: '24px' }}>
         <Link
@@ -62,15 +87,13 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-          {project.category && (
-            <span className="badge badge-blue">{project.category.name}</span>
-          )}
+          {categoryName && <span className="badge badge-glow">{categoryName}</span>}
           {project.isFeatured && (
-            <span className="badge badge-warning">
-              <Star size={12} fill="#d97706" color="#d97706" /> {t.projects.featured}
+            <span className="badge badge-glow">
+              <Star size={12} color="#f8fafc" /> {t.projects.featured}
             </span>
           )}
-          <span className="badge badge-success">
+          <span className="badge badge-glow">
             <CheckCircle2 size={12} /> {project.status === 'COMPLETED' ? t.projects.completed : project.status}
           </span>
         </div>
@@ -84,7 +107,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             color: 'var(--text-main)',
           }}
         >
-          {project.title}
+          {title}
         </h1>
 
         <p
@@ -96,7 +119,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             marginBottom: '30px',
           }}
         >
-          {project.shortDescription}
+          {shortDescription}
         </p>
 
         {/* Action Buttons */}
@@ -133,7 +156,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
       </div>
 
       {/* Main Breakdown: Problem vs Solution */}
-      {(project.problem || project.solution) && (
+      {(problem || solution) && (
         <div
           style={{
             display: 'grid',
@@ -142,12 +165,12 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             marginBottom: '35px',
           }}
         >
-          {project.problem && (
+          {problem && (
             <div
               className="white-card"
               style={{
                 padding: '30px',
-                borderTop: '4px solid #f43f5e',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
             >
               <div
@@ -156,24 +179,24 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#fda4af',
+                  color: '#f8fafc',
                 }}
               >
-                <AlertTriangle size={22} />
+                <AlertTriangle size={22} color="#94a3b8" />
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{t.projectDetails.problemTitle}</h3>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.96rem', lineHeight: 1.8 }}>
-                {project.problem}
+                {problem}
               </p>
             </div>
           )}
 
-          {project.solution && (
+          {solution && (
             <div
               className="white-card"
               style={{
                 padding: '30px',
-                borderTop: '4px solid #10b981',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
             >
               <div
@@ -182,14 +205,14 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#6ee7b7',
+                  color: '#f8fafc',
                 }}
               >
-                <Lightbulb size={22} />
+                <Lightbulb size={22} color="#94a3b8" />
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{t.projectDetails.solutionTitle}</h3>
               </div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.96rem', lineHeight: 1.8 }}>
-                {project.solution}
+                {solution}
               </p>
             </div>
           )}
@@ -206,14 +229,14 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
         }}
       >
         {/* Features list */}
-        {project.features && project.features.length > 0 && (
+        {features && features.length > 0 && (
           <div className="white-card" style={{ padding: '30px' }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px', color: 'var(--text-main)' }}>
               {t.projectDetails.featuresTitle}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {project.features.map((feat: any) => (
-                <div key={feat.id} style={{ display: 'flex', gap: '12px' }}>
+              {features.map((feat: any, idx: number) => (
+                <div key={feat.id || idx} style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ color: '#cbd5e1', flexShrink: 0, marginTop: '2px' }}>
                     <CheckCircle2 size={18} />
                   </div>
@@ -267,7 +290,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               {t.projectDetails.detailedOverview}
             </h4>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.8 }}>
-              {project.description}
+              {description}
             </p>
           </div>
         </div>
@@ -298,8 +321,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                     <Star
                       key={s}
                       size={15}
-                      fill={s <= Math.round(Number(averageRating)) ? '#d97706' : 'none'}
-                      color={s <= Math.round(Number(averageRating)) ? '#d97706' : '#cbd5e1'}
+                      fill={s <= Math.round(Number(averageRating)) ? '#f8fafc' : 'none'}
+                      color={s <= Math.round(Number(averageRating)) ? '#f8fafc' : '#475569'}
                     />
                   ))}
                 </div>
@@ -345,15 +368,15 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{rev.name}</div>
-                    <ShieldCheck size={15} color="#10b981" />
+                    <ShieldCheck size={15} color="#94a3b8" />
                   </div>
                   <div style={{ display: 'flex', gap: '2px' }}>
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
                         size={14}
-                        fill={s <= rev.rating ? '#d97706' : 'none'}
-                        color={s <= rev.rating ? '#d97706' : '#cbd5e1'}
+                        fill={s <= rev.rating ? '#f8fafc' : 'none'}
+                        color={s <= rev.rating ? '#f8fafc' : '#475569'}
                       />
                     ))}
                   </div>
@@ -370,7 +393,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
       <ReviewModal
         isOpen={modalOpen}
         projectId={project.id}
-        projectTitle={project.title}
+        projectTitle={title}
         onClose={() => setModalOpen(false)}
       />
     </div>

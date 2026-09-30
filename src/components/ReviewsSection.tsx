@@ -98,8 +98,8 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                         <Star
                           key={s}
                           size={16}
-                          fill={s <= rev.rating ? '#d97706' : 'none'}
-                          color={s <= rev.rating ? '#d97706' : '#cbd5e1'}
+                          fill={s <= rev.rating ? '#f8fafc' : 'none'}
+                          color={s <= rev.rating ? '#f8fafc' : '#475569'}
                         />
                       ))}
                     </div>
@@ -157,7 +157,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                     </div>
                   </div>
 
-                  <span title={t.reviews.verifiedReview} style={{ color: '#059669', display: 'flex', alignItems: 'center' }}>
+                  <span title={t.reviews.verifiedReview} style={{ color: '#94a3b8', display: 'flex', alignItems: 'center' }}>
                     <ShieldCheck size={18} />
                   </span>
                 </div>
