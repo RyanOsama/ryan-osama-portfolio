@@ -12,7 +12,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      if (window.scrollY > 40) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -41,16 +41,18 @@ export function Navbar() {
         left: 0,
         right: 0,
         zIndex: 1000,
-        transition: 'all 0.25s ease',
-        background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border-color)' : '1px solid transparent',
-        boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
-        padding: scrolled ? '12px 0' : '18px 0',
+        transition: 'all 0.3s ease',
+        background: scrolled
+          ? 'rgba(255, 255, 255, 0.95)'
+          : 'linear-gradient(to bottom, rgba(15, 23, 42, 0.45) 0%, transparent 100%)',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(226, 232, 240, 0.8)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 4px 20px rgba(0, 0, 0, 0.06)' : 'none',
+        padding: scrolled ? '12px 0' : '20px 0',
       }}
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        {/* Logo */}
+        {/* Brand Logo */}
         <Link
           href="/"
           style={{
@@ -63,43 +65,60 @@ export function Navbar() {
         >
           <div
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'var(--primary-blue)',
+              width: '42px',
+              height: '42px',
+              borderRadius: '12px',
+              background: '#1e3a8a',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 10px rgba(37, 99, 235, 0.25)',
+              boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)',
+              border: scrolled ? 'none' : '1px solid rgba(255, 255, 255, 0.3)',
             }}
           >
             <Code2 size={22} color="#ffffff" />
           </div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1.15rem', lineHeight: 1.2, color: 'var(--text-main)' }}>
+            <div
+              style={{
+                fontWeight: 800,
+                fontSize: '1.2rem',
+                lineHeight: 1.2,
+                color: scrolled ? 'var(--text-main)' : '#ffffff',
+                textShadow: scrolled ? 'none' : '0 2px 6px rgba(0,0,0,0.4)',
+              }}
+            >
               {lang === 'ar' ? 'ريان أسامة' : 'Ryan Osama'}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--primary-blue)', fontWeight: 600 }}>
+            <div
+              style={{
+                fontSize: '0.78rem',
+                color: scrolled ? '#1e3a8a' : '#93c5fd',
+                fontWeight: 600,
+                textShadow: scrolled ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
+              }}
+            >
               Full-Stack Software Engineer
             </div>
           </div>
         </Link>
 
-        {/* Desktop Nav Links */}
-        <nav style={{ display: 'none', gap: '28px', alignItems: 'center' }} className="desktop-nav">
+        {/* Desktop Navigation */}
+        <nav style={{ display: 'none', gap: '26px', alignItems: 'center' }} className="desktop-nav">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               style={{
-                color: 'var(--text-secondary)',
+                color: scrolled ? 'var(--text-secondary)' : '#ffffff',
+                textShadow: scrolled ? 'none' : '0 1px 6px rgba(0,0,0,0.4)',
                 textDecoration: 'none',
-                fontSize: '0.92rem',
+                fontSize: '0.94rem',
                 fontWeight: 600,
-                transition: 'color 0.15s ease',
+                transition: 'all 0.15s ease',
               }}
-              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = 'var(--primary-blue)')}
-              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = 'var(--text-secondary)')}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = scrolled ? '#1e3a8a' : '#93c5fd')}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = scrolled ? 'var(--text-secondary)' : '#ffffff')}
             >
               {link.label}
             </a>
@@ -108,26 +127,37 @@ export function Navbar() {
 
         {/* Action Controls & Language Switcher */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Language Switcher Toggle */}
+          {/* Language Switcher Button */}
           <button
             onClick={toggleLanguage}
-            className="btn btn-secondary btn-sm"
+            className="btn btn-sm"
             style={{
               fontWeight: 700,
-              padding: '6px 12px',
+              padding: '7px 14px',
               gap: '6px',
+              background: scrolled ? '#ffffff' : 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: scrolled ? 'none' : 'blur(8px)',
+              border: scrolled ? '1px solid var(--border-color)' : '1px solid rgba(255, 255, 255, 0.35)',
+              color: scrolled ? 'var(--text-main)' : '#ffffff',
+              boxShadow: 'var(--shadow-sm)',
             }}
             title={lang === 'en' ? 'التحويل للغة العربية' : 'Switch to English'}
           >
-            <Globe size={15} color="var(--primary-blue)" />
+            <Globe size={15} color={scrolled ? '#1e3a8a' : '#ffffff'} />
             <span>{t.nav.language}</span>
           </button>
 
-          {/* CTA Button */}
+          {/* Direct CTA */}
           <a
             href="#contact"
             className="btn btn-primary btn-sm"
-            style={{ display: 'none' }}
+            style={{
+              display: 'none',
+              background: '#1e3a8a',
+              color: '#ffffff',
+              padding: '8px 16px',
+              border: scrolled ? 'none' : '1px solid rgba(255,255,255,0.25)',
+            }}
             id="nav-cta-btn"
           >
             <span>{t.nav.requestProject}</span>
@@ -139,20 +169,22 @@ export function Navbar() {
             href="/admin"
             title={t.nav.adminPortal}
             style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: '#ffffff',
-              border: '1px solid var(--border-color)',
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: scrolled ? '#ffffff' : 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: scrolled ? 'none' : 'blur(8px)',
+              border: scrolled ? '1px solid var(--border-color)' : '1px solid rgba(255, 255, 255, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--text-secondary)',
+              color: scrolled ? 'var(--text-secondary)' : '#ffffff',
               transition: 'all 0.15s ease',
               textDecoration: 'none',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
-            <UserCheck size={17} />
+            <UserCheck size={18} />
           </Link>
 
           {/* Mobile Menu Toggle */}
@@ -160,15 +192,15 @@ export function Navbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="mobile-toggle"
             style={{
-              background: '#ffffff',
-              border: '1px solid var(--border-color)',
-              borderRadius: '8px',
+              background: scrolled ? '#ffffff' : 'rgba(255, 255, 255, 0.2)',
+              border: scrolled ? '1px solid var(--border-color)' : '1px solid rgba(255, 255, 255, 0.35)',
+              borderRadius: '10px',
               width: '38px',
               height: '38px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--text-main)',
+              color: scrolled ? 'var(--text-main)' : '#ffffff',
               cursor: 'pointer',
             }}
             aria-label="Toggle Menu"
@@ -220,7 +252,7 @@ export function Navbar() {
             href="#contact"
             onClick={() => setMobileOpen(false)}
             className="btn btn-primary"
-            style={{ width: '100%', marginTop: '6px' }}
+            style={{ width: '100%', marginTop: '6px', background: '#1e3a8a' }}
           >
             <span>{t.nav.requestProject}</span>
           </a>
