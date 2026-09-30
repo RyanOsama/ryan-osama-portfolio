@@ -92,7 +92,7 @@ export function ReviewModal({
         style={{
           width: '100%',
           maxWidth: '500px',
-          background: '#ffffff',
+          background: 'var(--bg-card)',
           padding: '32px',
           position: 'relative',
           boxShadow: 'var(--shadow-lg)',
@@ -105,7 +105,7 @@ export function ReviewModal({
             position: 'absolute',
             top: '20px',
             right: '20px',
-            background: '#f1f5f9',
+            background: 'rgba(255, 255, 255, 0.08)',
             border: 'none',
             color: 'var(--text-secondary)',
             cursor: 'pointer',

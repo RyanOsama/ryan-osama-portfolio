@@ -34,7 +34,7 @@ export function AboutSection() {
     <section id="about" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
             <span>{t.about.badge}</span>
           </div>
           <h2 className="section-title">{t.about.title}</h2>
@@ -66,17 +66,17 @@ export function AboutSection() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '12px',
-                    background: 'var(--primary-blue-light)',
-                    border: '1px solid var(--primary-blue-border)',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--primary-blue)',
+                    color: '#ffffff',
                   }}
                 >
                   <Icon size={24} />
                 </div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff' }}>
                   {item.title}
                 </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.7 }}>

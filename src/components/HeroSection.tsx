@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight, ArrowLeft, Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export function HeroSection() {
-  const { t, dir, lang } = useLanguage();
+  const { t, dir } = useLanguage();
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   return (
@@ -17,7 +17,7 @@ export function HeroSection() {
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
-        backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.72) 0%, rgba(15, 23, 42, 0.45) 50%, rgba(15, 23, 42, 0.15) 100%), url('/images/hero-bg.png')`,
+        backgroundImage: `linear-gradient(to right, rgba(11, 15, 25, 0.85) 0%, rgba(11, 15, 25, 0.55) 50%, rgba(11, 15, 25, 0.25) 100%), url('/images/hero-bg.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
@@ -44,17 +44,17 @@ export function HeroSection() {
               gap: '8px',
               padding: '8px 20px',
               borderRadius: '9999px',
-              background: 'rgba(30, 58, 138, 0.75)',
+              background: 'rgba(30, 41, 59, 0.8)',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
-              color: '#ffffff',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              color: '#f8fafc',
               fontSize: '0.88rem',
               fontWeight: 600,
               marginBottom: '26px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
             }}
           >
-            <Sparkles size={16} color="#93c5fd" />
+            <Sparkles size={16} color="#94a3b8" />
             <span>{t.hero.availabilityBadge}</span>
           </div>
 
@@ -67,57 +67,52 @@ export function HeroSection() {
               marginBottom: '22px',
               letterSpacing: '-0.02em',
               color: '#ffffff',
-              textShadow: '0 3px 12px rgba(0, 0, 0, 0.5)',
+              textShadow: '0 3px 12px rgba(0, 0, 0, 0.6)',
             }}
           >
             {t.hero.headline} <br />
             <span
               style={{
-                color: '#93c5fd',
-                textShadow: '0 2px 10px rgba(30, 58, 138, 0.8)',
+                color: '#cbd5e1',
+                textShadow: '0 2px 10px rgba(0, 0, 0, 0.7)',
               }}
             >
               {t.hero.headlineHighlight}
             </span>
           </h1>
 
-          {/* Subheadline description */}
+          {/* Subheadline */}
           <p
             style={{
               fontSize: 'clamp(1.05rem, 2vw, 1.25rem)',
-              color: '#f1f5f9',
+              color: '#cbd5e1',
               lineHeight: 1.85,
               marginBottom: '40px',
               maxWidth: '680px',
-              textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+              textShadow: '0 2px 8px rgba(0, 0, 0, 0.6)',
               fontWeight: 400,
             }}
           >
             {t.hero.subheadline}
           </p>
 
-          {/* Action CTAs: Deep Navy & Crisp White buttons matching the reference image */}
+          {/* Action CTAs */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
               gap: '16px',
-              justifyContent: dir === 'rtl' ? 'flex-start' : 'flex-start',
+              justifyContent: 'flex-start',
               marginBottom: '50px',
             }}
           >
             <a
               href="#projects"
-              className="btn"
+              className="btn btn-primary"
               style={{
-                background: '#1e3a8a',
-                color: '#ffffff',
                 padding: '14px 32px',
                 fontSize: '1.02rem',
-                fontWeight: 700,
                 borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.3)',
               }}
             >
               <span>{t.hero.exploreProjects}</span>
@@ -126,15 +121,11 @@ export function HeroSection() {
 
             <a
               href="#contact"
-              className="btn"
+              className="btn btn-secondary"
               style={{
-                background: '#ffffff',
-                color: '#1e3a8a',
                 padding: '14px 30px',
                 fontSize: '1.02rem',
-                fontWeight: 700,
                 borderRadius: '12px',
-                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.25)',
               }}
             >
               <span>{t.hero.contactMe}</span>
@@ -152,47 +143,50 @@ export function HeroSection() {
           >
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.92)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(30, 41, 59, 0.75)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
                 padding: '16px 18px',
-                color: '#0f172a',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                color: '#ffffff',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1e3a8a' }}>{t.hero.statYears}</div>
-              <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>{t.hero.statYearsLabel}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#ffffff' }}>{t.hero.statYears}</div>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>{t.hero.statYearsLabel}</div>
             </div>
 
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.92)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(30, 41, 59, 0.75)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
                 padding: '16px 18px',
-                color: '#0f172a',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                color: '#ffffff',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0284c7' }}>{t.hero.statProjects}</div>
-              <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>{t.hero.statProjectsLabel}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#e2e8f0' }}>{t.hero.statProjects}</div>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>{t.hero.statProjectsLabel}</div>
             </div>
 
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.92)',
-                backdropFilter: 'blur(10px)',
+                background: 'rgba(30, 41, 59, 0.75)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
                 padding: '16px 18px',
-                color: '#0f172a',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                color: '#ffffff',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669' }}>{t.hero.statQuality}</div>
-              <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 600 }}>{t.hero.statQualityLabel}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#cbd5e1' }}>{t.hero.statQuality}</div>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>{t.hero.statQualityLabel}</div>
             </div>
           </div>
         </div>

@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        background: '#f8fafc',
+        background: 'var(--bg-main)',
       }}
     >
       <div
@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
           width: '100%',
           maxWidth: '420px',
           padding: '40px',
-          background: '#ffffff',
+          background: 'var(--bg-card)',
           boxShadow: 'var(--shadow-lg)',
         }}
       >
@@ -80,15 +80,16 @@ export default function AdminLoginPage() {
               width: '56px',
               height: '56px',
               borderRadius: '14px',
-              background: 'var(--primary-blue)',
+              background: '#1e293b',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
               marginBottom: '16px',
             }}
           >
-            <Lock size={26} color="#ffffff" />
+            <Lock size={26} color="#cbd5e1" />
           </div>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '6px', color: 'var(--text-main)' }}>
             Admin Portal

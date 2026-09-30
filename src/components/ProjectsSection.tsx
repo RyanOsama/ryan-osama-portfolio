@@ -75,9 +75,9 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
               style={{
                 padding: '8px 20px',
                 borderRadius: '9999px',
-                border: selectedCat === 'all' ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
-                background: selectedCat === 'all' ? 'var(--primary-blue)' : '#ffffff',
-                color: selectedCat === 'all' ? '#ffffff' : 'var(--text-secondary)',
+                border: selectedCat === 'all' ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                background: selectedCat === 'all' ? '#ffffff' : 'rgba(255, 255, 255, 0.04)',
+                color: selectedCat === 'all' ? '#090d16' : 'var(--text-secondary)',
                 fontFamily: 'inherit',
                 fontSize: '0.9rem',
                 fontWeight: 600,
@@ -95,9 +95,9 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 style={{
                   padding: '8px 20px',
                   borderRadius: '9999px',
-                  border: selectedCat === cat.slug ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
-                  background: selectedCat === cat.slug ? 'var(--primary-blue)' : '#ffffff',
-                  color: selectedCat === cat.slug ? '#ffffff' : 'var(--text-secondary)',
+                  border: selectedCat === cat.slug ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                  background: selectedCat === cat.slug ? '#ffffff' : 'rgba(255, 255, 255, 0.04)',
+                  color: selectedCat === cat.slug ? '#090d16' : 'var(--text-secondary)',
                   fontFamily: 'inherit',
                   fontSize: '0.9rem',
                   fontWeight: 600,
@@ -136,7 +136,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 style={{
                   position: 'relative',
                   height: '200px',
-                  background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                  background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -144,7 +144,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                   borderBottom: '1px solid var(--border-color)',
                 }}
               >
-                <Layers size={48} color="var(--primary-blue)" style={{ opacity: 0.7 }} />
+                <Layers size={48} color="#94a3b8" style={{ opacity: 0.7 }} />
 
                 {/* Badges Overlay */}
                 <div
@@ -157,12 +157,12 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                   }}
                 >
                   {project.category && (
-                    <span className="badge badge-blue" style={{ background: '#ffffff', boxShadow: 'var(--shadow-sm)' }}>
+                    <span className="badge badge-blue">
                       {project.category.name}
                     </span>
                   )}
                   {project.isFeatured && (
-                    <span className="badge badge-warning" style={{ background: '#ffffff', boxShadow: 'var(--shadow-sm)' }}>
+                    <span className="badge badge-warning">
                       <Star size={12} fill="#d97706" color="#d97706" /> {t.projects.featured}
                     </span>
                   )}
@@ -210,9 +210,9 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                           fontSize: '0.78rem',
                           padding: '4px 10px',
                           borderRadius: '6px',
-                          background: '#f1f5f9',
-                          color: '#334155',
-                          border: '1px solid #e2e8f0',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          color: '#cbd5e1',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
                           fontWeight: 600,
                         }}
                       >
@@ -248,7 +248,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                       title={t.projects.addReview}
                       style={{ padding: '8px 12px' }}
                     >
-                      <MessageSquare size={16} color="var(--primary-blue)" />
+                      <MessageSquare size={16} color="var(--text-secondary)" />
                     </button>
 
                     {project.githubUrl && (

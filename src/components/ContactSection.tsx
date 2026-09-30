@@ -21,10 +21,10 @@ export function ContactSection({ settings }: ContactSectionProps) {
   const whatsappClean = phone.replace(/[^0-9]/g, '');
 
   return (
-    <section id="contact" style={{ padding: '80px 0', background: 'rgba(241, 245, 249, 0.5)' }}>
+    <section id="contact" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
             <span>{t.contact.badge}</span>
           </div>
           <h2 className="section-title">{t.contact.title}</h2>
@@ -57,12 +57,12 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 width: '52px',
                 height: '52px',
                 borderRadius: '12px',
-                background: '#ecfdf5',
-                border: '1px solid #a7f3d0',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#059669',
+                color: '#34d399',
               }}
             >
               <MessageCircle size={26} />
@@ -99,12 +99,12 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 width: '52px',
                 height: '52px',
                 borderRadius: '12px',
-                background: 'var(--primary-blue-light)',
-                border: '1px solid var(--primary-blue-border)',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--primary-blue)',
+                color: '#f8fafc',
               }}
             >
               <Mail size={26} />
@@ -139,12 +139,12 @@ export function ContactSection({ settings }: ContactSectionProps) {
                 width: '52px',
                 height: '52px',
                 borderRadius: '12px',
-                background: '#f1f5f9',
-                border: '1px solid var(--border-color)',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--accent-sky)',
+                color: '#cbd5e1',
               }}
             >
               <MapPin size={26} />

@@ -13,7 +13,7 @@ export function Footer() {
     <footer
       style={{
         borderTop: '1px solid var(--border-color)',
-        background: '#ffffff',
+        background: 'var(--bg-secondary)',
         padding: '50px 0 30px 0',
         marginTop: '60px',
       }}
@@ -32,7 +32,7 @@ export function Footer() {
           <div>
             <div style={{ fontWeight: 800, fontSize: '1.25rem', marginBottom: '6px', color: 'var(--text-main)' }}>
               {lang === 'ar' ? 'ريان أسامة' : 'Ryan Osama'}{' '}
-              <span style={{ color: 'var(--primary-blue)', fontWeight: 600, fontSize: '0.95rem' }}>
+              <span style={{ color: '#cbd5e1', fontWeight: 600, fontSize: '0.95rem' }}>
                 | Full-Stack Engineer
               </span>
             </div>

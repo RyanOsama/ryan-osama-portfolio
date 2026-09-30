@@ -41,7 +41,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            color: 'var(--primary-blue)',
+            color: '#cbd5e1',
             textDecoration: 'none',
             fontSize: '0.92rem',
             fontWeight: 700,
@@ -58,7 +58,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
         style={{
           padding: '40px',
           marginBottom: '35px',
-          background: '#ffffff',
           boxShadow: 'var(--shadow-md)',
         }}
       >
@@ -127,7 +126,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
           )}
 
           <button onClick={() => setModalOpen(true)} className="btn btn-secondary">
-            <MessageSquare size={16} color="var(--primary-blue)" />
+            <MessageSquare size={16} color="var(--text-secondary)" />
             <span>{t.projectDetails.writeReview}</span>
           </button>
         </div>
@@ -148,7 +147,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               className="white-card"
               style={{
                 padding: '30px',
-                borderTop: '4px solid #e11d48',
+                borderTop: '4px solid #f43f5e',
               }}
             >
               <div
@@ -157,7 +156,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#e11d48',
+                  color: '#fda4af',
                 }}
               >
                 <AlertTriangle size={22} />
@@ -174,7 +173,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               className="white-card"
               style={{
                 padding: '30px',
-                borderTop: '4px solid #059669',
+                borderTop: '4px solid #10b981',
               }}
             >
               <div
@@ -183,7 +182,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   alignItems: 'center',
                   gap: '10px',
                   marginBottom: '14px',
-                  color: '#059669',
+                  color: '#6ee7b7',
                 }}
               >
                 <Lightbulb size={22} />
@@ -215,7 +214,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {project.features.map((feat: any) => (
                 <div key={feat.id} style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ color: 'var(--primary-blue)', flexShrink: 0, marginTop: '2px' }}>
+                  <div style={{ color: '#cbd5e1', flexShrink: 0, marginTop: '2px' }}>
                     <CheckCircle2 size={18} />
                   </div>
                   <div>
@@ -246,7 +245,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 style={{
                   padding: '6px 14px',
                   borderRadius: '8px',
-                  background: '#f1f5f9',
+                  background: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid var(--border-color)',
                   fontSize: '0.88rem',
                   fontWeight: 600,
@@ -256,7 +255,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   gap: '6px',
                 }}
               >
-                <Layers size={14} color="var(--primary-blue)" />
+                <Layers size={14} color="#94a3b8" />
                 <span>{tech.name}</span>
               </div>
             ))}
@@ -330,7 +329,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               <div
                 key={rev.id}
                 style={{
-                  background: '#f8fafc',
+                  background: 'rgba(255, 255, 255, 0.03)',
                   padding: '18px 20px',
                   borderRadius: '12px',
                   border: '1px solid var(--border-color)',
@@ -346,7 +345,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{rev.name}</div>
-                    <ShieldCheck size={15} color="#059669" />
+                    <ShieldCheck size={15} color="#10b981" />
                   </div>
                   <div style={{ display: 'flex', gap: '2px' }}>
                     {[1, 2, 3, 4, 5].map((s) => (

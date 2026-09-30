@@ -49,7 +49,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
               bottom: '15px',
               ...(dir === 'rtl' ? { right: '24px' } : { left: '24px' }),
               width: '2px',
-              background: 'linear-gradient(to bottom, #2563eb, #93c5fd, #e2e8f0)',
+              background: 'linear-gradient(to bottom, #94a3b8, #475569, rgba(255, 255, 255, 0.05))',
             }}
           />
 
@@ -69,13 +69,13 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                     width: '50px',
                     height: '50px',
                     borderRadius: '50%',
-                    background: '#ffffff',
-                    border: '2px solid var(--primary-blue)',
-                    boxShadow: '0 0 10px rgba(37, 99, 235, 0.2)',
+                    background: '#182235',
+                    border: '2px solid #94a3b8',
+                    boxShadow: '0 0 14px rgba(0, 0, 0, 0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--primary-blue)',
+                    color: '#f8fafc',
                     flexShrink: 0,
                     zIndex: 2,
                   }}
@@ -102,8 +102,9 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '0.82rem',
-                        color: 'var(--primary-blue-dark)',
-                        background: 'var(--primary-blue-light)',
+                        color: '#cbd5e1',
+                        background: 'rgba(255, 255, 255, 0.06)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                         padding: '4px 10px',
                         borderRadius: '6px',
                         fontWeight: 600,

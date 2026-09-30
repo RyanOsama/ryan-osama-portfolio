@@ -35,10 +35,10 @@ export function ServicesSection({ services }: ServicesSectionProps) {
   };
 
   return (
-    <section id="services" style={{ padding: '80px 0', background: 'rgba(241, 245, 249, 0.5)' }}>
+    <section id="services" style={{ padding: '80px 0', background: 'rgba(15, 23, 42, 0.4)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
             <span>{t.services.badge}</span>
           </div>
           <h2 className="section-title">{t.services.title}</h2>
@@ -69,18 +69,19 @@ export function ServicesSection({ services }: ServicesSectionProps) {
                     width: '52px',
                     height: '52px',
                     borderRadius: '12px',
-                    background: 'var(--primary-blue)',
+                    background: '#1e293b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#ffffff',
                     marginBottom: '20px',
-                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                   }}
                 >
                   {getIcon(srv.icon)}
                 </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: 'var(--text-main)' }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>
                   {srv.title}
                 </h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.94rem', lineHeight: 1.75 }}>
@@ -92,7 +93,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
                 <a
                   href="#contact"
                   style={{
-                    color: 'var(--primary-blue)',
+                    color: '#cbd5e1',
                     textDecoration: 'none',
                     fontSize: '0.88rem',
                     fontWeight: 700,

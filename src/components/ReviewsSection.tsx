@@ -103,7 +103,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                         />
                       ))}
                     </div>
-                    <Quote size={24} color="var(--primary-blue)" style={{ opacity: 0.3 }} />
+                    <Quote size={24} color="#64748b" style={{ opacity: 0.5 }} />
                   </div>
 
                   {/* Comment */}
@@ -136,12 +136,12 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                         width: '38px',
                         height: '38px',
                         borderRadius: '50%',
-                        background: 'var(--primary-blue)',
+                        background: '#334155',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 700,
-                        color: '#ffffff',
+                        color: '#f8fafc',
                         fontSize: '0.95rem',
                       }}
                     >
@@ -150,7 +150,7 @@ export function ReviewsSection({ reviews }: ReviewsSectionProps) {
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-main)' }}>{rev.name}</div>
                       {rev.project && (
-                        <div style={{ fontSize: '0.78rem', color: 'var(--primary-blue)' }}>
+                        <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>
                           {t.reviews.projectLabel}: {rev.project.title}
                         </div>
                       )}

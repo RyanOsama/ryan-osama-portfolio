@@ -29,7 +29,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
     <section id="skills" style={{ padding: '80px 0' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div className="badge badge-blue" style={{ marginBottom: '12px' }}>
+          <div className="badge badge-glow" style={{ marginBottom: '12px' }}>
             <span>{t.skills.badge}</span>
           </div>
           <h2 className="section-title">{t.skills.title}</h2>
@@ -52,14 +52,13 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                 style={{
                   padding: '8px 18px',
                   borderRadius: '9999px',
-                  border: activeCategory === cat ? '1px solid var(--primary-blue)' : '1px solid var(--border-color)',
-                  background: activeCategory === cat ? 'var(--primary-blue)' : '#ffffff',
-                  color: activeCategory === cat ? '#ffffff' : 'var(--text-secondary)',
+                  border: activeCategory === cat ? '1px solid #ffffff' : '1px solid var(--border-color)',
+                  background: activeCategory === cat ? '#ffffff' : 'rgba(255, 255, 255, 0.05)',
+                  color: activeCategory === cat ? '#0b0f19' : 'var(--text-secondary)',
                   fontFamily: 'inherit',
                   fontSize: '0.88rem',
                   fontWeight: 600,
                   cursor: 'pointer',
-                  boxShadow: 'var(--shadow-sm)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -94,8 +93,8 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                   marginBottom: '8px',
                 }}
               >
-                <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-main)' }}>{skill.name}</span>
-                <span style={{ fontSize: '0.84rem', color: 'var(--primary-blue)', fontWeight: 700 }}>
+                <span style={{ fontWeight: 700, fontSize: '0.94rem', color: '#ffffff' }}>{skill.name}</span>
+                <span style={{ fontSize: '0.84rem', color: '#cbd5e1', fontWeight: 700 }}>
                   {skill.level}%
                 </span>
               </div>
@@ -104,7 +103,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                   width: '100%',
                   height: '7px',
                   borderRadius: '4px',
-                  background: '#e2e8f0',
+                  background: 'rgba(255, 255, 255, 0.08)',
                   overflow: 'hidden',
                 }}
               >
@@ -113,7 +112,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
                     width: `${skill.level}%`,
                     height: '100%',
                     borderRadius: '4px',
-                    background: 'var(--primary-blue)',
+                    background: 'linear-gradient(to right, #64748b, #cbd5e1)',
                     transition: 'width 0.8s ease-in-out',
                   }}
                 />
