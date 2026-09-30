@@ -99,16 +99,12 @@ export default function AdminLoginPage() {
         }}
       />
 
-      {/* Top Floating Bar: Language Switcher & Home Link */}
+      {/* Top Floating Bar: Back to Home Link Only */}
       <div
         style={{
           position: 'absolute',
           top: '24px',
-          left: '24px',
-          right: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          ...(dir === 'rtl' ? { right: '24px' } : { left: '24px' }),
           zIndex: 10,
         }}
       >
@@ -124,38 +120,15 @@ export default function AdminLoginPage() {
             gap: '8px',
             padding: '8px 16px',
             borderRadius: '10px',
-            background: 'rgba(30, 36, 48, 0.75)',
+            background: 'rgba(30, 36, 48, 0.65)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
           }}
         >
           {dir === 'rtl' ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
-          <span>{lang === 'ar' ? 'العودة للموقع الرئيسي' : 'Back to Website'}</span>
+          <span>{lang === 'ar' ? 'الرجوع للصفحة الرئيسية' : 'Back to Home'}</span>
         </Link>
-
-        {/* Instant Language Toggle */}
-        <button
-          onClick={toggleLanguage}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '10px',
-            background: 'rgba(30, 36, 48, 0.75)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            color: '#ffffff',
-            fontSize: '0.88rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
-          }}
-        >
-          <Globe size={15} />
-          <span>{lang === 'en' ? 'العربية' : 'English'}</span>
-        </button>
       </div>
 
       {/* Main Container */}
@@ -175,27 +148,27 @@ export default function AdminLoginPage() {
             width: '100%',
           }}
         >
-          {/* Login Card (Left on EN, Right on AR) */}
+          {/* Transparent Login Card (Left on EN, Right on AR) */}
           <div
-            className="white-card animate-fade-in"
+            className="animate-fade-in"
             style={{
               width: '100%',
               maxWidth: '440px',
-              padding: '42px 36px',
-              background: 'rgba(33, 38, 49, 0.88)',
+              padding: '40px 32px',
+              background: 'rgba(20, 24, 33, 0.45)',
               backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.14)',
-              borderRadius: '20px',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '24px',
+              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.4)',
               textAlign: dir === 'rtl' ? 'right' : 'left',
             }}
           >
             {/* Header */}
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
               <div
                 style={{
-                  width: '56px',
-                  height: '56px',
+                  width: '54px',
+                  height: '54px',
                   borderRadius: '16px',
                   background: 'rgba(255, 255, 255, 0.08)',
                   border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -203,10 +176,10 @@ export default function AdminLoginPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)',
-                  marginBottom: '16px',
+                  marginBottom: '14px',
                 }}
               >
-                <Lock size={26} color="#ffffff" />
+                <Lock size={24} color="#ffffff" />
               </div>
               <h1 style={{ fontSize: '1.45rem', fontWeight: 800, marginBottom: '6px', color: '#ffffff' }}>
                 {lang === 'ar' ? 'بوابة لوحة التحكم' : 'Admin Portal'}
@@ -255,8 +228,8 @@ export default function AdminLoginPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     style={{
-                      background: 'rgba(20, 24, 32, 0.75)',
-                      border: '1px solid rgba(255, 255, 255, 0.14)',
+                      background: 'rgba(255, 255, 255, 0.07)',
+                      border: '1px solid rgba(255, 255, 255, 0.18)',
                       padding: '12px 14px',
                       color: '#ffffff',
                     }}
@@ -278,8 +251,8 @@ export default function AdminLoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     style={{
-                      background: 'rgba(20, 24, 32, 0.75)',
-                      border: '1px solid rgba(255, 255, 255, 0.14)',
+                      background: 'rgba(255, 255, 255, 0.07)',
+                      border: '1px solid rgba(255, 255, 255, 0.18)',
                       padding: '12px 14px',
                       paddingRight: dir === 'rtl' ? '14px' : '42px',
                       paddingLeft: dir === 'rtl' ? '42px' : '14px',
