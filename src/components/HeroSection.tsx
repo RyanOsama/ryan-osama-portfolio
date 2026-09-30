@@ -45,8 +45,8 @@ export function HeroSection() {
           inset: 0,
           background:
             dir === 'rtl'
-              ? 'linear-gradient(to left, rgba(9, 13, 22, 0.92) 0%, rgba(9, 13, 22, 0.65) 50%, rgba(9, 13, 22, 0.2) 100%)'
-              : 'linear-gradient(to right, rgba(9, 13, 22, 0.92) 0%, rgba(9, 13, 22, 0.65) 50%, rgba(9, 13, 22, 0.2) 100%)',
+              ? 'linear-gradient(to left, rgba(33, 38, 49, 0.90) 0%, rgba(33, 38, 49, 0.60) 50%, rgba(33, 38, 49, 0.15) 100%)'
+              : 'linear-gradient(to right, rgba(33, 38, 49, 0.90) 0%, rgba(33, 38, 49, 0.60) 50%, rgba(33, 38, 49, 0.15) 100%)',
           zIndex: 1,
         }}
       />
