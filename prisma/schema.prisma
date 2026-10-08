@@ -203,3 +203,14 @@ model VisitSession {
   @@index([startedAt])
   @@map("visit_sessions")
 }
+
+model UploadedFile {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  @@map("uploaded_files")
+}

@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
+import { prisma } from '@/lib/prisma';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -29,11 +29,9 @@ export async function uploadFile(
   const safeExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext) ? ext : '.jpg';
   const uniqueName = `${crypto.randomUUID()}${safeExt}`;
 
-  const storageDriver = process.env.STORAGE_DRIVER || 'local';
+  const storageDriver = process.env.STORAGE_DRIVER || 'db';
 
   if (storageDriver === 'r2' && process.env.R2_BUCKET && process.env.R2_PUBLIC_URL) {
-    // Cloudflare R2 Upload logic (S3 client)
-    // Production ready branch
     const publicUrl = `${process.env.R2_PUBLIC_URL.replace(/\/$/, '')}/${uniqueName}`;
     return {
       url: publicUrl,
@@ -43,14 +41,17 @@ export async function uploadFile(
     };
   }
 
-  // Local storage driver (Development / Self-hosted)
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-  await fs.mkdir(uploadDir, { recursive: true });
+  // Database-backed cloud storage (Works on Vercel Serverless & Localhost without read-only filesystem issues)
+  const uploaded = await prisma.uploadedFile.create({
+    data: {
+      filename: uniqueName,
+      mimeType,
+      size: fileBuffer.length,
+      data: fileBuffer,
+    },
+  });
 
-  const filePath = path.join(uploadDir, uniqueName);
-  await fs.writeFile(filePath, fileBuffer);
-
-  const fileUrl = `/uploads/${uniqueName}`;
+  const fileUrl = `/api/uploads/${uploaded.id}`;
 
   return {
     url: fileUrl,
@@ -60,14 +61,18 @@ export async function uploadFile(
   };
 }
 
-export async function deleteUploadedFile(fileUrl: string): Promise<boolean> {
+export async function deleteFile(fileUrl: string): Promise<boolean> {
   try {
-    if (!fileUrl.startsWith('/uploads/')) return false;
-    const filename = path.basename(fileUrl);
-    const filePath = path.join(process.cwd(), 'public', 'uploads', filename);
-    await fs.unlink(filePath);
+    if (fileUrl.startsWith('/api/uploads/')) {
+      const id = fileUrl.replace('/api/uploads/', '');
+      await prisma.uploadedFile.deleteMany({
+        where: { id },
+      });
+      return true;
+    }
     return true;
-  } catch {
+  } catch (error) {
+    console.error('Failed to delete file:', error);
     return false;
   }
 }
