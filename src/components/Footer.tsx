@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Mail, Shield } from 'lucide-react';
+import Link from 'next/link';
+import { Mail, Shield, Lock } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './Icons';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -95,10 +96,35 @@ export function Footer({ settings }: FooterProps) {
           <div>
             {t.footer.rights} {new Date().getFullYear()} — Ryan Osama
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Shield size={14} color="#059669" /> {t.footer.securedSystem}
             </span>
+            <Link
+              href="/admin/login"
+              style={{
+                color: 'var(--text-muted)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: '0.82rem',
+                opacity: 0.8,
+                transition: 'opacity 0.2s ease, color 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '1';
+                e.currentTarget.style.color = '#38bdf8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '0.8';
+                e.currentTarget.style.color = 'var(--text-muted)';
+              }}
+              title={lang === 'ar' ? 'دخول لوحة التحكم' : 'Admin Login'}
+            >
+              <Lock size={13} />
+              <span>{lang === 'ar' ? 'لوحة التحكم' : 'Admin'}</span>
+            </Link>
           </div>
         </div>
       </div>
