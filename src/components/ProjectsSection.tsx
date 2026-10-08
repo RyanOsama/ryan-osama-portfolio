@@ -54,6 +54,12 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
         shortDescription: tr.en.shortDescription || p.shortDescription,
       };
     }
+    if (lang === 'ar' && tr?.ar) {
+      return {
+        title: tr.ar.title || p.title,
+        shortDescription: tr.ar.shortDescription || p.shortDescription,
+      };
+    }
     return {
       title: p.title,
       shortDescription: p.shortDescription,

@@ -140,6 +140,34 @@ export const projectTranslations: Record<
       ],
     },
   },
+  'munasabat-qr': {
+    en: {
+      title: 'Munasabat – Cloud-Powered Event Invitation & QR Check-In System',
+      shortDescription: 'A cloud-connected event management platform that generates encrypted QR invitations, supports batch A4 PDF printing, and enables real-time check-in verification via Supabase to prevent duplicate entries.',
+      description: 'Munasabat is an end-to-end event and guest management system built with Electron, React, TypeScript, and Supabase. It allows event organizers and enterprises to create events, manage guest allocations, and generate encrypted QR invitations ready for batch A4 printing with precise crop marks. Equipped with an ultra-fast camera scanner and a companion mobile app, the system validates guest tickets in milliseconds against a central cloud database, strictly eliminating ticket reuse and providing live attendance metrics.',
+      problem: 'Entry Bottlenecks & Fake Passes: Slow manual ticket checks at event gates cause long queues and risk unauthorized access.\nDuplicate Ticket Reuse: Guests sharing or screenshotting invitation passes to allow multiple unauthorized entries.\nMulti-Gate Desynchronization: Difficulty synchronizing guest entry logs across multiple check-in gates and devices in real time.',
+      solution: 'Real-Time Cloud Validation: Integrated with Supabase (PostgreSQL) for instant, synchronized verification across all scanning devices with zero race conditions.\nAnti-Duplicate Security: Cryptographically unique invitation tokens that automatically invalidate immediately upon first successful check-in.\nAutomated PDF Layout Engine: Dynamic generation of print-ready 12-card A4 sheets with alignment and cutting guides (crop marks).\nInstant Scanner Feedback: Camera-based QR scanner providing millisecond visual and audio indicators (Success / Already Used / Invalid).\nMulti-Tenant & Analytics: Multi-company support, subscription controls, live attendance charts, and CSV report exports.',
+      features: [
+        { title: 'Real-Time Cloud Validation', description: 'Instant, synchronized check-in verification powered by Supabase with zero race conditions.' },
+        { title: 'Anti-Duplicate Security', description: 'Cryptographically unique QR tokens that invalidate immediately on first scan.' },
+        { title: 'Automated PDF Layout Engine', description: 'Batch 12-card A4 printable sheets with precise cutting guides and crop marks.' },
+        { title: 'Instant Scanner Feedback', description: 'Camera-based QR scanner with millisecond audio and visual validation.' },
+      ],
+    },
+    ar: {
+      title: 'منصة مناسبات – نظام الدعوات الذكية وإدارة الحضور برمز QR السحابي',
+      shortDescription: 'منصة سحابية متكاملة لإدارة الفعاليات والمناسبات، توليد بطاقات الدعوة المشفرة برمز QR، الطباعة الجماعية لصفحات A4، والتحقق اللحظي لمنع تكرار الدخول.',
+      description: 'نظام متكامل وشامل لإدارة الضيوف والفعاليات مبني بتقنيات Electron و React و TypeScript و Supabase. يتيح للمنظمين والشركات إنشاء الفعاليات وإصدار بطاقات الدعوة المشفرة جاهزة للطباعة مع علامات القص الدقيقة، ومزود بماسح ضوئي فائق السرعة عبر الكاميرا وتطبيق جوال لمطابقة التذاكر في أجزاء من الثانية ومنع التكرار تماماً مع إحصائيات حضور حية ومزامنة بين جميع البوابات.',
+      problem: 'بطء تدقيق التذاكر الورقية واليدوية عند بوابات الدخول، مشاركة الضيوف لصور الدعوات لتمرير أشخاص غير مصرح لهم، وصعوبة مزامنة سجلات الدخول بين أكثر من بوابة في نفس اللحظة.',
+      solution: 'التحقق السحابي الفوري عبر Supabase بدون أي تعارض، تشفير بطاقات الدعوة وإلغاؤها آلياً فور أول مسح ناجح، محرك طباعة يولد 12 بطاقة منظمة في ورقة A4، واستجابة صوتية ومرئية فورية للماسح الضوئي.',
+      features: [
+        { title: 'تحقق سحابي فوري (Real-Time)', description: 'مزامنة لحظية عبر Supabase بين جميع أجهزة المسح والبوابات دون أي تأخير.' },
+        { title: 'حماية متقدمة ضد تكرار التذاكر', description: 'تشفير فريد لكل رمز QR يتم إبطاله تلقائياً فور أول تسجيل دخول ناجح.' },
+        { title: 'محرك طباعة A4 مؤتمت', description: 'توليد قوالب طباعة جماعية لـ 12 بطاقة في الصفحة مع علامات قص دقيقة.' },
+        { title: 'ماسح ضوئي فائق السرعة', description: 'مسح فوري عبر الكاميرا مع تنبيهات صوتية ومرئية ملونة لحالة التذكرة.' },
+      ],
+    },
+  },
 };
 
 export const experienceTranslations: Record<

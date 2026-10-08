@@ -33,12 +33,11 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
     project.reviews.length > 0 ? (totalRating / project.reviews.length).toFixed(1) : null;
 
   const tr = projectTranslations[project.slug];
-  const title = lang === 'en' && tr?.en?.title ? tr.en.title : project.title;
-  const shortDescription =
-    lang === 'en' && tr?.en?.shortDescription ? tr.en.shortDescription : project.shortDescription;
-  const description = lang === 'en' && tr?.en?.description ? tr.en.description : project.description;
-  const problem = lang === 'en' && tr?.en?.problem ? tr.en.problem : project.problem;
-  const solution = lang === 'en' && tr?.en?.solution ? tr.en.solution : project.solution;
+  const title = lang === 'en' ? (tr?.en?.title || project.title) : (tr?.ar?.title || project.title);
+  const shortDescription = lang === 'en' ? (tr?.en?.shortDescription || project.shortDescription) : (tr?.ar?.shortDescription || project.shortDescription);
+  const description = lang === 'en' ? (tr?.en?.description || project.description) : (tr?.ar?.description || project.description);
+  const problem = lang === 'en' ? (tr?.en?.problem || project.problem) : (tr?.ar?.problem || project.problem);
+  const solution = lang === 'en' ? (tr?.en?.solution || project.solution) : (tr?.ar?.solution || project.solution);
 
   const features =
     project.features && project.features.length > 0
