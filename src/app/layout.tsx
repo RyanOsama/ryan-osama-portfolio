@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { ToastProvider } from '@/components/Toast';
+import { VisitorTracker } from '@/components/VisitorTracker';
 
 export const metadata: Metadata = {
   title: 'Ryan Osama | Senior Full-Stack Software Engineer',
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body>
         <LanguageProvider>
           <ToastProvider>
+            <VisitorTracker />
             {children}
           </ToastProvider>
         </LanguageProvider>

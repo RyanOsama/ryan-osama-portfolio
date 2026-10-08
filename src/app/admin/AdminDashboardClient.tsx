@@ -30,6 +30,12 @@ import {
   TrendingUp,
   Check,
   X,
+  Users,
+  Clock,
+  Monitor,
+  Smartphone,
+  Activity,
+  Calendar,
 } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 import { useLanguage } from '@/context/LanguageContext';
@@ -44,11 +50,13 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const { showToast } = useToast();
   const { lang, toggleLanguage, dir } = useLanguage();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'reviews' | 'services' | 'skills' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'visitors' | 'projects' | 'reviews' | 'services' | 'skills' | 'settings'>('overview');
   const [loading, setLoading] = useState(true);
 
   // Data states
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [visitorFilter, setVisitorFilter] = useState<'all' | 'today'>('today');
   const [projects, setProjects] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [technologies, setTechnologies] = useState<any[]>([]);
@@ -94,7 +102,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [dashRes, projRes, catRes, techRes, revRes, srvRes, sklRes, setRes] = await Promise.all([
+      const [dashRes, projRes, catRes, techRes, revRes, srvRes, sklRes, setRes, anaRes] = await Promise.all([
         fetch('/api/admin/dashboard'),
         fetch('/api/admin/projects'),
         fetch('/api/categories'),
@@ -103,9 +111,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         fetch('/api/admin/services'),
         fetch('/api/admin/skills'),
         fetch('/api/admin/settings'),
+        fetch('/api/admin/analytics'),
       ]);
 
-      const [dash, proj, cat, tech, rev, srv, skl, sett] = await Promise.all([
+      const [dash, proj, cat, tech, rev, srv, skl, sett, ana] = await Promise.all([
         dashRes.json(),
         projRes.json(),
         catRes.json(),
@@ -114,9 +123,11 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         srvRes.json(),
         sklRes.json(),
         setRes.json(),
+        anaRes.json(),
       ]);
 
       if (dash.success) setDashboardData(dash.data);
+      if (ana.success) setAnalyticsData(ana.data);
       if (proj.success) setProjects(proj.data);
       if (cat.success) setCategories(cat.data);
       if (tech.success) setTechnologies(tech.data);
@@ -530,6 +541,51 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
             >
               <LayoutDashboard size={18} color={activeTab === 'overview' ? '#ffffff' : '#94a3b8'} />
               <span>{lang === 'ar' ? 'نظرة عامة وإحصائيات' : 'Overview'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('visitors')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px 14px',
+                borderRadius: '10px',
+                border: activeTab === 'visitors' ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid transparent',
+                background: activeTab === 'visitors' ? '#343c4d' : 'transparent',
+                color: activeTab === 'visitors' ? '#ffffff' : '#cbd5e1',
+                fontFamily: 'inherit',
+                fontSize: '0.92rem',
+                fontWeight: activeTab === 'visitors' ? 700 : 500,
+                cursor: 'pointer',
+                textAlign: dir === 'rtl' ? 'right' : 'left',
+                width: '100%',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Users size={18} color={activeTab === 'visitors' ? '#38bdf8' : '#94a3b8'} />
+                <span>{lang === 'ar' ? 'الزوار وحركة الموقع' : 'Visitors & Traffic'}</span>
+              </div>
+              {analyticsData?.activeNow > 0 && (
+                <span
+                  style={{
+                    background: '#10b981',
+                    color: '#ffffff',
+                    fontSize: '0.72rem',
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                  title={lang === 'ar' ? 'متواجدون الآن' : 'Active Now'}
+                >
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ffffff', display: 'inline-block' }} />
+                  {analyticsData.activeNow}
+                </span>
+              )}
             </button>
 
             <button
@@ -977,6 +1033,34 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                       {lang === 'ar'
                         ? `مع ${dashboardData?.stats?.totalSkills ?? 0} مهارة تقنية`
                         : `& ${dashboardData?.stats?.totalSkills ?? 0} configured skills`}
+                    </div>
+                  </div>
+
+                  {/* Visitors Live Card */}
+                  <div
+                    onClick={() => setActiveTab('visitors')}
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(56, 189, 248, 0.35)',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.88rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'حركة وزوار اليوم' : "Today's Visitors"}
+                      </span>
+                      <Users size={18} color="#38bdf8" />
+                    </div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#38bdf8', marginTop: '6px' }}>
+                      {analyticsData?.todayVisits ?? 0}
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {analyticsData?.activeNow > 0
+                        ? (lang === 'ar' ? `🟢 ${analyticsData.activeNow} متواجدون الآن` : `🟢 ${analyticsData.activeNow} active now`)
+                        : (lang === 'ar' ? 'اضغط لعرض مدة البقاء والتفاصيل' : 'Click to view details')}
                     </div>
                   </div>
                 </div>
@@ -1518,6 +1602,429 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                     <span>{lang === 'ar' ? 'حفظ التغييرات' : 'Save Settings'}</span>
                   </button>
                 </form>
+              </div>
+            )}
+
+            {/* TAB: VISITORS & TRAFFIC */}
+            {activeTab === 'visitors' && (
+              <div>
+                {/* Privacy Banner */}
+                <div
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    borderRadius: '14px',
+                    padding: '14px 20px',
+                    marginBottom: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    fontSize: '0.88rem',
+                    color: '#93c5fd',
+                  }}
+                >
+                  <Activity size={20} color="#38bdf8" />
+                  <div>
+                    <strong style={{ color: '#ffffff' }}>
+                      {lang === 'ar' ? 'إحصائيات حقيقية بالكامل ومحترمة للخصوصية:' : '100% Real, Privacy-Friendly Analytics:'}
+                    </strong>{' '}
+                    {lang === 'ar'
+                      ? 'يتم احتساب عدد الزوار الفعليين ومدة بقائهم بدقة في الوقت الفعلي دون تسجيل أو حفظ أي عناوين IP أو بيانات سرية.'
+                      : 'Accurate real-time tracking of visitor counts and dwell time without logging IP addresses or tracking sensitive data.'}
+                  </div>
+                </div>
+
+                {/* Key Metrics Cards */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+                    gap: '18px',
+                    marginBottom: '28px',
+                  }}
+                >
+                  {/* Today's Visitors */}
+                  <div
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '16px',
+                      padding: '22px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'زوار اليوم' : "Today's Visitors"}
+                      </span>
+                      <Calendar size={18} color="#38bdf8" />
+                    </div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
+                      {analyticsData?.todayVisits ?? 0}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'أشخاص دخلوا الموقع اليوم' : 'Unique visits today'}
+                    </div>
+                  </div>
+
+                  {/* Active Now */}
+                  <div
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      borderRadius: '16px',
+                      padding: '22px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'المتواجدون الآن بالموقع' : 'Active Right Now'}
+                      </span>
+                      <div
+                        style={{
+                          width: '10px',
+                          height: '10px',
+                          borderRadius: '50%',
+                          background: '#10b981',
+                          boxShadow: '0 0 10px #10b981',
+                        }}
+                      />
+                    </div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#34d399', marginTop: '8px' }}>
+                      {analyticsData?.activeNow ?? 0}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'يتصفحون الموقع في هذه اللحظة' : 'Browsing the site live'}
+                    </div>
+                  </div>
+
+                  {/* Avg Time Spent */}
+                  <div
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '16px',
+                      padding: '22px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'متوسط وقت البقاء' : 'Avg Time Spent'}
+                      </span>
+                      <Clock size={18} color="#f59e0b" />
+                    </div>
+                    <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
+                      {(() => {
+                        const sec = analyticsData?.avgDurationSeconds ?? 0;
+                        if (sec < 60) return `${sec} ${lang === 'ar' ? 'ثانية' : 'sec'}`;
+                        const min = Math.floor(sec / 60);
+                        const remSec = sec % 60;
+                        return `${min} ${lang === 'ar' ? 'د' : 'm'} ${remSec} ${lang === 'ar' ? 'ث' : 's'}`;
+                      })()}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'معدل المدة التي يقضيها الزائر' : 'Average session duration'}
+                    </div>
+                  </div>
+
+                  {/* Total Visits */}
+                  <div
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '16px',
+                      padding: '22px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'إجمالي الزيارات' : 'Total Visits'}
+                      </span>
+                      <Users size={18} color="#a855f7" />
+                    </div>
+                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
+                      {analyticsData?.totalVisits ?? 0}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'إجمالي كل الزيارات المسجلة' : 'All-time visit sessions'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Table Header & Controls */}
+                <div
+                  style={{
+                    background: '#212631',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '14px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '0 0 4px 0', color: '#ffffff' }}>
+                        {lang === 'ar' ? 'سجل الزيارات والوقت المستغرق' : 'Visitor Activity & Time Spent'}
+                      </h3>
+                      <p style={{ fontSize: '0.84rem', color: '#94a3b8', margin: 0 }}>
+                        {lang === 'ar'
+                          ? 'يعرض توقيت دخول كل زائر، الصفحة، وكم دقيقة/ثانية قضاها في الموقع'
+                          : 'Shows visitor entry time, visited page, and duration spent on site'}
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button
+                        onClick={() => setVisitorFilter('today')}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: '8px',
+                          border: visitorFilter === 'today' ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.15)',
+                          background: visitorFilter === 'today' ? '#38bdf8' : '#2b3240',
+                          color: visitorFilter === 'today' ? '#000000' : '#cbd5e1',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {lang === 'ar' ? 'زيارات اليوم' : "Today's Visits"}
+                      </button>
+                      <button
+                        onClick={() => setVisitorFilter('all')}
+                        style={{
+                          padding: '6px 14px',
+                          borderRadius: '8px',
+                          border: visitorFilter === 'all' ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.15)',
+                          background: visitorFilter === 'all' ? '#38bdf8' : '#2b3240',
+                          color: visitorFilter === 'all' ? '#000000' : '#cbd5e1',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {lang === 'ar' ? 'كل الزيارات' : 'All Visits'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Real Visitors Table */}
+                  {(() => {
+                    const allVisits = analyticsData?.recentVisits || [];
+                    const filteredVisits = visitorFilter === 'today'
+                      ? allVisits.filter((v: any) => new Date(v.startedAt).toDateString() === new Date().toDateString())
+                      : allVisits;
+
+                    if (filteredVisits.length === 0) {
+                      return (
+                        <div
+                          style={{
+                            padding: '48px 20px',
+                            textAlign: 'center',
+                            color: '#94a3b8',
+                            background: '#2b3240',
+                            borderRadius: '12px',
+                            border: '1px dashed rgba(255, 255, 255, 0.15)',
+                          }}
+                        >
+                          <Users size={36} color="#94a3b8" style={{ marginBottom: '10px', opacity: 0.6 }} />
+                          <div style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff' }}>
+                            {lang === 'ar' ? 'لا توجد زيارات مسجلة حتى الآن' : 'No visits recorded yet'}
+                          </div>
+                          <div style={{ fontSize: '0.84rem', marginTop: '4px' }}>
+                            {lang === 'ar'
+                              ? 'بمجرد أن يفتح أي شخص رابط موقعك ستظهر تفاصيله ومدة بقائه هنا مباشرة'
+                              : 'As soon as anyone opens your site, their activity and duration will appear here live'}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+                          <thead>
+                            <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8', fontSize: '0.82rem' }}>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'وقت الدخول (الساعة)' : 'Entry Time'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'كم قعد بالموقع (المدة)' : 'Time Spent'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الصفحة' : 'Page'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الجهاز' : 'Device'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'المتصفح' : 'Browser'}</th>
+                              {allVisits.some((v: any) => v.country) && (
+                                <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الدولة' : 'Country'}</th>
+                              )}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredVisits.map((visit: any, index: number) => {
+                              const startedDate = new Date(visit.startedAt);
+                              const isLive = (Date.now() - new Date(visit.lastPingAt).getTime()) < 90000;
+                              const dur = visit.durationSeconds || 0;
+
+                              const formatDuration = (s: number) => {
+                                if (s === 0) return lang === 'ar' ? 'أقل من 15 ثانية' : '< 15 sec';
+                                if (s < 60) return `${s} ${lang === 'ar' ? 'ثانية' : 'sec'}`;
+                                const m = Math.floor(s / 60);
+                                const rem = s % 60;
+                                return `${m} ${lang === 'ar' ? 'دقيقة' : 'min'} ${rem > 0 ? `و ${rem} ${lang === 'ar' ? 'ثانية' : 'sec'}` : ''}`;
+                              };
+
+                              return (
+                                <tr
+                                  key={visit.id || index}
+                                  style={{
+                                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                                    fontSize: '0.86rem',
+                                    transition: 'background 0.15s ease',
+                                  }}
+                                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)')}
+                                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                                >
+                                  {/* Status */}
+                                  <td style={{ padding: '14px' }}>
+                                    {isLive ? (
+                                      <span
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '6px',
+                                          background: 'rgba(16, 185, 129, 0.15)',
+                                          color: '#34d399',
+                                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                                          padding: '3px 9px',
+                                          borderRadius: '20px',
+                                          fontSize: '0.74rem',
+                                          fontWeight: 700,
+                                        }}
+                                      >
+                                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', display: 'inline-block' }} />
+                                        {lang === 'ar' ? 'نشط الآن' : 'Active Now'}
+                                      </span>
+                                    ) : (
+                                      <span
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '6px',
+                                          background: 'rgba(148, 163, 184, 0.1)',
+                                          color: '#94a3b8',
+                                          padding: '3px 9px',
+                                          borderRadius: '20px',
+                                          fontSize: '0.74rem',
+                                          fontWeight: 600,
+                                        }}
+                                      >
+                                        {lang === 'ar' ? 'غادر' : 'Left'}
+                                      </span>
+                                    )}
+                                  </td>
+
+                                  {/* Entry Time */}
+                                  <td style={{ padding: '14px', fontWeight: 700, color: '#ffffff' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                      <Clock size={14} color="#38bdf8" />
+                                      <span>
+                                        {startedDate.toLocaleTimeString(lang === 'ar' ? 'ar-SA' : 'en-US', {
+                                          hour: '2-digit',
+                                          minute: '2-digit',
+                                          hour12: true,
+                                        })}
+                                      </span>
+                                    </div>
+                                    <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '2px', fontWeight: 500 }}>
+                                      {startedDate.toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: startedDate.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
+                                      })}
+                                    </div>
+                                  </td>
+
+                                  {/* Duration */}
+                                  <td style={{ padding: '14px' }}>
+                                    <span
+                                      style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '4px 10px',
+                                        borderRadius: '8px',
+                                        background: dur >= 60 ? 'rgba(56, 189, 248, 0.12)' : 'rgba(255, 255, 255, 0.05)',
+                                        color: dur >= 60 ? '#38bdf8' : '#e2e8f0',
+                                        fontWeight: 700,
+                                        fontSize: '0.84rem',
+                                      }}
+                                    >
+                                      {formatDuration(dur)}
+                                    </span>
+                                  </td>
+
+                                  {/* Visited Page */}
+                                  <td style={{ padding: '14px', color: '#cbd5e1' }}>
+                                    <code
+                                      style={{
+                                        background: 'rgba(0, 0, 0, 0.3)',
+                                        padding: '2px 8px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.8rem',
+                                        color: '#f8fafc',
+                                      }}
+                                    >
+                                      {visit.page || '/'}
+                                    </code>
+                                  </td>
+
+                                  {/* Device */}
+                                  <td style={{ padding: '14px', color: '#cbd5e1' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                      {visit.device === 'Mobile' ? (
+                                        <>
+                                          <Smartphone size={15} color="#ec4899" />
+                                          <span>{lang === 'ar' ? 'جوال' : 'Mobile'}</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Monitor size={15} color="#60a5fa" />
+                                          <span>{lang === 'ar' ? 'كمبيوتر' : 'Desktop'}</span>
+                                        </>
+                                      )}
+                                    </div>
+                                  </td>
+
+                                  {/* Browser */}
+                                  <td style={{ padding: '14px', color: '#94a3b8' }}>
+                                    {visit.browser || 'Browser'}
+                                  </td>
+
+                                  {/* Country */}
+                                  {allVisits.some((v: any) => v.country) && (
+                                    <td style={{ padding: '14px', color: '#e2e8f0', fontWeight: 600 }}>
+                                      {visit.country || '-'}
+                                    </td>
+                                  )}
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
             )}
           </>

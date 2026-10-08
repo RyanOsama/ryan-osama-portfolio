@@ -185,3 +185,18 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+model VisitSession {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  page            String   @default("/")
+  device          String?  // Desktop, Mobile, Tablet
+  browser         String?  // Chrome, Safari, Firefox, Edge, etc.
+  country         String?  // Country code e.g. SA, YE, US
+  durationSeconds Int      @default(0)
+  startedAt       DateTime @default(now())
+  lastPingAt      DateTime @default(now())
+
+  @@index([startedAt])
+  @@map("visit_sessions")
+}
