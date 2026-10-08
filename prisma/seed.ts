@@ -151,7 +151,7 @@ async function main() {
     { key: 'owner_name', value: 'ريان أسامة (Ryan Osama)', group: 'profile' },
     { key: 'headline', value: 'مهندس برمجيات ومطور Full-Stack متخصص في بناء الأنظمة السحابية والحلول الآمنة عالية الأداء', group: 'profile' },
     { key: 'bio', value: 'شغوف بهندسة البرمجيات النظيفة وبناء المنصات التي تحل مشاكل حقيقية. أمتلك خبرة عملية في تصميم وتطوير الأنظمة المتكاملة من واجهات المستخدم التفاعلية وحتى البنية التحتية الخلفية وقواعد البيانات مع التركيز التام على معايير الأمان وتجربة المستخدم السلسة.', group: 'profile' },
-    { key: 'email', value: 'ryan.osama.dev@gmail.com', group: 'profile' },
+    { key: 'email', value: 'r6y6ony98@gmail.com', group: 'profile' },
     { key: 'phone', value: '+967770000000', group: 'profile' },
     { key: 'location', value: 'اليمن - حضرموت', group: 'profile' },
     { key: 'github_url', value: 'https://github.com/ryan-osama', group: 'social' },

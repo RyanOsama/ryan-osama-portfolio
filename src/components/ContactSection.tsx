@@ -12,7 +12,7 @@ interface ContactSectionProps {
 export function ContactSection({ settings }: ContactSectionProps) {
   const { t } = useLanguage();
 
-  const email = settings?.email || 'ryan.osama.dev@gmail.com';
+  const email = settings?.email || 'r6y6ony98@gmail.com';
   const phone = settings?.phone || '+967770000000';
   const location = settings?.location || 'Yemen - Hadramout (Available Remotely Worldwide)';
   const githubUrl = settings?.github_url || 'https://github.com/ryan-osama';

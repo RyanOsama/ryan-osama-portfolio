@@ -14,7 +14,7 @@ export function Footer({ settings }: FooterProps) {
   const { t, lang } = useLanguage();
   const githubUrl = settings?.github_url || 'https://github.com/ryan-osama';
   const linkedinUrl = settings?.linkedin_url || 'https://linkedin.com/in/ryan-osama';
-  const email = settings?.email || 'ryan.osama.dev@gmail.com';
+  const email = settings?.email || 'r6y6ony98@gmail.com';
 
   return (
     <footer
