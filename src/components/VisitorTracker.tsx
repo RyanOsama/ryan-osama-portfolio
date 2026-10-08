@@ -14,20 +14,36 @@ export function VisitorTracker() {
       return;
     }
 
-    // Get or initialize session ID in sessionStorage
+    // 1. Persistent Unique Visitor Token in localStorage (identifies the same person across multiple days/visits)
+    let vToken = '';
+    try {
+      vToken = localStorage.getItem('portfolio_visitor_token') || '';
+      if (!vToken) {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+          vToken = 'usr_' + crypto.randomUUID();
+        } else {
+          vToken = 'usr_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        }
+        localStorage.setItem('portfolio_visitor_token', vToken);
+      }
+    } catch {
+      vToken = 'usr_guest';
+    }
+
+    // 2. Active Session ID in sessionStorage (identifies this current browser tab / entry)
     let sId = '';
     try {
       sId = sessionStorage.getItem('visitor_session_id') || '';
       if (!sId) {
         if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-          sId = crypto.randomUUID();
+          sId = 'ses_' + crypto.randomUUID();
         } else {
-          sId = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+          sId = 'ses_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
         }
         sessionStorage.setItem('visitor_session_id', sId);
       }
     } catch {
-      sId = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      sId = 'ses_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
     }
 
     sessionIdRef.current = sId;
@@ -44,12 +60,13 @@ export function VisitorTracker() {
     else if (ua.includes('Safari')) browser = 'Safari';
     else if (ua.includes('Firefox')) browser = 'Firefox';
 
-    // Initial visit track
+    // Track visit
     try {
       fetch('/api/analytics/track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          visitorToken: vToken,
           sessionId: sId,
           page: pathname,
           device,

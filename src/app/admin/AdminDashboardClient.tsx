@@ -1638,32 +1638,58 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-                    gap: '18px',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+                    gap: '16px',
                     marginBottom: '28px',
                   }}
                 >
-                  {/* Today's Visitors */}
+                  {/* Distinct People Today */}
                   <div
                     style={{
                       background: '#2b3240',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
                       borderRadius: '16px',
-                      padding: '22px',
+                      padding: '20px',
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
-                        {lang === 'ar' ? 'زوار اليوم' : "Today's Visitors"}
+                      <span style={{ color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'زوار اليوم الفعليون' : "Today's Unique Visitors"}
                       </span>
                       <Calendar size={18} color="#38bdf8" />
                     </div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
-                      {analyticsData?.todayVisits ?? 0}
+                    <div style={{ fontSize: '2.3rem', fontWeight: 900, color: '#ffffff', marginTop: '6px' }}>
+                      {analyticsData?.todayUniqueVisitors ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                      {lang === 'ar' ? 'أشخاص دخلوا الموقع اليوم' : 'Unique visits today'}
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar'
+                        ? `أشخاص مختلفين (إجمالي ${analyticsData?.todayVisits ?? 0} دخول)`
+                        : `Distinct people (${analyticsData?.todayVisits ?? 0} sessions)`}
+                    </div>
+                  </div>
+
+                  {/* All-time Unique People */}
+                  <div
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      borderRadius: '16px',
+                      padding: '20px',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'إجمالي الأشخاص الفعليين' : 'Total Unique People'}
+                      </span>
+                      <Users size={18} color="#a855f7" />
+                    </div>
+                    <div style={{ fontSize: '2.3rem', fontWeight: 900, color: '#c084fc', marginTop: '6px' }}>
+                      {analyticsData?.uniqueVisitors ?? 0}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'عدد الأشخاص الفريدين بدون تكرار' : 'Unique human visitors'}
                     </div>
                   </div>
 
@@ -1673,15 +1699,13 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                       background: '#2b3240',
                       border: '1px solid rgba(16, 185, 129, 0.3)',
                       borderRadius: '16px',
-                      padding: '22px',
+                      padding: '20px',
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
-                      position: 'relative',
-                      overflow: 'hidden',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
-                        {lang === 'ar' ? 'المتواجدون الآن بالموقع' : 'Active Right Now'}
+                      <span style={{ color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'المتواجدون الآن' : 'Active Right Now'}
                       </span>
                       <div
                         style={{
@@ -1693,11 +1717,11 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         }}
                       />
                     </div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#34d399', marginTop: '8px' }}>
+                    <div style={{ fontSize: '2.3rem', fontWeight: 900, color: '#34d399', marginTop: '6px' }}>
                       {analyticsData?.activeNow ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                      {lang === 'ar' ? 'يتصفحون الموقع في هذه اللحظة' : 'Browsing the site live'}
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'يتصفحون الموقع في هذه اللحظة' : 'Live on site right now'}
                     </div>
                   </div>
 
@@ -1707,17 +1731,17 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                       background: '#2b3240',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
                       borderRadius: '16px',
-                      padding: '22px',
+                      padding: '20px',
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
+                      <span style={{ color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600 }}>
                         {lang === 'ar' ? 'متوسط وقت البقاء' : 'Avg Time Spent'}
                       </span>
                       <Clock size={18} color="#f59e0b" />
                     </div>
-                    <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
+                    <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#ffffff', marginTop: '6px' }}>
                       {(() => {
                         const sec = analyticsData?.avgDurationSeconds ?? 0;
                         if (sec < 60) return `${sec} ${lang === 'ar' ? 'ثانية' : 'sec'}`;
@@ -1726,32 +1750,32 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         return `${min} ${lang === 'ar' ? 'د' : 'm'} ${remSec} ${lang === 'ar' ? 'ث' : 's'}`;
                       })()}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                      {lang === 'ar' ? 'معدل المدة التي يقضيها الزائر' : 'Average session duration'}
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'معدل المدة لكل جلسة' : 'Average time on site'}
                     </div>
                   </div>
 
-                  {/* Total Visits */}
+                  {/* Total Visits / Sessions */}
                   <div
                     style={{
                       background: '#2b3240',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
                       borderRadius: '16px',
-                      padding: '22px',
+                      padding: '20px',
                       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: '#cbd5e1', fontSize: '0.86rem', fontWeight: 600 }}>
-                        {lang === 'ar' ? 'إجمالي الزيارات' : 'Total Visits'}
+                      <span style={{ color: '#cbd5e1', fontSize: '0.84rem', fontWeight: 600 }}>
+                        {lang === 'ar' ? 'إجمالي مرات الدخول' : 'Total Sessions'}
                       </span>
-                      <Users size={18} color="#a855f7" />
+                      <Activity size={18} color="#38bdf8" />
                     </div>
-                    <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#ffffff', marginTop: '8px' }}>
+                    <div style={{ fontSize: '2.3rem', fontWeight: 900, color: '#ffffff', marginTop: '6px' }}>
                       {analyticsData?.totalVisits ?? 0}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                      {lang === 'ar' ? 'إجمالي كل الزيارات المسجلة' : 'All-time visit sessions'}
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '4px' }}>
+                      {lang === 'ar' ? 'مجموع كافة الجلسات المسجلة' : 'All session visits'}
                     </div>
                   </div>
                 </div>
@@ -1859,6 +1883,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                           <thead>
                             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8', fontSize: '0.82rem' }}>
                               <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
+                              <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الزائر وتكرار الزيارة' : 'Visitor & Frequency'}</th>
                               <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'وقت الدخول (الساعة)' : 'Entry Time'}</th>
                               <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'كم قعد بالموقع (المدة)' : 'Time Spent'}</th>
                               <th style={{ padding: '12px 14px' }}>{lang === 'ar' ? 'الصفحة' : 'Page'}</th>
@@ -1931,6 +1956,50 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                                         {lang === 'ar' ? 'غادر' : 'Left'}
                                       </span>
                                     )}
+                                  </td>
+
+                                  {/* Visitor Identity & Frequency */}
+                                  <td style={{ padding: '14px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                      <span style={{ fontWeight: 800, color: '#ffffff', fontSize: '0.9rem' }}>
+                                        {lang === 'ar' ? `زائر #${visit.visitorNumber}` : `Visitor #${visit.visitorNumber}`}
+                                      </span>
+                                      {visit.totalVisitsByThisPerson > 1 ? (
+                                        <span
+                                          style={{
+                                            background: 'rgba(245, 158, 11, 0.15)',
+                                            color: '#fbbf24',
+                                            border: '1px solid rgba(245, 158, 11, 0.35)',
+                                            padding: '2px 8px',
+                                            borderRadius: '12px',
+                                            fontSize: '0.74rem',
+                                            fontWeight: 800,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                          }}
+                                          title={lang === 'ar' ? `هذا الشخص دخل موقعك ${visit.totalVisitsByThisPerson} مرات` : `Visited ${visit.totalVisitsByThisPerson} times`}
+                                        >
+                                          🔁 {lang === 'ar' ? `دخل ${visit.totalVisitsByThisPerson} مرات` : `${visit.totalVisitsByThisPerson} visits`}
+                                        </span>
+                                      ) : (
+                                        <span
+                                          style={{
+                                            background: 'rgba(56, 189, 248, 0.12)',
+                                            color: '#38bdf8',
+                                            padding: '2px 8px',
+                                            borderRadius: '12px',
+                                            fontSize: '0.74rem',
+                                            fontWeight: 700,
+                                          }}
+                                        >
+                                          {lang === 'ar' ? 'زيارة أولى' : '1st visit'}
+                                        </span>
+                                      )}
+                                      <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                                        ({lang === 'ar' ? `جلسة #${visit.visitCount}` : `Session #${visit.visitCount}`})
+                                      </span>
+                                    </div>
                                   </td>
 
                                   {/* Entry Time */}

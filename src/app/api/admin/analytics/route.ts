@@ -10,23 +10,14 @@ export async function GET() {
 
     const [
       totalVisits,
-      todayVisits,
-      activeNow,
       recentVisits,
       durationAggregate,
       todayVisitsList,
+      allUniqueGroups,
+      todayUniqueGroups,
+      activeNow,
     ] = await Promise.all([
       prisma.visitSession.count(),
-      prisma.visitSession.count({
-        where: {
-          startedAt: { gte: todayStart },
-        },
-      }),
-      prisma.visitSession.count({
-        where: {
-          lastPingAt: { gte: activeThreshold },
-        },
-      }),
       prisma.visitSession.findMany({
         take: 100,
         orderBy: { startedAt: 'desc' },
@@ -38,7 +29,54 @@ export async function GET() {
         where: { startedAt: { gte: todayStart } },
         select: { startedAt: true },
       }),
+      prisma.visitSession.groupBy({
+        by: ['visitorToken'],
+        _count: { id: true },
+      }),
+      prisma.visitSession.groupBy({
+        by: ['visitorToken'],
+        where: { startedAt: { gte: todayStart } },
+      }),
+      prisma.visitSession.count({
+        where: {
+          lastPingAt: { gte: activeThreshold },
+        },
+      }),
     ]);
+
+    // Map of visitorToken to their total visits count
+    const visitorTotalMap = new Map<string, number>();
+    for (const g of allUniqueGroups) {
+      if (g.visitorToken) {
+        visitorTotalMap.set(g.visitorToken, g._count.id);
+      }
+    }
+
+    // Assign consistent short visitor numbers (e.g. Visitor #1, Visitor #2)
+    const visitorOrderMap = new Map<string, number>();
+    let visitorCounter = 1;
+
+    // Get earliest visits to number visitors chronologically
+    const earliestVisits = await prisma.visitSession.findMany({
+      select: { visitorToken: true },
+      orderBy: { startedAt: 'asc' },
+    });
+
+    for (const v of earliestVisits) {
+      if (v.visitorToken && !visitorOrderMap.has(v.visitorToken)) {
+        visitorOrderMap.set(v.visitorToken, visitorCounter++);
+      }
+    }
+
+    // Attach totalVisitsByVisitor and visitorNumber to recent visits
+    const enhancedRecentVisits = recentVisits.map((v) => {
+      const vToken = v.visitorToken || v.sessionId;
+      return {
+        ...v,
+        visitorNumber: visitorOrderMap.get(vToken) || 1,
+        totalVisitsByThisPerson: visitorTotalMap.get(vToken) || v.visitCount || 1,
+      };
+    });
 
     // Calculate hourly distribution for today (0-23)
     const hourlyVisits = Array(24).fill(0);
@@ -48,11 +86,13 @@ export async function GET() {
     }
 
     return successResponse({
-      totalVisits,
-      todayVisits,
+      totalVisits, // Total sessions/visits
+      uniqueVisitors: allUniqueGroups.length, // Total distinct people
+      todayUniqueVisitors: todayUniqueGroups.length, // Distinct people today
+      todayVisits: todayVisitsList.length, // Total sessions today
       activeNow,
       avgDurationSeconds: Math.round(durationAggregate._avg.durationSeconds || 0),
-      recentVisits,
+      recentVisits: enhancedRecentVisits,
       hourlyVisits,
     });
   } catch (error) {

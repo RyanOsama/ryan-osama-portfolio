@@ -188,7 +188,9 @@ model SiteSetting {
 
 model VisitSession {
   id              String   @id @default(cuid())
+  visitorToken    String   @default("") // persistent anonymous visitor UUID across visits
   sessionId       String   @unique
+  visitCount      Int      @default(1) // how many times this specific person entered the site
   page            String   @default("/")
   device          String?  // Desktop, Mobile, Tablet
   browser         String?  // Chrome, Safari, Firefox, Edge, etc.
@@ -197,6 +199,7 @@ model VisitSession {
   startedAt       DateTime @default(now())
   lastPingAt      DateTime @default(now())
 
+  @@index([visitorToken])
   @@index([startedAt])
   @@map("visit_sessions")
 }
