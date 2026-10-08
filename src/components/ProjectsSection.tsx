@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, ArrowRight, ArrowLeft, Star, Layers, MessageSquare } from 'lucide-react';
+import { ExternalLink, ArrowRight, ArrowLeft, Star, Layers, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { GithubIcon } from './Icons';
 import { ReviewModal } from './ReviewModal';
 import { useLanguage } from '@/context/LanguageContext';
@@ -44,7 +44,13 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   const [selectedCat, setSelectedCat] = useState('all');
+  const [showAll, setShowAll] = useState(false);
   const [activeReviewProject, setActiveReviewProject] = useState<{ id: string; title: string } | null>(null);
+
+  const handleCategorySelect = (catSlug: string) => {
+    setSelectedCat(catSlug);
+    setShowAll(false);
+  };
 
   const getLocalizedProject = (p: ProjectItem) => {
     const tr = projectTranslations[p.slug];
@@ -79,6 +85,8 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
       ? projects
       : projects.filter((p) => p.category?.slug === selectedCat);
 
+  const visibleProjects = showAll ? filteredProjects : filteredProjects.slice(0, 3);
+
   return (
     <section id="projects" style={{ padding: '80px 0' }}>
       <div className="container">
@@ -100,7 +108,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
             }}
           >
             <button
-              onClick={() => setSelectedCat('all')}
+              onClick={() => handleCategorySelect('all')}
               style={{
                 padding: '8px 20px',
                 borderRadius: '9999px',
@@ -120,7 +128,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCat(cat.slug)}
+                onClick={() => handleCategorySelect(cat.slug)}
                 style={{
                   padding: '8px 20px',
                   borderRadius: '9999px',
@@ -149,7 +157,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
             gap: '28px',
           }}
         >
-          {filteredProjects.map((project) => {
+          {visibleProjects.map((project) => {
             const locProj = getLocalizedProject(project);
             return (
               <div
@@ -339,6 +347,50 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
             );
           })}
         </div>
+
+        {/* Load More / Show Less Toggle Button */}
+        {filteredProjects.length > 3 && (
+          <div style={{ textAlign: 'center', marginTop: '42px' }}>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '12px 28px',
+                borderRadius: '9999px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                color: '#ffffff',
+                fontFamily: 'inherit',
+                fontSize: '0.94rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.18)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <span>
+                {showAll
+                  ? (lang === 'ar' ? 'عرض مشاريع أقل' : 'Show Less')
+                  : (lang === 'ar'
+                      ? `عرض المزيد من المشاريع (+${filteredProjects.length - 3})`
+                      : `Show More Projects (+${filteredProjects.length - 3})`)}
+              </span>
+              {showAll ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+          </div>
+        )}
 
         {/* Review Submission Modal */}
         <ReviewModal
