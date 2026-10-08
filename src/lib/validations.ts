@@ -10,27 +10,35 @@ export const loginSchema = z.object({
 });
 
 export const projectSchema = z.object({
-  title: z.string().min(3, 'عنوان المشروع مطلوب').max(200),
-  slug: z.string().min(2, 'الـ Slug مطلوب').max(200),
-  shortDescription: z.string().min(5, 'الوصف المختصر مطلوب').max(500),
-  description: z.string().min(10, 'الوصف الكامل مطلوب'),
-  problem: z.string().optional().nullable(),
-  solution: z.string().optional().nullable(),
-  categoryId: z.string().optional().nullable(),
-  coverImage: z.string().min(1, 'الصورة الرئيسية مطلوبة'),
-  liveUrl: z.string().url('رابط غير صالح').optional().nullable().or(z.literal('')),
-  githubUrl: z.string().url('رابط غير صالح').optional().nullable().or(z.literal('')),
+  title: z.string().min(1, 'عنوان المشروع مطلوب').max(200),
+  slug: z.string().min(1, 'الـ Slug مطلوب').max(200),
+  shortDescription: z.string().min(1, 'الوصف المختصر مطلوب').max(500),
+  description: z.string().min(1, 'الوصف الكامل مطلوب'),
+  problem: z.string().optional().nullable().or(z.literal('')),
+  solution: z.string().optional().nullable().or(z.literal('')),
+  categoryId: z.string().optional().nullable().or(z.literal('')),
+  coverImage: z.string().min(1, 'الصورة الرئيسية مطلوبة').default('/images/hero-bg.png'),
+  liveUrl: z.string().optional().nullable().or(z.literal('')),
+  githubUrl: z.string().optional().nullable().or(z.literal('')),
   status: z.enum(['COMPLETED', 'IN_PROGRESS', 'ARCHIVED']).default('COMPLETED'),
   isFeatured: z.boolean().default(false),
   sortOrder: z.number().int().default(0),
   technologyIds: z.array(z.string()).optional().default([]),
   features: z
-    .array(
-      z.object({
-        title: z.string().min(1, 'عنوان الميزة مطلوب'),
-        description: z.string().optional().nullable(),
-        sortOrder: z.number().int().default(0),
-      })
+    .preprocess(
+      (val) => {
+        if (!Array.isArray(val)) return [];
+        return val.filter(
+          (item) => item && typeof item.title === 'string' && item.title.trim().length > 0
+        );
+      },
+      z.array(
+        z.object({
+          title: z.string().min(1, 'عنوان الميزة مطلوب'),
+          description: z.string().optional().nullable().or(z.literal('')),
+          sortOrder: z.number().int().default(0),
+        })
+      )
     )
     .optional()
     .default([]),

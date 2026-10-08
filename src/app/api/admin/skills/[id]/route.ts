@@ -42,7 +42,10 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.skill.delete({ where: { id } });
+    const result = await prisma.skill.deleteMany({ where: { id } });
+    if (result.count === 0) {
+      return errorResponse('المهارة غير موجودة أو تم حذفها مسبقاً', 404);
+    }
     return successResponse(null, 'تم حذف المهارة بنجاح');
   } catch (error) {
     return errorResponse('حدث خطأ أثناء حذف المهارة', 500);

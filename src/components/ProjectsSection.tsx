@@ -48,10 +48,10 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
 
   const getLocalizedProject = (p: ProjectItem) => {
     const tr = projectTranslations[p.slug];
-    if (tr) {
+    if (lang === 'en' && tr?.en) {
       return {
-        title: lang === 'en' ? tr.en.title : tr.ar.title,
-        shortDescription: lang === 'en' ? tr.en.shortDescription : tr.ar.shortDescription,
+        title: tr.en.title || p.title,
+        shortDescription: tr.en.shortDescription || p.shortDescription,
       };
     }
     return {
@@ -160,7 +160,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                 <div
                   style={{
                     position: 'relative',
-                    height: '200px',
+                    height: '210px',
                     background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
                     display: 'flex',
                     alignItems: 'center',
@@ -169,7 +169,31 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                     borderBottom: '1px solid var(--border-color)',
                   }}
                 >
-                  <Layers size={48} color="#94a3b8" style={{ opacity: 0.7 }} />
+                  {project.coverImage ? (
+                    <img
+                      src={project.coverImage}
+                      alt={locProj.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.4s ease',
+                      }}
+                      className="project-cover-img"
+                    />
+                  ) : (
+                    <Layers size={48} color="#94a3b8" style={{ opacity: 0.7 }} />
+                  )}
+
+                  {/* Gradient shadow for badges readability */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.4) 0%, transparent 60%, rgba(15, 23, 42, 0.7) 100%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
 
                   {/* Badges Overlay */}
                   <div
@@ -179,6 +203,7 @@ export function ProjectsSection({ projects, categories }: ProjectsSectionProps) 
                       ...(dir === 'rtl' ? { right: '14px' } : { left: '14px' }),
                       display: 'flex',
                       gap: '6px',
+                      zIndex: 2,
                     }}
                   >
                     {project.category && (

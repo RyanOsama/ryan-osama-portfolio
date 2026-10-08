@@ -76,7 +76,7 @@ export default async function HomePage() {
         <ReviewsSection reviews={data.reviews} />
         <ContactSection settings={data.settings} />
       </main>
-      <Footer />
+      <Footer settings={data.settings} />
     </ToastProvider>
   );
 }

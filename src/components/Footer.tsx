@@ -1,13 +1,19 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Mail, Shield } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from './Icons';
 import { useLanguage } from '@/context/LanguageContext';
 
-export function Footer() {
+interface FooterProps {
+  settings?: Record<string, string>;
+}
+
+export function Footer({ settings }: FooterProps) {
   const { t, lang } = useLanguage();
+  const githubUrl = settings?.github_url || 'https://github.com/ryan-osama';
+  const linkedinUrl = settings?.linkedin_url || 'https://linkedin.com/in/ryan-osama';
+  const email = settings?.email || 'ryan.osama.dev@gmail.com';
 
   return (
     <footer
@@ -43,7 +49,7 @@ export function Footer() {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <a
-              href="https://github.com/ryan-osama"
+              href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary btn-sm"
@@ -53,7 +59,7 @@ export function Footer() {
               <span>GitHub</span>
             </a>
             <a
-              href="https://linkedin.com/in/ryan-osama"
+              href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary btn-sm"
@@ -63,7 +69,7 @@ export function Footer() {
               <span>LinkedIn</span>
             </a>
             <a
-              href="mailto:ryan.osama.dev@gmail.com"
+              href={`mailto:${email}`}
               className="btn btn-secondary btn-sm"
               style={{ padding: '8px 14px' }}
             >
@@ -93,9 +99,6 @@ export function Footer() {
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Shield size={14} color="#059669" /> {t.footer.securedSystem}
             </span>
-            <Link href="/admin" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
-              {t.footer.adminLink}
-            </Link>
           </div>
         </div>
       </div>

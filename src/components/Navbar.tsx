@@ -2,13 +2,20 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Code2, Globe, UserCheck, ArrowUpRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, Code2, Globe, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export function Navbar() {
   const { t, lang, toggleLanguage } = useLanguage();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const getHref = (hash: string) => {
+    if (pathname === '/') return hash;
+    return `/${hash}`;
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,14 +30,14 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: t.nav.home, href: '#hero' },
-    { label: t.nav.about, href: '#about' },
-    { label: t.nav.services, href: '#services' },
-    { label: t.nav.skills, href: '#skills' },
-    { label: t.nav.projects, href: '#projects' },
-    { label: t.nav.experience, href: '#experience' },
-    { label: t.nav.reviews, href: '#reviews' },
-    { label: t.nav.contact, href: '#contact' },
+    { label: t.nav.home, href: getHref('#hero') },
+    { label: t.nav.about, href: getHref('#about') },
+    { label: t.nav.services, href: getHref('#services') },
+    { label: t.nav.skills, href: getHref('#skills') },
+    { label: t.nav.projects, href: getHref('#projects') },
+    { label: t.nav.experience, href: getHref('#experience') },
+    { label: t.nav.reviews, href: getHref('#reviews') },
+    { label: t.nav.contact, href: getHref('#contact') },
   ];
 
   return (
@@ -105,7 +112,7 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <nav style={{ display: 'none', gap: '26px', alignItems: 'center' }} className="desktop-nav">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               style={{
@@ -120,7 +127,7 @@ export function Navbar() {
               onMouseLeave={(e) => ((e.target as HTMLElement).style.color = '#cbd5e1')}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -146,8 +153,8 @@ export function Navbar() {
           </button>
 
           {/* Direct CTA */}
-          <a
-            href="#contact"
+          <Link
+            href={getHref('#contact')}
             className="btn btn-primary btn-sm"
             style={{
               display: 'none',
@@ -157,28 +164,6 @@ export function Navbar() {
           >
             <span>{t.nav.requestProject}</span>
             <ArrowUpRight size={15} />
-          </a>
-
-          {/* Admin Link */}
-          <Link
-            href="/admin"
-            title={t.nav.adminPortal}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#cbd5e1',
-              transition: 'all 0.15s ease',
-              textDecoration: 'none',
-            }}
-          >
-            <UserCheck size={18} />
           </Link>
 
           {/* Mobile Menu Toggle */}
@@ -225,7 +210,7 @@ export function Navbar() {
           }}
         >
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
@@ -240,16 +225,16 @@ export function Navbar() {
               }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#contact"
+          <Link
+            href={getHref('#contact')}
             onClick={() => setMobileOpen(false)}
             className="btn btn-primary"
             style={{ width: '100%', marginTop: '6px' }}
           >
             <span>{t.nav.requestProject}</span>
-          </a>
+          </Link>
         </div>
       )}
 

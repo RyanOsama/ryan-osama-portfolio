@@ -33,20 +33,19 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
     project.reviews.length > 0 ? (totalRating / project.reviews.length).toFixed(1) : null;
 
   const tr = projectTranslations[project.slug];
-  const title = tr ? (lang === 'en' ? tr.en.title : tr.ar.title) : project.title;
-  const shortDescription = tr
-    ? lang === 'en'
-      ? tr.en.shortDescription
-      : tr.ar.shortDescription
-    : project.shortDescription;
-  const description = tr ? (lang === 'en' ? tr.en.description : tr.ar.description) : project.description;
-  const problem = tr ? (lang === 'en' ? tr.en.problem : tr.ar.problem) : project.problem;
-  const solution = tr ? (lang === 'en' ? tr.en.solution : tr.ar.solution) : project.solution;
+  const title = lang === 'en' && tr?.en?.title ? tr.en.title : project.title;
+  const shortDescription =
+    lang === 'en' && tr?.en?.shortDescription ? tr.en.shortDescription : project.shortDescription;
+  const description = lang === 'en' && tr?.en?.description ? tr.en.description : project.description;
+  const problem = lang === 'en' && tr?.en?.problem ? tr.en.problem : project.problem;
+  const solution = lang === 'en' && tr?.en?.solution ? tr.en.solution : project.solution;
 
   const features =
-    tr && tr[lang]?.features
+    project.features && project.features.length > 0
+      ? project.features
+      : tr && tr[lang]?.features
       ? tr[lang].features
-      : project.features;
+      : [];
 
   const categoryName = project.category
     ? categoryTranslations[project.category.slug]
@@ -76,6 +75,32 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
           <span>{t.projectDetails.backToProjects}</span>
         </Link>
       </div>
+
+      {/* Cover Image Banner */}
+      {project.coverImage && (
+        <div
+          className="white-card"
+          style={{
+            padding: 0,
+            marginBottom: '28px',
+            overflow: 'hidden',
+            maxHeight: '380px',
+            position: 'relative',
+          }}
+        >
+          <img
+            src={project.coverImage}
+            alt={title}
+            style={{
+              width: '100%',
+              height: '100%',
+              maxHeight: '380px',
+              objectFit: 'cover',
+              display: 'block',
+            }}
+          />
+        </div>
+      )}
 
       {/* Hero Header Card */}
       <div
