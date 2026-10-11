@@ -70,6 +70,15 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<any | null>(null);
   const [selectedTechCategory, setSelectedTechCategory] = useState<string>('ALL');
+  const [showAddTechInline, setShowAddTechInline] = useState(false);
+  const [newTechForm, setNewTechForm] = useState({ name: '', category: 'General' });
+  const [savingNewTech, setSavingNewTech] = useState(false);
+
+  // Top 3 Projects management
+  const [topThreeModalOpen, setTopThreeModalOpen] = useState(false);
+  const [selectedTopThree, setSelectedTopThree] = useState<string[]>([]);
+  const [savingOrder, setSavingOrder] = useState(false);
+
   const [projectForm, setProjectForm] = useState({
     title: '',
     slug: '',
@@ -321,6 +330,112 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
     } catch {
       showToast(lang === 'ar' ? 'حدث خطأ في حفظ المشروع' : 'Error saving project', 'error');
     }
+  };
+
+  // Add new technology inline & save to database
+  const handleAddNewTechnology = async () => {
+    if (!newTechForm.name.trim()) return;
+    setSavingNewTech(true);
+    try {
+      const res = await fetch('/api/admin/technologies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTechForm.name.trim(),
+          category: newTechForm.category || 'General',
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        const created = data.data;
+        setTechnologies((prev) => {
+          const exists = prev.some((t) => t.id === created.id);
+          return exists ? prev : [...prev, created];
+        });
+        setProjectForm((prev) => ({
+          ...prev,
+          technologyIds: prev.technologyIds.includes(created.id)
+            ? prev.technologyIds
+            : [...prev.technologyIds, created.id],
+        }));
+        setSelectedTechCategory(created.category || 'General');
+        setNewTechForm({ name: '', category: 'General' });
+        setShowAddTechInline(false);
+        showToast(
+          lang === 'ar'
+            ? 'تم حفظ التقنية الجديدة وتحديدها للمشروع بنجاح!'
+            : 'New technology created and selected!',
+          'success'
+        );
+      } else {
+        showToast(data.message || (lang === 'ar' ? 'فشل إضافة التقنية' : 'Failed to add tech'), 'error');
+      }
+    } catch {
+      showToast(lang === 'ar' ? 'خطأ في إضافة التقنية' : 'Error adding tech', 'error');
+    } finally {
+      setSavingNewTech(false);
+    }
+  };
+
+  // Projects Reordering Handlers (Homepage Top 3 Control)
+  const handleSaveReorder = async (newProjectsOrder: any[]) => {
+    setSavingOrder(true);
+    try {
+      const projectIds = newProjectsOrder.map((p) => p.id);
+      const res = await fetch('/api/admin/projects/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectIds }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(
+          lang === 'ar'
+            ? 'تم تحديث ترتيب المشاريع في الصفحة الرئيسية بنجاح!'
+            : 'Homepage projects order updated successfully!',
+          'success'
+        );
+        loadAllData();
+      } else {
+        showToast(data.message || 'Error updating order', 'error');
+      }
+    } catch {
+      showToast(lang === 'ar' ? 'خطأ أثناء تحديث الترتيب' : 'Error saving order', 'error');
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
+  const handleMoveProject = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= projects.length) return;
+    const reordered = [...projects];
+    const temp = reordered[index];
+    reordered[index] = reordered[targetIndex];
+    reordered[targetIndex] = temp;
+    setProjects(reordered);
+    handleSaveReorder(reordered);
+  };
+
+  const handleMakeProjectTop = (id: string) => {
+    const projectToMove = projects.find((p) => p.id === id);
+    if (!projectToMove) return;
+    const rest = projects.filter((p) => p.id !== id);
+    const reordered = [projectToMove, ...rest];
+    setProjects(reordered);
+    handleSaveReorder(reordered);
+  };
+
+  const handleApplyTopThreeModal = async () => {
+    if (selectedTopThree.length === 0) return;
+    const topProjects = selectedTopThree
+      .map((id) => projects.find((p) => p.id === id))
+      .filter(Boolean);
+    const otherProjects = projects.filter((p) => !selectedTopThree.includes(p.id));
+    const reordered = [...topProjects, ...otherProjects];
+    setProjects(reordered);
+    await handleSaveReorder(reordered);
+    setTopThreeModalOpen(false);
   };
 
   const handleDeleteProject = async (id: string, title: string) => {
@@ -1118,123 +1233,421 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
             {/* TAB: PROJECTS */}
             {activeTab === 'projects' && (
-              <div
-                style={{
-                  background: '#2b3240',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
-                  overflowX: 'auto',
-                }}
-              >
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: dir === 'rtl' ? 'right' : 'left' }}>
-                  <thead>
-                    <tr
+              <div>
+                {/* TOP 3 HOMEPAGE PROJECTS SHOWCASE */}
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                    border: '1px solid rgba(56, 189, 248, 0.35)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    marginBottom: '24px',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '12px',
+                      marginBottom: '18px',
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#38bdf8', marginBottom: '4px' }}>
+                        <Sparkles size={18} />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
+                          {lang === 'ar'
+                            ? '🌟 المشاريع الثلاثة الأولى المعروضة في الصفحة الرئيسية'
+                            : '🌟 Top 3 Projects Displayed on Homepage'}
+                        </h3>
+                      </div>
+                      <p style={{ fontSize: '0.86rem', color: '#94a3b8', margin: 0 }}>
+                        {lang === 'ar'
+                          ? 'هذه هي أول 3 مشاريع تظهر مباشرة في قسم المشاريع بالصفحة الرئيسية للموقع. يمكنك إعادة ترتيبها فورياً بالأسهم أو تخصيصها:'
+                          : 'These 3 projects are displayed in the showcase section of the homepage. Reorder them instantly using arrows or customize:'}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setSelectedTopThree(projects.slice(0, 3).map((p) => p.id));
+                        setTopThreeModalOpen(true);
+                      }}
+                      className="btn btn-secondary btn-sm"
                       style={{
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-                        color: '#cbd5e1',
-                        fontSize: '0.88rem',
+                        background: 'rgba(56, 189, 248, 0.15)',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                        color: '#38bdf8',
                         fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '8px 16px',
                       }}
                     >
-                      <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'المشروع' : 'Project'}</th>
-                      <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'التصنيف' : 'Category'}</th>
-                      <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
-                      <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'التقييمات' : 'Reviews'}</th>
-                      <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الرابط' : 'Links'}</th>
-                      <th style={{ padding: '14px 12px', textAlign: 'center' }}>{lang === 'ar' ? 'الإجراءات' : 'Actions'}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((proj) => (
-                      <tr
-                        key={proj.id}
-                        style={{
-                          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                          transition: 'background 0.2s ease',
-                        }}
-                      >
-                        <td style={{ padding: '16px 12px' }}>
-                          <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{proj.title}</div>
-                          <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/projects/{proj.slug}</div>
-                        </td>
-                        <td style={{ padding: '16px 12px', color: '#cbd5e1', fontSize: '0.9rem' }}>
-                          {proj.category?.name || (lang === 'ar' ? 'عام' : 'Uncategorized')}
-                        </td>
-                        <td style={{ padding: '16px 12px' }}>
-                          <span
+                      <Sparkles size={14} />
+                      <span>{lang === 'ar' ? '🎛️ تخصيص أول 3 مشاريع' : 'Customize Top 3'}</span>
+                    </button>
+                  </div>
+
+                  {/* Top 3 Cards Grid */}
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                      gap: '16px',
+                    }}
+                  >
+                    {[0, 1, 2].map((slotIndex) => {
+                      const proj = projects[slotIndex];
+                      const rankStyle =
+                        slotIndex === 0
+                          ? { label: lang === 'ar' ? '🥇 المركز الأول (الواجهة الرئيسية)' : '🥇 Rank #1 (Primary)', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)', border: 'rgba(251, 191, 36, 0.4)' }
+                          : slotIndex === 1
+                          ? { label: lang === 'ar' ? '🥈 المركز الثاني' : '🥈 Rank #2', color: '#e2e8f0', bg: 'rgba(226, 232, 240, 0.15)', border: 'rgba(226, 232, 240, 0.4)' }
+                          : { label: lang === 'ar' ? '🥉 المركز الثالث' : '🥉 Rank #3', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', border: 'rgba(249, 115, 22, 0.4)' };
+
+                      if (!proj) {
+                        return (
+                          <div
+                            key={slotIndex}
                             style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              padding: '3px 10px',
-                              borderRadius: '9999px',
-                              fontSize: '0.8rem',
-                              fontWeight: 700,
-                              background: 'rgba(255, 255, 255, 0.08)',
-                              border: '1px solid rgba(255, 255, 255, 0.15)',
-                              color: '#ffffff',
+                              padding: '20px',
+                              borderRadius: '12px',
+                              background: 'rgba(255, 255, 255, 0.03)',
+                              border: '1px dashed rgba(255, 255, 255, 0.15)',
+                              textAlign: 'center',
+                              color: '#64748b',
+                              fontSize: '0.88rem',
                             }}
                           >
-                            {proj.status === 'COMPLETED' ? (lang === 'ar' ? 'مكتمل' : 'COMPLETED') : proj.status}
-                          </span>
-                          {proj.isFeatured && (
-                            <span
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                padding: '3px 10px',
-                                borderRadius: '9999px',
-                                fontSize: '0.8rem',
-                                fontWeight: 700,
-                                background: '#3b4558',
-                                border: '1px solid rgba(255, 255, 255, 0.25)',
-                                color: '#ffffff',
-                                marginInlineStart: '6px',
-                              }}
-                            >
-                              {lang === 'ar' ? 'مميز' : 'Featured'}
-                            </span>
-                          )}
-                        </td>
-                        <td style={{ padding: '16px 12px', fontSize: '0.9rem', color: '#cbd5e1' }}>
-                          {proj._count?.reviews || 0} {lang === 'ar' ? 'تقييم' : 'reviews'}
-                        </td>
-                        <td style={{ padding: '16px 12px' }}>
-                          <Link
-                            href={`/projects/${proj.slug}`}
-                            target="_blank"
-                            className="btn btn-secondary btn-sm"
-                            style={{ background: '#343c4d', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
-                            title={lang === 'ar' ? 'عرض الصفحة' : 'View Page'}
-                          >
-                            <ExternalLink size={14} />
-                          </Link>
-                        </td>
-                        <td style={{ padding: '16px 12px', textAlign: 'center' }}>
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                            <button
-                              onClick={() => openEditProjectModal(proj)}
-                              className="btn btn-secondary btn-sm"
-                              style={{ background: '#343c4d', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
-                              title={lang === 'ar' ? 'تعديل' : 'Edit'}
-                            >
-                              <Edit2 size={14} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProject(proj.id, proj.title)}
-                              className="btn btn-danger btn-sm"
-                              style={{ background: 'rgba(244, 63, 94, 0.15)', border: '1px solid rgba(244, 63, 94, 0.3)', color: '#fda4af' }}
-                              title={lang === 'ar' ? 'حذف' : 'Delete'}
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            {lang === 'ar' ? `المقعد #${slotIndex + 1} فارغ` : `Slot #${slotIndex + 1} empty`}
                           </div>
-                        </td>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={proj.id}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.04)',
+                            border: `1px solid ${rankStyle.border}`,
+                            borderRadius: '14px',
+                            padding: '16px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.78rem',
+                                  fontWeight: 800,
+                                  padding: '3px 10px',
+                                  borderRadius: '9999px',
+                                  background: rankStyle.bg,
+                                  color: rankStyle.color,
+                                  border: `1px solid ${rankStyle.border}`,
+                                }}
+                              >
+                                {rankStyle.label}
+                              </span>
+
+                              {/* Quick Move Arrows */}
+                              <div style={{ display: 'flex', gap: '4px' }}>
+                                <button
+                                  type="button"
+                                  disabled={slotIndex === 0 || savingOrder}
+                                  onClick={() => handleMoveProject(slotIndex, 'up')}
+                                  style={{
+                                    padding: '3px 8px',
+                                    borderRadius: '6px',
+                                    background: 'rgba(255, 255, 255, 0.08)',
+                                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                                    color: slotIndex === 0 ? '#475569' : '#ffffff',
+                                    cursor: slotIndex === 0 ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                  }}
+                                  title={lang === 'ar' ? 'تقديم للمركز السابق' : 'Move Up'}
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={slotIndex >= projects.length - 1 || savingOrder}
+                                  onClick={() => handleMoveProject(slotIndex, 'down')}
+                                  style={{
+                                    padding: '3px 8px',
+                                    borderRadius: '6px',
+                                    background: 'rgba(255, 255, 255, 0.08)',
+                                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                                    color: slotIndex >= projects.length - 1 ? '#475569' : '#ffffff',
+                                    cursor: slotIndex >= projects.length - 1 ? 'not-allowed' : 'pointer',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                  }}
+                                  title={lang === 'ar' ? 'تأخير للمركز التالي' : 'Move Down'}
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
+                              {proj.coverImage && (
+                                <img
+                                  src={proj.coverImage}
+                                  alt={proj.title}
+                                  style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }}
+                                />
+                              )}
+                              <div style={{ overflow: 'hidden' }}>
+                                <h4
+                                  style={{
+                                    fontSize: '0.94rem',
+                                    fontWeight: 800,
+                                    color: '#ffffff',
+                                    margin: 0,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                  }}
+                                >
+                                  {proj.title}
+                                </h4>
+                                <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                                  {proj.category?.name || (lang === 'ar' ? 'عام' : 'General')}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* All Projects Table with Homepage Order Column */}
+                <div
+                  style={{
+                    background: '#2b3240',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    overflowX: 'auto',
+                  }}
+                >
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: dir === 'rtl' ? 'right' : 'left' }}>
+                    <thead>
+                      <tr
+                        style={{
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+                          color: '#cbd5e1',
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'المشروع' : 'Project'}</th>
+                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الترتيب في الرئيسية' : 'Homepage Rank'}</th>
+                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'التصنيف' : 'Category'}</th>
+                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
+                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الرابط' : 'Links'}</th>
+                        <th style={{ padding: '14px 12px', textAlign: 'center' }}>{lang === 'ar' ? 'الإجراءات' : 'Actions'}</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {projects.map((proj, idx) => {
+                        const isTopThree = idx < 3;
+                        const rankLabel =
+                          idx === 0
+                            ? { text: lang === 'ar' ? '🌟 #1 في الرئيسية' : '#1 Homepage', color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.15)', border: 'rgba(251, 191, 36, 0.4)' }
+                            : idx === 1
+                            ? { text: lang === 'ar' ? '🌟 #2 في الرئيسية' : '#2 Homepage', color: '#e2e8f0', bg: 'rgba(226, 232, 240, 0.15)', border: 'rgba(226, 232, 240, 0.4)' }
+                            : idx === 2
+                            ? { text: lang === 'ar' ? '🌟 #3 في الرئيسية' : '#3 Homepage', color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', border: 'rgba(249, 115, 22, 0.4)' }
+                            : { text: `#${idx + 1}`, color: '#94a3b8', bg: 'rgba(255, 255, 255, 0.05)', border: 'rgba(255, 255, 255, 0.1)' };
+
+                        return (
+                          <tr
+                            key={proj.id}
+                            style={{
+                              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                              transition: 'background 0.2s ease',
+                              background: isTopThree ? 'rgba(56, 189, 248, 0.03)' : 'transparent',
+                            }}
+                          >
+                            <td style={{ padding: '16px 12px' }}>
+                              <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{proj.title}</div>
+                              <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/projects/{proj.slug}</div>
+                            </td>
+
+                            {/* Homepage Order & Reorder Controls */}
+                            <td style={{ padding: '16px 12px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    padding: '3px 10px',
+                                    borderRadius: '9999px',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 700,
+                                    background: rankLabel.bg,
+                                    color: rankLabel.color,
+                                    border: `1px solid ${rankLabel.border}`,
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {rankLabel.text}
+                                </span>
+
+                                <div style={{ display: 'inline-flex', gap: '3px' }}>
+                                  <button
+                                    type="button"
+                                    disabled={idx === 0 || savingOrder}
+                                    onClick={() => handleMoveProject(idx, 'up')}
+                                    style={{
+                                      padding: '3px 7px',
+                                      borderRadius: '4px',
+                                      background: '#343c4d',
+                                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                                      color: idx === 0 ? '#475569' : '#ffffff',
+                                      cursor: idx === 0 ? 'not-allowed' : 'pointer',
+                                      fontSize: '0.72rem',
+                                    }}
+                                    title={lang === 'ar' ? 'تقديم للأعلى' : 'Move Up'}
+                                  >
+                                    ▲
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={idx >= projects.length - 1 || savingOrder}
+                                    onClick={() => handleMoveProject(idx, 'down')}
+                                    style={{
+                                      padding: '3px 7px',
+                                      borderRadius: '4px',
+                                      background: '#343c4d',
+                                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                                      color: idx >= projects.length - 1 ? '#475569' : '#ffffff',
+                                      cursor: idx >= projects.length - 1 ? 'not-allowed' : 'pointer',
+                                      fontSize: '0.72rem',
+                                    }}
+                                    title={lang === 'ar' ? 'تأخير للأسفل' : 'Move Down'}
+                                  >
+                                    ▼
+                                  </button>
+                                  {idx > 0 && (
+                                    <button
+                                      type="button"
+                                      disabled={savingOrder}
+                                      onClick={() => handleMakeProjectTop(proj.id)}
+                                      style={{
+                                        padding: '3px 8px',
+                                        borderRadius: '4px',
+                                        background: 'rgba(251, 191, 36, 0.15)',
+                                        border: '1px solid rgba(251, 191, 36, 0.35)',
+                                        color: '#fbbf24',
+                                        cursor: 'pointer',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 700,
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                      title={lang === 'ar' ? 'جعله الأول في الرئيسية' : 'Set as Rank #1'}
+                                    >
+                                      ★ {lang === 'ar' ? 'الأول' : 'Top'}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+
+                            <td style={{ padding: '16px 12px', color: '#cbd5e1', fontSize: '0.9rem' }}>
+                              {proj.category?.name || (lang === 'ar' ? 'عام' : 'Uncategorized')}
+                            </td>
+                            <td style={{ padding: '16px 12px' }}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '3px 10px',
+                                  borderRadius: '9999px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 700,
+                                  background: 'rgba(255, 255, 255, 0.08)',
+                                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                                  color: '#ffffff',
+                                }}
+                              >
+                                {proj.status === 'COMPLETED' ? (lang === 'ar' ? 'مكتمل' : 'COMPLETED') : proj.status}
+                              </span>
+                              {proj.isFeatured && (
+                                <span
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    padding: '3px 10px',
+                                    borderRadius: '9999px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 700,
+                                    background: '#3b4558',
+                                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                                    color: '#ffffff',
+                                    marginInlineStart: '6px',
+                                  }}
+                                >
+                                  {lang === 'ar' ? 'مميز' : 'Featured'}
+                                </span>
+                              )}
+                            </td>
+
+
+
+                            <td style={{ padding: '16px 12px' }}>
+                              <Link
+                                href={`/projects/${proj.slug}`}
+                                target="_blank"
+                                className="btn btn-secondary btn-sm"
+                                style={{ background: '#343c4d', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
+                                title={lang === 'ar' ? 'عرض الصفحة' : 'View Page'}
+                              >
+                                <ExternalLink size={14} />
+                              </Link>
+                            </td>
+                            <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                <button
+                                  onClick={() => openEditProjectModal(proj)}
+                                  className="btn btn-secondary btn-sm"
+                                  style={{ background: '#343c4d', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
+                                  title={lang === 'ar' ? 'تعديل' : 'Edit'}
+                                >
+                                  <Edit2 size={14} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteProject(proj.id, proj.title)}
+                                  className="btn btn-danger btn-sm"
+                                  style={{ background: 'rgba(244, 63, 94, 0.15)', border: '1px solid rgba(244, 63, 94, 0.3)', color: '#fda4af' }}
+                                  title={lang === 'ar' ? 'حذف' : 'Delete'}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 
@@ -2340,16 +2753,119 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
+
+
               {/* Technologies with Categorized Tabs */}
               <div className="form-group" style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <label className="form-label" style={{ color: '#e2e8f0', marginBottom: 0 }}>
                     {lang === 'ar' ? 'التقنيات المستخدمة في المشروع' : 'Project Technologies'}
                   </label>
-                  <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 700 }}>
-                    {lang === 'ar' ? `${projectForm.technologyIds.length} تقنية محددة` : `${projectForm.technologyIds.length} selected`}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddTechInline(!showAddTechInline)}
+                      style={{
+                        padding: '4px 12px',
+                        borderRadius: '6px',
+                        background: 'rgba(56, 189, 248, 0.15)',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                        color: '#38bdf8',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <Plus size={14} />
+                      <span>{lang === 'ar' ? 'إضافة تقنية جديدة' : 'Add New Tech'}</span>
+                    </button>
+                    <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 700 }}>
+                      {lang === 'ar' ? `${projectForm.technologyIds.length} تقنية محددة` : `${projectForm.technologyIds.length} selected`}
+                    </span>
+                  </div>
                 </div>
+
+                {/* Inline Add Tech Form */}
+                {showAddTechInline && (
+                  <div
+                    style={{
+                      padding: '14px',
+                      borderRadius: '12px',
+                      background: 'rgba(56, 189, 248, 0.08)',
+                      border: '1px solid rgba(56, 189, 248, 0.3)',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#38bdf8' }}>
+                        {lang === 'ar' ? '✨ إضافة تقنية جديدة وحفظها' : '✨ Add & Save New Technology'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddTechInline(false)}
+                        style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '10px', alignItems: 'flex-end' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', color: '#cbd5e1', marginBottom: '4px' }}>
+                          {lang === 'ar' ? 'اسم التقنية *' : 'Tech Name *'}
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={lang === 'ar' ? 'مثال: Docker, Svelte...' : 'e.g. Docker, Svelte...'}
+                          value={newTechForm.name}
+                          onChange={(e) => setNewTechForm((prev) => ({ ...prev, name: e.target.value }))}
+                          className="form-input"
+                          style={{ padding: '6px 10px', fontSize: '0.85rem', background: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.18)', color: '#ffffff' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', color: '#cbd5e1', marginBottom: '4px' }}>
+                          {lang === 'ar' ? 'القسم (اختياري / بدون قسم)' : 'Category (Optional / Uncategorized)'}
+                        </label>
+                        <select
+                          value={newTechForm.category}
+                          onChange={(e) => setNewTechForm((prev) => ({ ...prev, category: e.target.value }))}
+                          className="form-select"
+                          style={{ padding: '6px 10px', fontSize: '0.85rem', background: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.18)', color: '#ffffff' }}
+                        >
+                          <option value="General">{lang === 'ar' ? '📦 بدون قسم (أخرى / عامة)' : '📦 Uncategorized / General'}</option>
+                          <option value="Frontend">{lang === 'ar' ? '🎨 فرونت إند (Frontend)' : '🎨 Frontend'}</option>
+                          <option value="Backend">{lang === 'ar' ? '⚙️ باك إند (Backend)' : '⚙️ Backend'}</option>
+                          <option value="Database">{lang === 'ar' ? '🗄️ قواعد بيانات (Database)' : '🗄️ Database'}</option>
+                          <option value="DevOps">{lang === 'ar' ? '🚀 ديف أوبس (DevOps)' : '🚀 DevOps'}</option>
+                          <option value="Language">{lang === 'ar' ? '💻 لغة برمجة (Language)' : '💻 Language'}</option>
+                          <option value="Storage">{lang === 'ar' ? '☁️ تخزين سحابي (Storage)' : '☁️ Storage'}</option>
+                          <option value="Security">{lang === 'ar' ? '🛡️ أمان وحماية (Security)' : '🛡️ Security'}</option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={savingNewTech || !newTechForm.name.trim()}
+                        onClick={handleAddNewTechnology}
+                        className="btn btn-primary btn-sm"
+                        style={{
+                          padding: '7px 14px',
+                          height: '35px',
+                          background: '#38bdf8',
+                          color: '#090d16',
+                          fontWeight: 700,
+                          opacity: savingNewTech || !newTechForm.name.trim() ? 0.6 : 1,
+                        }}
+                      >
+                        {savingNewTech ? <Loader2 size={14} className="spin" /> : <Check size={14} />}
+                        <span>{lang === 'ar' ? 'حفظ وإضافة' : 'Save & Add'}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Selected Technologies Preview Chips */}
                 {projectForm.technologyIds.length > 0 && (
@@ -2417,24 +2933,37 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
                 {/* Category Navigation Tabs */}
                 {(() => {
+                  const isUncat = (c?: string | null) =>
+                    !c ||
+                    c.toLowerCase() === 'general' ||
+                    c.toLowerCase() === 'uncategorized' ||
+                    c === 'بدون قسم' ||
+                    c.toLowerCase() === 'other';
+
                   const uniqueCategories = Array.from(
                     new Set([
+                      'General',
                       'Frontend',
                       'Backend',
                       'Database',
                       'DevOps',
-                      ...technologies.map((t) => t.category || 'General'),
+                      'Language',
+                      'Storage',
+                      'Security',
+                      ...technologies.map((t) => (isUncat(t.category) ? 'General' : t.category)),
                     ])
-                  ).filter(Boolean);
+                  ).filter(Boolean) as string[];
 
                   const getCategoryLabel = (cat: string) => {
                     if (cat === 'ALL') return lang === 'ar' ? '🌟 الكل' : '🌟 All';
-                    if (cat.toLowerCase() === 'frontend') return lang === 'ar' ? '🎨 فرونت إند (Frontend)' : '🎨 Frontend';
-                    if (cat.toLowerCase() === 'backend') return lang === 'ar' ? '⚙️ باك إند (Backend)' : '⚙️ Backend';
-                    if (cat.toLowerCase() === 'database') return lang === 'ar' ? '🗄️ قواعد بيانات (Database)' : '🗄️ Database';
-                    if (cat.toLowerCase() === 'devops') return lang === 'ar' ? '🚀 ديف أوبس (DevOps)' : '🚀 DevOps';
-                    if (cat.toLowerCase() === 'storage') return lang === 'ar' ? '☁️ التخزين السحابي (Storage)' : '☁️ Storage';
-                    if (cat.toLowerCase() === 'language') return lang === 'ar' ? '💻 لغات البرمجة (Languages)' : '💻 Languages';
+                    if (isUncat(cat)) return lang === 'ar' ? '📦 بدون قسم / عامة' : '📦 Uncategorized';
+                    if (cat.toLowerCase() === 'frontend') return lang === 'ar' ? '🎨 فرونت إند' : '🎨 Frontend';
+                    if (cat.toLowerCase() === 'backend') return lang === 'ar' ? '⚙️ باك إند' : '⚙️ Backend';
+                    if (cat.toLowerCase() === 'database') return lang === 'ar' ? '🗄️ قواعد بيانات' : '🗄️ Database';
+                    if (cat.toLowerCase() === 'devops') return lang === 'ar' ? '🚀 ديف أوبس' : '🚀 DevOps';
+                    if (cat.toLowerCase() === 'storage') return lang === 'ar' ? '☁️ التخزين السحابي' : '☁️ Storage';
+                    if (cat.toLowerCase() === 'language') return lang === 'ar' ? '💻 لغات البرمجة' : '💻 Languages';
+                    if (cat.toLowerCase() === 'security') return lang === 'ar' ? '🛡️ أمان وحماية' : '🛡️ Security';
                     return cat;
                   };
 
@@ -2443,8 +2972,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                   const filteredTechs =
                     selectedTechCategory === 'ALL'
                       ? technologies
+                      : isUncat(selectedTechCategory)
+                      ? technologies.filter((t) => isUncat(t.category))
                       : technologies.filter(
-                          (t) => (t.category || 'General').toLowerCase() === selectedTechCategory.toLowerCase()
+                          (t) => (t.category || '').toLowerCase() === selectedTechCategory.toLowerCase()
                         );
 
                   return (
@@ -2460,12 +2991,16 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         }}
                       >
                         {categoriesList.map((cat) => {
-                          const isActive = selectedTechCategory.toLowerCase() === cat.toLowerCase();
+                          const isCatActive =
+                            selectedTechCategory.toLowerCase() === cat.toLowerCase() ||
+                            (isUncat(selectedTechCategory) && isUncat(cat));
                           const count =
                             cat === 'ALL'
                               ? technologies.length
+                              : isUncat(cat)
+                              ? technologies.filter((t) => isUncat(t.category)).length
                               : technologies.filter(
-                                  (t) => (t.category || 'General').toLowerCase() === cat.toLowerCase()
+                                  (t) => (t.category || '').toLowerCase() === cat.toLowerCase()
                                 ).length;
 
                           return (
@@ -2477,11 +3012,11 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                                 padding: '6px 12px',
                                 borderRadius: '8px',
                                 fontSize: '0.8rem',
-                                fontWeight: isActive ? 700 : 500,
+                                fontWeight: isCatActive ? 700 : 500,
                                 whiteSpace: 'nowrap',
-                                border: isActive ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
-                                background: isActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                                color: isActive ? '#38bdf8' : '#cbd5e1',
+                                border: isCatActive ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.12)',
+                                background: isCatActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                                color: isCatActive ? '#38bdf8' : '#cbd5e1',
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
                               }}
@@ -2858,6 +3393,126 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* TOP 3 HOMEPAGE PROJECTS SELECTOR MODAL */}
+      {topThreeModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            padding: '20px',
+          }}
+          onClick={() => setTopThreeModalOpen(false)}
+        >
+          <div
+            className="white-card"
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              background: '#1e2532',
+              border: '1px solid rgba(56, 189, 248, 0.4)',
+              borderRadius: '16px',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6)',
+              padding: '28px',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Sparkles size={20} color="#38bdf8" />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+                  {lang === 'ar' ? 'تحديد أول 3 مشاريع في الصفحة الرئيسية' : 'Customize Top 3 Homepage Projects'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTopThreeModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <p style={{ color: '#cbd5e1', fontSize: '0.88rem', marginBottom: '20px', lineHeight: 1.6 }}>
+              {lang === 'ar'
+                ? 'اختر بدقة أي مشاريع تريد أن تظهر في المراكز الثلاثة الأولى بالصفحة الرئيسية للموقع:'
+                : 'Select exactly which projects appear in the top 3 positions of your portfolio homepage:'}
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+              {[
+                { slot: 0, label: lang === 'ar' ? '🥇 المركز الأول (المشروع الرئيسي في الواجهة)' : '🥇 Rank #1 (Primary)' },
+                { slot: 1, label: lang === 'ar' ? '🥈 المركز الثاني' : '🥈 Rank #2' },
+                { slot: 2, label: lang === 'ar' ? '🥉 المركز الثالث' : '🥉 Rank #3' },
+              ].map(({ slot, label }) => (
+                <div key={slot} className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ color: '#38bdf8', fontWeight: 700, marginBottom: '6px' }}>
+                    {label}
+                  </label>
+                  <select
+                    className="form-select"
+                    value={selectedTopThree[slot] || ''}
+                    onChange={(e) => {
+                      const newIds = [...selectedTopThree];
+                      newIds[slot] = e.target.value;
+                      setSelectedTopThree(newIds);
+                    }}
+                    style={{
+                      background: '#2b3240',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      color: '#ffffff',
+                      padding: '10px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.92rem',
+                    }}
+                  >
+                    <option value="">{lang === 'ar' ? '-- اختر مشروعاً --' : '-- Select Project --'}</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.title} {p.category ? `(${p.category.name})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setTopThreeModalOpen(false)}
+                className="btn btn-secondary"
+                style={{ background: '#343c4d', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
+              >
+                {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                disabled={savingOrder || selectedTopThree.filter(Boolean).length === 0}
+                onClick={handleApplyTopThreeModal}
+                className="btn btn-primary"
+                style={{
+                  background: '#38bdf8',
+                  color: '#090d16',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                {savingOrder ? <Loader2 size={16} className="spin" /> : <Check size={16} />}
+                <span>{lang === 'ar' ? 'حفظ ترتيب الصفحة الرئيسية' : 'Save Homepage Order'}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

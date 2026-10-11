@@ -2,7 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ExternalLink, ArrowRight, ArrowLeft, Star, Layers, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  ExternalLink,
+  ArrowRight,
+  ArrowLeft,
+  Star,
+  Layers,
+  MessageSquare,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 import { GithubIcon } from './Icons';
 import { ReviewModal } from './ReviewModal';
 import { useLanguage } from '@/context/LanguageContext';

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     const existing = await prisma.technology.findUnique({ where: { slug: safeSlug } });
     if (existing) {
-      return errorResponse('الـ Slug مستخدم مسبقاً', 400);
+      return successResponse(existing, 'التقنية موجودة بالفعل وتم تحديدها', 200);
     }
 
     const tech = await prisma.technology.create({
@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
         name: sanitizeText(name),
         slug: safeSlug,
         icon: icon || null,
-        category: category || 'General',
-        sortOrder,
+        category: category?.trim() || 'General',
+        sortOrder: sortOrder || 0,
       },
     });
 
