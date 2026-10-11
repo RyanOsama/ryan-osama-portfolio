@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { extractDemoCredentials } from '@/lib/credentials-helper';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,22 +35,26 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const formatted = projects.map((p) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      shortDescription: p.shortDescription,
-      coverImage: p.coverImage,
-      liveUrl: p.liveUrl,
-      githubUrl: p.githubUrl,
-      status: p.status,
-      isFeatured: p.isFeatured,
-      sortOrder: p.sortOrder,
-      category: p.category,
-      technologies: p.technologies.map((t) => t.technology),
-      approvedReviewsCount: p._count.reviews,
-      createdAt: p.createdAt,
-    }));
+    const formatted = projects.map((p) => {
+      const { demoCredentials } = extractDemoCredentials(p.description);
+      return {
+        id: p.id,
+        title: p.title,
+        slug: p.slug,
+        shortDescription: p.shortDescription,
+        coverImage: p.coverImage,
+        liveUrl: p.liveUrl,
+        demoCredentials,
+        githubUrl: p.githubUrl,
+        status: p.status,
+        isFeatured: p.isFeatured,
+        sortOrder: p.sortOrder,
+        category: p.category,
+        technologies: p.technologies.map((t) => t.technology),
+        approvedReviewsCount: p._count.reviews,
+        createdAt: p.createdAt,
+      };
+    });
 
     return successResponse(formatted);
   } catch (error) {

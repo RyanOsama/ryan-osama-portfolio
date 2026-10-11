@@ -4,6 +4,8 @@ import { projectSchema, getZodErrorMessage } from '@/lib/validations';
 import { sanitizeText, sanitizeRichText, slugify } from '@/lib/sanitize';
 import { successResponse, errorResponse } from '@/lib/api-response';
 
+import { extractDemoCredentials, injectDemoCredentials } from '@/lib/credentials-helper';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -31,10 +33,15 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const formatted = projects.map((p) => ({
-      ...p,
-      technologies: p.technologies.map((t) => t.technology),
-    }));
+    const formatted = projects.map((p) => {
+      const { cleanDescription, demoCredentials } = extractDemoCredentials(p.description);
+      return {
+        ...p,
+        description: cleanDescription,
+        demoCredentials,
+        technologies: p.technologies.map((t) => t.technology),
+      };
+    });
 
     return successResponse(formatted);
   } catch (error) {
@@ -63,12 +70,14 @@ export async function POST(request: NextRequest) {
       return errorResponse('الـ Slug مستخدم لمشروع آخر، يرجى اختيار slug مختلف', 400);
     }
 
+    const finalDescription = injectDemoCredentials(data.description, data.demoCredentials);
+
     const newProject = await prisma.project.create({
       data: {
         title: sanitizeText(data.title),
         slug: safeSlug,
         shortDescription: sanitizeText(data.shortDescription),
-        description: sanitizeRichText(data.description),
+        description: sanitizeRichText(finalDescription),
         problem: data.problem ? sanitizeRichText(data.problem) : null,
         solution: data.solution ? sanitizeRichText(data.solution) : null,
         categoryId: data.categoryId || null,

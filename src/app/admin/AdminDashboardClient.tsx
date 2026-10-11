@@ -23,6 +23,7 @@ import {
   RefreshCw,
   ExternalLink,
   ShieldAlert,
+  Key,
   Globe,
   ArrowRight,
   ArrowLeft,
@@ -89,6 +90,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
     categoryId: '',
     coverImage: '/images/hero-bg.png',
     liveUrl: '',
+    demoCredentials: '',
     githubUrl: '',
     status: 'COMPLETED',
     isFeatured: false,
@@ -219,6 +221,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       categoryId: categories[0]?.id || '',
       coverImage: '/images/hero-bg.png',
       liveUrl: '',
+      demoCredentials: '',
       githubUrl: '',
       status: 'COMPLETED',
       isFeatured: false,
@@ -242,6 +245,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       categoryId: p.categoryId || '',
       coverImage: p.coverImage || '/images/hero-bg.png',
       liveUrl: p.liveUrl || '',
+      demoCredentials: p.demoCredentials || '',
       githubUrl: p.githubUrl || '',
       status: p.status || 'COMPLETED',
       isFeatured: !!p.isFeatured,
@@ -302,6 +306,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         ...projectForm,
         categoryId: projectForm.categoryId || null,
         liveUrl: projectForm.liveUrl || null,
+        demoCredentials: projectForm.demoCredentials || null,
         githubUrl: projectForm.githubUrl || null,
         problem: projectForm.problem || null,
         solution: projectForm.solution || null,
@@ -391,11 +396,10 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       if (data.success) {
         showToast(
           lang === 'ar'
-            ? 'تم تحديث ترتيب المشاريع في الصفحة الرئيسية بنجاح!'
-            : 'Homepage projects order updated successfully!',
+            ? 'تم حفظ الترتيب تلقائياً بنجاح!'
+            : 'Homepage projects order saved automatically!',
           'success'
         );
-        loadAllData();
       } else {
         showToast(data.message || 'Error updating order', 'error');
       }
@@ -1428,7 +1432,26 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                             </div>
                           </div>
 
-
+                          {proj.demoCredentials && (
+                            <div
+                              style={{
+                                fontSize: '0.75rem',
+                                color: '#38bdf8',
+                                background: 'rgba(56, 189, 248, 0.1)',
+                                padding: '4px 8px',
+                                borderRadius: '6px',
+                                marginTop: '8px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                              }}
+                            >
+                              <Key size={12} />
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {lang === 'ar' ? 'يتضمن بيانات تجربة' : 'Has Demo Credentials'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -1457,7 +1480,6 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         }}
                       >
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'المشروع' : 'Project'}</th>
-                        <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الترتيب في الرئيسية' : 'Homepage Rank'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'التصنيف' : 'Category'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الرابط' : 'Links'}</th>
@@ -1488,86 +1510,6 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                             <td style={{ padding: '16px 12px' }}>
                               <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{proj.title}</div>
                               <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/projects/{proj.slug}</div>
-                            </td>
-
-                            {/* Homepage Order & Reorder Controls */}
-                            <td style={{ padding: '16px 12px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span
-                                  style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    padding: '3px 10px',
-                                    borderRadius: '9999px',
-                                    fontSize: '0.78rem',
-                                    fontWeight: 700,
-                                    background: rankLabel.bg,
-                                    color: rankLabel.color,
-                                    border: `1px solid ${rankLabel.border}`,
-                                    whiteSpace: 'nowrap',
-                                  }}
-                                >
-                                  {rankLabel.text}
-                                </span>
-
-                                <div style={{ display: 'inline-flex', gap: '3px' }}>
-                                  <button
-                                    type="button"
-                                    disabled={idx === 0 || savingOrder}
-                                    onClick={() => handleMoveProject(idx, 'up')}
-                                    style={{
-                                      padding: '3px 7px',
-                                      borderRadius: '4px',
-                                      background: '#343c4d',
-                                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                                      color: idx === 0 ? '#475569' : '#ffffff',
-                                      cursor: idx === 0 ? 'not-allowed' : 'pointer',
-                                      fontSize: '0.72rem',
-                                    }}
-                                    title={lang === 'ar' ? 'تقديم للأعلى' : 'Move Up'}
-                                  >
-                                    ▲
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={idx >= projects.length - 1 || savingOrder}
-                                    onClick={() => handleMoveProject(idx, 'down')}
-                                    style={{
-                                      padding: '3px 7px',
-                                      borderRadius: '4px',
-                                      background: '#343c4d',
-                                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                                      color: idx >= projects.length - 1 ? '#475569' : '#ffffff',
-                                      cursor: idx >= projects.length - 1 ? 'not-allowed' : 'pointer',
-                                      fontSize: '0.72rem',
-                                    }}
-                                    title={lang === 'ar' ? 'تأخير للأسفل' : 'Move Down'}
-                                  >
-                                    ▼
-                                  </button>
-                                  {idx > 0 && (
-                                    <button
-                                      type="button"
-                                      disabled={savingOrder}
-                                      onClick={() => handleMakeProjectTop(proj.id)}
-                                      style={{
-                                        padding: '3px 8px',
-                                        borderRadius: '4px',
-                                        background: 'rgba(251, 191, 36, 0.15)',
-                                        border: '1px solid rgba(251, 191, 36, 0.35)',
-                                        color: '#fbbf24',
-                                        cursor: 'pointer',
-                                        fontSize: '0.72rem',
-                                        fontWeight: 700,
-                                        whiteSpace: 'nowrap',
-                                      }}
-                                      title={lang === 'ar' ? 'جعله الأول في الرئيسية' : 'Set as Rank #1'}
-                                    >
-                                      ★ {lang === 'ar' ? 'الأول' : 'Top'}
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
                             </td>
 
                             <td style={{ padding: '16px 12px', color: '#cbd5e1', fontSize: '0.9rem' }}>
@@ -2753,7 +2695,36 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </div>
               </div>
 
-
+              {/* Demo Credentials Field */}
+              <div className="form-group" style={{ marginBottom: '1.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <label className="form-label" style={{ color: '#38bdf8', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Key size={16} />
+                    <span>{lang === 'ar' ? 'بيانات تسجيل الدخول للتجربة (اختياري)' : 'Demo Login Credentials (Optional)'}</span>
+                  </label>
+                  <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                    {lang === 'ar' ? 'ستظهر للزوار مع زر نسخ لتجربة المنصة' : 'Shown to visitors with copy button'}
+                  </span>
+                </div>
+                <textarea
+                  rows={2}
+                  className="form-textarea"
+                  placeholder={
+                    lang === 'ar'
+                      ? 'مثال: البريد: demo@test.com | كلمة المرور: Test1234 (أو أي معلومات يحتاجها الزائر لتسجيل الدخول وتجربة المنصة)'
+                      : 'e.g. Email: demo@test.com | Password: Test1234 (or any login instructions)'
+                  }
+                  value={projectForm.demoCredentials || ''}
+                  onChange={(e) => setProjectForm({ ...projectForm, demoCredentials: e.target.value })}
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.05)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#ffffff',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.6,
+                  }}
+                />
+              </div>
 
               {/* Technologies with Categorized Tabs */}
               <div className="form-group" style={{ marginBottom: '1.5rem' }}>

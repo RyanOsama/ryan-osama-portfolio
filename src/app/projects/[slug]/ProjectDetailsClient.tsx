@@ -13,6 +13,9 @@ import {
   Lightbulb,
   MessageSquare,
   ShieldCheck,
+  Key,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/Icons';
 import { ReviewModal } from '@/components/ReviewModal';
@@ -27,6 +30,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
   const { t, lang, dir } = useLanguage();
   const ArrowBackIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const [modalOpen, setModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const totalRating = project.reviews.reduce((acc: number, curr: any) => acc + curr.rating, 0);
   const averageRating =
@@ -177,6 +181,71 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             <span>{t.projectDetails.writeReview}</span>
           </button>
         </div>
+
+        {/* Demo Credentials Card */}
+        {project.demoCredentials && (
+          <div
+            style={{
+              marginTop: '22px',
+              padding: '16px 20px',
+              borderRadius: '12px',
+              background: 'rgba(56, 189, 248, 0.08)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '14px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  background: 'rgba(56, 189, 248, 0.18)',
+                  border: '1px solid rgba(56, 189, 248, 0.35)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#38bdf8',
+                  flexShrink: 0,
+                }}
+              >
+                <Key size={18} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600, marginBottom: '2px' }}>
+                  {lang === 'ar' ? 'بيانات تسجيل الدخول لتجربة المنصة' : 'Demo Login Credentials / Test Account'}
+                </div>
+                <div style={{ fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                  {project.demoCredentials}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(project.demoCredentials);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="btn btn-secondary"
+              style={{
+                padding: '7px 16px',
+                fontSize: '0.85rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              {copied ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
+              <span>{copied ? (lang === 'ar' ? 'تم النسخ!' : 'Copied!') : (lang === 'ar' ? 'نسخ البيانات' : 'Copy Credentials')}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Breakdown: Problem vs Solution */}

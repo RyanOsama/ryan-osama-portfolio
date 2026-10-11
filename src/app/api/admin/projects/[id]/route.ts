@@ -4,6 +4,8 @@ import { projectSchema, getZodErrorMessage } from '@/lib/validations';
 import { sanitizeText, sanitizeRichText, slugify } from '@/lib/sanitize';
 import { successResponse, errorResponse } from '@/lib/api-response';
 
+import { extractDemoCredentials, injectDemoCredentials } from '@/lib/credentials-helper';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -24,8 +26,12 @@ export async function GET(
       return errorResponse('المشروع غير موجود', 404);
     }
 
+    const { cleanDescription, demoCredentials } = extractDemoCredentials(project.description);
+
     return successResponse({
       ...project,
+      description: cleanDescription,
+      demoCredentials,
       technologies: project.technologies.map((t) => t.technology),
     });
   } catch (error) {
@@ -58,6 +64,8 @@ export async function PUT(
       return errorResponse('الـ Slug مستخدم لمشروع آخر', 400);
     }
 
+    const finalDescription = injectDemoCredentials(data.description, data.demoCredentials);
+
     // Update project with transaction (features & technologies replacement)
     const updated = await prisma.$transaction(async (tx) => {
       // Delete existing features & tech links
@@ -70,7 +78,7 @@ export async function PUT(
           title: sanitizeText(data.title),
           slug: safeSlug,
           shortDescription: sanitizeText(data.shortDescription),
-          description: sanitizeRichText(data.description),
+          description: sanitizeRichText(finalDescription),
           problem: data.problem ? sanitizeRichText(data.problem) : null,
           solution: data.solution ? sanitizeRichText(data.solution) : null,
           categoryId: data.categoryId || null,

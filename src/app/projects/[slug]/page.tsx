@@ -5,6 +5,7 @@ import { ToastProvider } from '@/components/Toast';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ProjectDetailsClient } from './ProjectDetailsClient';
+import { extractDemoCredentials } from '@/lib/credentials-helper';
 import type { Metadata } from 'next';
 
 export async function generateMetadata({
@@ -63,8 +64,12 @@ export default async function ProjectPage({
     notFound();
   }
 
+  const { cleanDescription, demoCredentials } = extractDemoCredentials(project.description);
+
   const formattedProject = {
     ...project,
+    description: cleanDescription,
+    demoCredentials,
     technologies: project.technologies.map((t) => t.technology),
   };
 

@@ -19,6 +19,7 @@ export const projectSchema = z.object({
   categoryId: z.string().optional().nullable().or(z.literal('')),
   coverImage: z.string().min(1, 'الصورة الرئيسية مطلوبة').default('/images/hero-bg.png'),
   liveUrl: z.string().optional().nullable().or(z.literal('')),
+  demoCredentials: z.string().optional().nullable().or(z.literal('')),
   githubUrl: z.string().optional().nullable().or(z.literal('')),
   status: z.enum(['COMPLETED', 'IN_PROGRESS', 'ARCHIVED']).default('COMPLETED'),
   isFeatured: z.boolean().default(false),
