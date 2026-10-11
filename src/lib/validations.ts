@@ -29,15 +29,21 @@ export const projectSchema = z.object({
     .preprocess(
       (val) => {
         if (!Array.isArray(val)) return [];
-        return val.filter(
-          (item) => item && typeof item.title === 'string' && item.title.trim().length > 0
-        );
+        return val
+          .filter(
+            (item) => item && typeof item.title === 'string' && item.title.trim().length > 0
+          )
+          .map((item, idx) => ({
+            title: item.title.trim(),
+            description: item.description ? String(item.description).trim() : null,
+            sortOrder: typeof item.sortOrder === 'number' ? item.sortOrder : idx,
+          }));
       },
       z.array(
         z.object({
           title: z.string().min(1, 'عنوان الميزة مطلوب'),
           description: z.string().optional().nullable().or(z.literal('')),
-          sortOrder: z.number().int().default(0),
+          sortOrder: z.number().int().optional().default(0),
         })
       )
     )
@@ -54,10 +60,10 @@ export const categorySchema = z.object({
 
 export const technologySchema = z.object({
   name: z.string().min(1, 'اسم التقنية مطلوب').max(100),
-  slug: z.string().min(1, 'الـ Slug مطلوب').max(100),
-  icon: z.string().optional().nullable(),
-  category: z.string().optional().nullable(),
-  sortOrder: z.number().int().default(0),
+  slug: z.string().optional().nullable().or(z.literal('')),
+  icon: z.string().optional().nullable().or(z.literal('')),
+  category: z.string().optional().nullable().or(z.literal('')),
+  sortOrder: z.number().int().optional().default(0),
 });
 
 export const serviceSchema = z.object({

@@ -108,10 +108,11 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const [skillForm, setSkillForm] = useState({ name: '', category: 'Frontend', level: 90, sortOrder: 0, isActive: true });
 
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [savingProject, setSavingProject] = useState(false);
 
   // Fetch all dashboard data
-  const loadAllData = async () => {
-    setLoading(true);
+  const loadAllData = async (showSpinner = true) => {
+    if (showSpinner) setLoading(true);
     try {
       const [dashRes, projRes, catRes, techRes, revRes, srvRes, sklRes, setRes, anaRes] = await Promise.all([
         fetch('/api/admin/dashboard'),
@@ -290,6 +291,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
   const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSavingProject(true);
     try {
       const url = editingProject ? `/api/admin/projects/${editingProject.id}` : '/api/admin/projects';
       const method = editingProject ? 'PUT' : 'POST';
@@ -298,8 +300,8 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         .filter((f: any) => f && typeof f.title === 'string' && f.title.trim().length > 0)
         .map((f: any, idx: number) => ({
           title: f.title.trim(),
-          description: f.description ? f.description.trim() : null,
-          sortOrder: f.sortOrder ?? idx,
+          description: f.description && typeof f.description === 'string' ? f.description.trim() : null,
+          sortOrder: typeof f.sortOrder === 'number' ? f.sortOrder : idx,
         }));
 
       const payload = {
@@ -328,12 +330,14 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
           'success'
         );
         setProjectModalOpen(false);
-        loadAllData();
+        await loadAllData(false);
       } else {
         showToast(data.message || (lang === 'ar' ? 'فشل حفظ المشروع' : 'Save failed'), 'error');
       }
     } catch {
       showToast(lang === 'ar' ? 'حدث خطأ في حفظ المشروع' : 'Error saving project', 'error');
+    } finally {
+      setSavingProject(false);
     }
   };
 
@@ -347,6 +351,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: newTechForm.name.trim(),
+          slug: newTechForm.name.trim().toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g, '-').replace(/^-|-$/g, '') || undefined,
           category: newTechForm.category || 'General',
         }),
       });
@@ -970,7 +975,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
 
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <button
-                  onClick={loadAllData}
+                  onClick={() => loadAllData()}
                   className="btn btn-secondary btn-sm"
                   style={{
                     background: '#2b3240',
@@ -3182,10 +3187,25 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 </button>
                 <button
                   type="submit"
+                  disabled={savingProject}
                   className="btn btn-primary"
-                  style={{ background: '#ffffff', color: '#000000', fontWeight: 700 }}
+                  style={{
+                    background: '#ffffff',
+                    color: '#000000',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    opacity: savingProject ? 0.7 : 1,
+                    cursor: savingProject ? 'not-allowed' : 'pointer',
+                  }}
                 >
-                  {lang === 'ar' ? 'حفظ المشروع' : 'Save Project'}
+                  {savingProject && <Loader2 size={16} className="animate-spin" color="#000000" />}
+                  <span>
+                    {savingProject
+                      ? (lang === 'ar' ? 'جاري حفظ التغييرات...' : 'Saving changes...')
+                      : (lang === 'ar' ? 'حفظ المشروع' : 'Save Project')}
+                  </span>
                 </button>
               </div>
             </form>
