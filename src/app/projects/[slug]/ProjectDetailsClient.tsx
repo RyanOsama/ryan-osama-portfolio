@@ -198,95 +198,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
             <span>{t.projectDetails.writeReview}</span>
           </button>
         </div>
-
-        {/* Demo Credentials Quick Highlight */}
-        {demoCredentials && (
-          <div
-            style={{
-              marginTop: '22px',
-              padding: '16px 20px',
-              borderRadius: '12px',
-              background: 'rgba(56, 189, 248, 0.08)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '14px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: 'rgba(56, 189, 248, 0.18)',
-                  border: '1px solid rgba(56, 189, 248, 0.35)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#38bdf8',
-                  flexShrink: 0,
-                }}
-              >
-                <Key size={18} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600, marginBottom: '2px' }}>
-                  {t.projectDetails.demoCredentialsBadge}
-                </div>
-                <div style={{ fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                  {parsedCreds?.phone && parsedCreds?.password ? (
-                    <span>
-                      <span style={{ color: '#38bdf8' }}>{lang === 'ar' ? 'الهاتف: ' : 'Phone: '}</span>{parsedCreds.phone}
-                      <span style={{ margin: '0 8px', color: '#64748b' }}>|</span>
-                      <span style={{ color: '#38bdf8' }}>{lang === 'ar' ? 'كلمة المرور: ' : 'Pass: '}</span>{parsedCreds.password}
-                    </span>
-                  ) : (
-                    demoCredentials
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <a
-                href="#demo-section"
-                className="btn btn-secondary"
-                style={{
-                  padding: '7px 14px',
-                  fontSize: '0.85rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  textDecoration: 'none',
-                }}
-              >
-                <span>{lang === 'ar' ? 'عرض قسم التجربة' : 'View Demo Section'}</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => handleCopy(demoCredentials, 'hero')}
-                className="btn btn-secondary"
-                style={{
-                  padding: '7px 16px',
-                  fontSize: '0.85rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                  background: copiedKey === 'hero' ? 'rgba(16, 185, 129, 0.2)' : undefined,
-                  borderColor: copiedKey === 'hero' ? '#10b981' : undefined,
-                }}
-              >
-                {copiedKey === 'hero' ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
-                <span>{copiedKey === 'hero' ? t.projectDetails.demoCopied : t.projectDetails.demoCopy}</span>
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* DEDICATED DEMO & SYSTEM TESTING SECTION (قسم التجربة) */}
@@ -295,29 +206,11 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
           id="demo-section"
           className="white-card"
           style={{
-            padding: '36px',
+            padding: '32px',
             marginBottom: '35px',
-            border: '1px solid rgba(56, 189, 248, 0.35)',
-            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%)',
-            boxShadow: '0 10px 30px -10px rgba(56, 189, 248, 0.25)',
-            position: 'relative',
-            overflow: 'hidden',
+            border: '1px solid var(--border-color)',
           }}
         >
-          {/* Subtle glowing ambient background */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '-60px',
-              right: dir === 'rtl' ? 'auto' : '-60px',
-              left: dir === 'rtl' ? '-60px' : 'auto',
-              width: '180px',
-              height: '180px',
-              background: 'radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }}
-          />
-
           <div
             style={{
               display: 'flex',
@@ -325,60 +218,49 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               justifyContent: 'space-between',
               alignItems: 'center',
               gap: '16px',
-              marginBottom: '24px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-              paddingBottom: '20px',
+              marginBottom: '22px',
+              borderBottom: '1px solid var(--border-color)',
+              paddingBottom: '18px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
-                  width: '46px',
-                  height: '46px',
-                  borderRadius: '12px',
-                  background: 'rgba(56, 189, 248, 0.15)',
-                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid var(--border-color)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#38bdf8',
-                  boxShadow: '0 0 16px rgba(56, 189, 248, 0.25)',
+                  color: '#cbd5e1',
                   flexShrink: 0,
                 }}
               >
-                <Key size={22} />
+                <Key size={20} color="#cbd5e1" />
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <h2
                     style={{
-                      fontSize: '1.35rem',
+                      fontSize: '1.25rem',
                       fontWeight: 800,
-                      color: '#ffffff',
+                      color: 'var(--text-main)',
                       margin: 0,
                     }}
                   >
                     {t.projectDetails.demoSectionTitle}
                   </h2>
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      padding: '3px 10px',
-                      borderRadius: '20px',
-                      background: 'rgba(16, 185, 129, 0.15)',
-                      color: '#34d399',
-                      border: '1px solid rgba(16, 185, 129, 0.3)',
-                    }}
-                  >
-                    {lang === 'ar' ? 'للتجربة المباشرة' : 'Active Demo Access'}
+                  <span className="badge badge-glow">
+                    {lang === 'ar' ? 'للتجربة المباشرة' : 'Live Demo'}
                   </span>
                 </div>
                 <p
                   style={{
                     fontSize: '0.92rem',
-                    color: '#94a3b8',
-                    marginTop: '5px',
+                    color: 'var(--text-secondary)',
+                    marginTop: '4px',
                     marginBottom: 0,
                     lineHeight: 1.6,
                   }}
@@ -394,15 +276,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"
-                style={{
-                  padding: '11px 24px',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 14px rgba(56, 189, 248, 0.35)',
-                }}
               >
                 <span>{t.projectDetails.demoLaunchBtn}</span>
                 <ExternalLink size={16} />
@@ -416,7 +289,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
               gap: '16px',
-              marginBottom: '20px',
+              marginBottom: '18px',
             }}
           >
             {(parsedCreds?.phone || parsedCreds?.username || parsedCreds?.email) && (
@@ -424,8 +297,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 style={{
                   padding: '16px 20px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-color)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -433,7 +306,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>
                     {parsedCreds?.phone
                       ? (lang === 'ar' ? 'رقم الهاتف / الحساب' : 'Phone / Account')
                       : parsedCreds?.email
@@ -443,7 +316,7 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   <div
                     style={{
                       fontSize: '1.1rem',
-                      color: '#38bdf8',
+                      color: 'var(--text-main)',
                       fontWeight: 700,
                       fontFamily: 'monospace',
                       letterSpacing: '0.5px',
@@ -460,13 +333,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   style={{
                     padding: '7px 14px',
                     fontSize: '0.85rem',
-                    borderRadius: '8px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
-                    background: copiedKey === 'user' ? 'rgba(16, 185, 129, 0.2)' : undefined,
-                    borderColor: copiedKey === 'user' ? '#10b981' : undefined,
                   }}
                 >
                   {copiedKey === 'user' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
@@ -480,8 +346,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 style={{
                   padding: '16px 20px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-color)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -489,13 +355,13 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>
                     {lang === 'ar' ? 'كلمة المرور (Password)' : 'Password'}
                   </div>
                   <div
                     style={{
                       fontSize: '1.1rem',
-                      color: '#f8fafc',
+                      color: 'var(--text-main)',
                       fontWeight: 700,
                       fontFamily: 'monospace',
                       letterSpacing: '0.5px',
@@ -512,13 +378,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   style={{
                     padding: '7px 14px',
                     fontSize: '0.85rem',
-                    borderRadius: '8px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
-                    background: copiedKey === 'pass' ? 'rgba(16, 185, 129, 0.2)' : undefined,
-                    borderColor: copiedKey === 'pass' ? '#10b981' : undefined,
                   }}
                 >
                   {copiedKey === 'pass' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
@@ -532,8 +391,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 style={{
                   padding: '16px 20px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-color)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -542,13 +401,13 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>
                     {t.projectDetails.demoCredentialsBadge}
                   </div>
                   <div
                     style={{
                       fontSize: '0.98rem',
-                      color: '#38bdf8',
+                      color: 'var(--text-main)',
                       fontWeight: 700,
                       fontFamily: 'monospace',
                       whiteSpace: 'pre-wrap',
@@ -565,11 +424,6 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
                   style={{
                     padding: '7px 14px',
                     fontSize: '0.85rem',
-                    borderRadius: '8px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
                   }}
                 >
                   {copiedKey === 'raw' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
@@ -586,14 +440,14 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               alignItems: 'center',
               gap: '10px',
               fontSize: '0.88rem',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               background: 'rgba(255, 255, 255, 0.02)',
               padding: '12px 16px',
               borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              border: '1px solid var(--border-color)',
             }}
           >
-            <ShieldCheck size={18} color="#38bdf8" style={{ flexShrink: 0 }} />
+            <ShieldCheck size={18} color="#cbd5e1" style={{ flexShrink: 0 }} />
             <span>{t.projectDetails.demoNotice}</span>
           </div>
         </section>
