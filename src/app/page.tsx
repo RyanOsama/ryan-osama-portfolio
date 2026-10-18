@@ -22,6 +22,7 @@ async function getPortfolioData() {
       prisma.skill.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: 'asc' }, { level: 'desc' }] }),
       prisma.experience.findMany({ orderBy: [{ sortOrder: 'asc' }, { startDate: 'desc' }] }),
       prisma.project.findMany({
+        where: { isVisible: true },
         orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
         include: {
           category: true,

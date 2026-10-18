@@ -23,6 +23,7 @@ export const projectSchema = z.object({
   githubUrl: z.string().optional().nullable().or(z.literal('')),
   status: z.enum(['COMPLETED', 'IN_PROGRESS', 'ARCHIVED']).default('COMPLETED'),
   isFeatured: z.boolean().default(false),
+  isVisible: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
   technologyIds: z.array(z.string()).optional().default([]),
   features: z

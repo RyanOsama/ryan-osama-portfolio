@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
         githubUrl: data.githubUrl || null,
         status: data.status,
         isFeatured: data.isFeatured,
+        isVisible: data.isVisible ?? true,
         sortOrder: data.sortOrder,
         features: {
           create: data.features.map((f, idx) => ({

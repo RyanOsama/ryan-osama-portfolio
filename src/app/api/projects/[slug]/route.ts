@@ -36,7 +36,7 @@ export async function GET(
       },
     });
 
-    if (!project) {
+    if (!project || !project.isVisible) {
       return errorResponse('المشروع غير موجود', 404);
     }
 

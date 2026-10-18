@@ -87,6 +87,7 @@ export async function PUT(
           githubUrl: data.githubUrl || null,
           status: data.status,
           isFeatured: data.isFeatured,
+          isVisible: data.isVisible ?? true,
           sortOrder: data.sortOrder,
           features: {
             create: data.features.map((f, idx) => ({
@@ -112,6 +113,44 @@ export async function PUT(
     return successResponse(updated, 'تم تحديث المشروع بنجاح');
   } catch (error) {
     console.error('Admin project update error:', error);
+    return errorResponse('حدث خطأ أثناء تحديث المشروع', 500);
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+
+    const updateData: any = {};
+    if (typeof body.isVisible === 'boolean') {
+      updateData.isVisible = body.isVisible;
+    }
+    if (typeof body.isFeatured === 'boolean') {
+      updateData.isFeatured = body.isFeatured;
+    }
+    if (typeof body.status === 'string') {
+      updateData.status = body.status;
+    }
+    if (typeof body.sortOrder === 'number') {
+      updateData.sortOrder = body.sortOrder;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return errorResponse('لا توجد بيانات صالحة للتحديث', 400);
+    }
+
+    const updated = await prisma.project.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return successResponse(updated, 'تم حفظ التعديل السريع بنجاح');
+  } catch (error) {
+    console.error('Admin project quick patch error:', error);
     return errorResponse('حدث خطأ أثناء تحديث المشروع', 500);
   }
 }

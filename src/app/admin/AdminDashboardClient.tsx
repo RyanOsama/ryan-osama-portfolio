@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
+  EyeOff,
   Star,
   UploadCloud,
   Loader2,
@@ -79,6 +80,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
   const [topThreeModalOpen, setTopThreeModalOpen] = useState(false);
   const [selectedTopThree, setSelectedTopThree] = useState<string[]>([]);
   const [savingOrder, setSavingOrder] = useState(false);
+  const [togglingVisibilityId, setTogglingVisibilityId] = useState<string | null>(null);
 
   const [projectForm, setProjectForm] = useState({
     title: '',
@@ -94,6 +96,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
     githubUrl: '',
     status: 'COMPLETED',
     isFeatured: false,
+    isVisible: true,
     sortOrder: 0,
     technologyIds: [] as string[],
     features: [] as { title: string; description?: string; sortOrder?: number }[],
@@ -226,6 +229,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       githubUrl: '',
       status: 'COMPLETED',
       isFeatured: false,
+      isVisible: true,
       sortOrder: 0,
       technologyIds: [],
       features: [],
@@ -250,6 +254,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
       githubUrl: p.githubUrl || '',
       status: p.status || 'COMPLETED',
       isFeatured: !!p.isFeatured,
+      isVisible: p.isVisible !== undefined ? !!p.isVisible : true,
       sortOrder: p.sortOrder || 0,
       technologyIds: p.technologies ? p.technologies.map((t: any) => t.id) : [],
       features: p.features && p.features.length > 0
@@ -445,6 +450,52 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
     setProjects(reordered);
     await handleSaveReorder(reordered);
     setTopThreeModalOpen(false);
+  };
+
+  // Quick Visibility Toggle with instant auto-save
+  const handleToggleProjectVisibility = async (id: string, newVisibility: boolean, projectTitle?: string) => {
+    setTogglingVisibilityId(id);
+
+    // Optimistically update local state for instantaneous UI response
+    setProjects((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isVisible: newVisibility } : p))
+    );
+
+    try {
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isVisible: newVisibility }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        showToast(
+          newVisibility
+            ? (lang === 'ar'
+                ? `تم تفعيل ظهور مشروع "${projectTitle || ''}" في صفحة المشاريع بنجاح 👁️`
+                : `"${projectTitle || 'Project'}" is now visible on projects page 👁️`)
+            : (lang === 'ar'
+                ? `تم إخفاء مشروع "${projectTitle || ''}" من صفحة المشاريع بنجاح 🚫`
+                : `"${projectTitle || 'Project'}" is now hidden from projects page 🚫`),
+          'success'
+        );
+      } else {
+        // Rollback on failure
+        setProjects((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, isVisible: !newVisibility } : p))
+        );
+        showToast(data.message || (lang === 'ar' ? 'فشل تحديث حالة الظهور' : 'Failed to update visibility'), 'error');
+      }
+    } catch {
+      // Rollback on network error
+      setProjects((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, isVisible: !newVisibility } : p))
+      );
+      showToast(lang === 'ar' ? 'حدث خطأ في الاتصال أثناء تحديث الظهور' : 'Network error updating visibility', 'error');
+    } finally {
+      setTogglingVisibilityId(null);
+    }
   };
 
   const handleDeleteProject = async (id: string, title: string) => {
@@ -1353,19 +1404,41 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         >
                           <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                              <span
-                                style={{
-                                  fontSize: '0.78rem',
-                                  fontWeight: 800,
-                                  padding: '3px 10px',
-                                  borderRadius: '9999px',
-                                  background: rankStyle.bg,
-                                  color: rankStyle.color,
-                                  border: `1px solid ${rankStyle.border}`,
-                                }}
-                              >
-                                {rankStyle.label}
-                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span
+                                  style={{
+                                    fontSize: '0.78rem',
+                                    fontWeight: 800,
+                                    padding: '3px 10px',
+                                    borderRadius: '9999px',
+                                    background: rankStyle.bg,
+                                    color: rankStyle.color,
+                                    border: `1px solid ${rankStyle.border}`,
+                                  }}
+                                >
+                                  {rankStyle.label}
+                                </span>
+                                {proj.isVisible === false && (
+                                  <span
+                                    style={{
+                                      fontSize: '0.72rem',
+                                      fontWeight: 700,
+                                      padding: '2px 8px',
+                                      borderRadius: '6px',
+                                      background: 'rgba(239, 68, 68, 0.15)',
+                                      color: '#f87171',
+                                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                    }}
+                                    title={lang === 'ar' ? 'المشروع مخفي حالياً من الموقع' : 'Hidden from site'}
+                                  >
+                                    <EyeOff size={11} />
+                                    {lang === 'ar' ? 'مخفي' : 'Hidden'}
+                                  </span>
+                                )}
+                              </div>
 
                               {/* Quick Move Arrows */}
                               <div style={{ display: 'flex', gap: '4px' }}>
@@ -1487,6 +1560,7 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'المشروع' : 'Project'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'التصنيف' : 'Category'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الحالة' : 'Status'}</th>
+                        <th style={{ padding: '14px 12px', textAlign: 'center' }}>{lang === 'ar' ? 'الظهور في المشاريع' : 'Show in Projects'}</th>
                         <th style={{ padding: '14px 12px' }}>{lang === 'ar' ? 'الرابط' : 'Links'}</th>
                         <th style={{ padding: '14px 12px', textAlign: 'center' }}>{lang === 'ar' ? 'الإجراءات' : 'Actions'}</th>
                       </tr>
@@ -1513,7 +1587,24 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                             }}
                           >
                             <td style={{ padding: '16px 12px' }}>
-                              <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{proj.title}</div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff' }}>{proj.title}</span>
+                                {proj.isVisible === false && (
+                                  <span
+                                    style={{
+                                      fontSize: '0.72rem',
+                                      fontWeight: 700,
+                                      padding: '1px 6px',
+                                      borderRadius: '4px',
+                                      background: 'rgba(239, 68, 68, 0.12)',
+                                      color: '#f87171',
+                                      border: '1px solid rgba(239, 68, 68, 0.25)',
+                                    }}
+                                  >
+                                    {lang === 'ar' ? 'مخفي' : 'Hidden'}
+                                  </span>
+                                )}
+                              </div>
                               <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>/projects/{proj.slug}</div>
                             </td>
 
@@ -1554,6 +1645,92 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                                   {lang === 'ar' ? 'مميز' : 'Featured'}
                                 </span>
                               )}
+                            </td>
+
+                            {/* Quick Visibility Toggle Column */}
+                            <td style={{ padding: '16px 12px', textAlign: 'center' }}>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleProjectVisibility(proj.id, proj.isVisible === false ? true : false, proj.title)}
+                                disabled={togglingVisibilityId === proj.id}
+                                title={
+                                  proj.isVisible !== false
+                                    ? (lang === 'ar' ? 'المشروع معروض في صفحة المشاريع - انقر للإخفاء الفوري' : 'Visible on projects page - click to hide')
+                                    : (lang === 'ar' ? 'المشروع مخفي من صفحة المشاريع - انقر للإظهار الفوري' : 'Hidden from projects page - click to show')
+                                }
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: togglingVisibilityId === proj.id ? 'wait' : 'pointer',
+                                  padding: '4px 6px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  outline: 'none',
+                                  opacity: togglingVisibilityId === proj.id ? 0.6 : 1,
+                                  transition: 'opacity 0.2s ease',
+                                }}
+                              >
+                                {/* iOS Style Smooth Animated Toggle Switch */}
+                                <div
+                                  style={{
+                                    position: 'relative',
+                                    width: '42px',
+                                    height: '22px',
+                                    borderRadius: '9999px',
+                                    background: proj.isVisible !== false ? '#10b981' : '#374151',
+                                    border: proj.isVisible !== false ? '1px solid #059669' : '1px solid rgba(255, 255, 255, 0.15)',
+                                    boxShadow: proj.isVisible !== false ? '0 0 10px rgba(16, 185, 129, 0.45)' : 'none',
+                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      position: 'absolute',
+                                      top: '2px',
+                                      left: proj.isVisible !== false ? '21px' : '2px',
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      background: '#ffffff',
+                                      boxShadow: '0 2px 4px rgba(0,0,0,0.35)',
+                                      transition: 'left 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Status Label Badge */}
+                                <span
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    padding: '3px 8px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 700,
+                                    background: proj.isVisible !== false ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                                    color: proj.isVisible !== false ? '#34d399' : '#f87171',
+                                    border: proj.isVisible !== false ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(239, 68, 68, 0.25)',
+                                    userSelect: 'none',
+                                    minWidth: '64px',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {proj.isVisible !== false ? (
+                                    <>
+                                      <Eye size={12} />
+                                      <span>{lang === 'ar' ? 'معروض' : 'Visible'}</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <EyeOff size={12} />
+                                      <span>{lang === 'ar' ? 'مخفي' : 'Hidden'}</span>
+                                    </>
+                                  )}
+                                </span>
+                              </button>
                             </td>
 
 
@@ -3165,7 +3342,18 @@ export function AdminDashboardClient({ adminUser }: { adminUser: AdminUser }) {
                 )}
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.92rem', color: '#ffffff' }}>
+                  <input
+                    type="checkbox"
+                    checked={projectForm.isVisible}
+                    onChange={(e) => setProjectForm({ ...projectForm, isVisible: e.target.checked })}
+                  />
+                  <span style={{ fontWeight: 600 }}>
+                    {lang === 'ar' ? 'إظهار المشروع في صفحة المشاريع والموقع' : 'Show project on projects page & site'}
+                  </span>
+                </label>
+
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.92rem', color: '#ffffff' }}>
                   <input
                     type="checkbox"

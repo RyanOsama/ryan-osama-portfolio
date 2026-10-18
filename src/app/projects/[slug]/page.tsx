@@ -19,7 +19,7 @@ export async function generateMetadata({
     include: { category: true },
   });
 
-  if (!project) {
+  if (!project || !project.isVisible) {
     return {
       title: 'المشروع غير موجود | ريان أسامة',
     };
@@ -60,7 +60,7 @@ export default async function ProjectPage({
     },
   });
 
-  if (!project) {
+  if (!project || !project.isVisible) {
     notFound();
   }
 

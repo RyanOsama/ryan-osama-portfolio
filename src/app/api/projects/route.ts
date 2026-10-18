@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const categorySlug = searchParams.get('category');
     const featuredOnly = searchParams.get('featured') === 'true';
 
-    const where: any = {};
+    const where: any = { isVisible: true };
     if (featuredOnly) {
       where.isFeatured = true;
     }
@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
         githubUrl: p.githubUrl,
         status: p.status,
         isFeatured: p.isFeatured,
+        isVisible: p.isVisible,
         sortOrder: p.sortOrder,
         category: p.category,
         technologies: p.technologies.map((t) => t.technology),
