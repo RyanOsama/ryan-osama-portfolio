@@ -81,6 +81,15 @@ export interface TranslationDictionary {
     approvedReviews: string;
     writeReview: string;
     noReviews: string;
+    demoSectionTitle: string;
+    demoSectionSubtitle: string;
+    demoCredentialsBadge: string;
+    demoPhoneOrUser: string;
+    demoPassword: string;
+    demoLaunchBtn: string;
+    demoCopy: string;
+    demoCopied: string;
+    demoNotice: string;
   };
   experience: {
     badge: string;
@@ -218,6 +227,15 @@ export const translations: Record<Language, TranslationDictionary> = {
       approvedReviews: 'verified reviews',
       writeReview: 'Write a Review',
       noReviews: 'No reviews published yet for this project. Be the first to review!',
+      demoSectionTitle: 'Live Demo & System Testing',
+      demoSectionSubtitle: 'Test the live platform with full permissions using the test credentials below:',
+      demoCredentialsBadge: 'Live Test Account',
+      demoPhoneOrUser: 'Phone / Username',
+      demoPassword: 'Password',
+      demoLaunchBtn: 'Launch Live Demo',
+      demoCopy: 'Copy',
+      demoCopied: 'Copied!',
+      demoNotice: 'Use these demo credentials to log in and explore all administrative dashboards, roles, and features without registering a new account.',
     },
     experience: {
       badge: 'Career Journey',
@@ -352,6 +370,15 @@ export const translations: Record<Language, TranslationDictionary> = {
       approvedReviews: 'تقييم معتمد',
       writeReview: 'كتابة تقييم',
       noReviews: 'لا توجد تقييمات منشورة لهذا المشروع بعد. كن أول من يضيف انطباعه!',
+      demoSectionTitle: 'قسم التجربة واختبار المنصة (للتجربة)',
+      demoSectionSubtitle: 'يمكنك تجربة النظام بكافة ميزاته وصلاحياته الإدارية باستخدام بيانات الدخول التجريبية التالية:',
+      demoCredentialsBadge: 'حساب التجربة والاختبار',
+      demoPhoneOrUser: 'رقم الهاتف / الحساب',
+      demoPassword: 'كلمة المرور',
+      demoLaunchBtn: 'فتح المنصة والتجربة المباشرة',
+      demoCopy: 'نسخ',
+      demoCopied: 'تم النسخ!',
+      demoNotice: 'استخدم هذه البيانات لتسجيل الدخول الفوري وتجربة كافة صلاحيات ولوحات تحكم النظام بدون الحاجة لإنشاء حساب جديد.',
     },
     experience: {
       badge: 'المسيرة المهنية',

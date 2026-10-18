@@ -74,6 +74,7 @@ export const projectTranslations: Record<
       description: string;
       problem?: string;
       solution?: string;
+      demoCredentials?: string;
       features?: { title: string; description?: string }[];
     };
     ar: {
@@ -82,6 +83,7 @@ export const projectTranslations: Record<
       description: string;
       problem?: string;
       solution?: string;
+      demoCredentials?: string;
       features?: { title: string; description?: string }[];
     };
   }
@@ -93,6 +95,7 @@ export const projectTranslations: Record<
       description: 'An enterprise-grade university management system built to streamline multi-department operations. Features student admissions, faculty portals, course registration, automated transcript generation, and role-based access control with bank-grade security.',
       problem: 'Educational institutions struggled with fragmented paperwork, slow manual grading, and lack of real-time multi-role access for faculty and students.',
       solution: 'Architected a unified, fast web platform with secure role-based authorization, automated grade calculations, and optimized PostgreSQL database queries.',
+      demoCredentials: 'phone: 967780791584\npassword: admin123',
       features: [
         { title: 'Multi-Role Portals', description: 'Dedicated dashboards for Admins, Deans, Professors, and Students.' },
         { title: 'Automated GPA & Grade System', description: 'Instant calculation and audit logging of grades and transcripts.' },
@@ -106,6 +109,7 @@ export const projectTranslations: Record<
       description: 'منظومة إدارية وأكاديمية متكاملة مصممة لإدارة الجامعات والكليات باحترافية، تغطي شؤون الطلاب، تسجيل المقررات، إدارة الدرجات والمعدلات التراكمية، مع لوحات تحكم مستقلة ومؤمنة.',
       problem: 'الحاجة إلى أتمتة العمليات الورقية المعقدة في المؤسسات التعليمية وتوفير وصول فوري وآمن للطلاب والمحاضرين مع إدارة صلاحيات دقيقة.',
       solution: 'بناء نظام موحد بواجهات سريعة وتفاعلية، وفصل الصلاحيات بدقة، وربطه بقاعدة بيانات PostgreSQL معتمدة على معايير الأمان والتشفير.',
+      demoCredentials: 'phone: 967780791584\npassword: admin123',
       features: [
         { title: 'بوابات مستخدمين متعددة المستويات', description: 'لوحات تحكم منفصلة للمشرفين، رؤساء الأقسام، المدرسين، والطلاب.' },
         { title: 'حساب المعدلات والنتائج آلياً', description: 'معالجة فورية وتوثيق رقمي للدرجات وسجلات الدرجات الأكاديمية.' },

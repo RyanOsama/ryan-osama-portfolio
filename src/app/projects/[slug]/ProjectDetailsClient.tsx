@@ -21,6 +21,7 @@ import { GithubIcon } from '@/components/Icons';
 import { ReviewModal } from '@/components/ReviewModal';
 import { useLanguage } from '@/context/LanguageContext';
 import { projectTranslations, categoryTranslations } from '@/lib/i18nContent';
+import { parseCredentialDetails } from '@/lib/credentials-helper';
 
 interface ProjectDetailsProps {
   project: any;
@@ -30,7 +31,16 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
   const { t, lang, dir } = useLanguage();
   const ArrowBackIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const [modalOpen, setModalOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const handleCopy = (text: string, key: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => {
+      setCopiedKey((curr) => (curr === key ? null : curr));
+    }, 2000);
+  };
 
   const totalRating = project.reviews.reduce((acc: number, curr: any) => acc + curr.rating, 0);
   const averageRating =
@@ -42,6 +52,13 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
   const description = lang === 'en' ? (tr?.en?.description || project.description) : (tr?.ar?.description || project.description);
   const problem = lang === 'en' ? (tr?.en?.problem || project.problem) : (tr?.ar?.problem || project.problem);
   const solution = lang === 'en' ? (tr?.en?.solution || project.solution) : (tr?.ar?.solution || project.solution);
+
+  const demoCredentials =
+    project.demoCredentials ||
+    (lang === 'en' ? tr?.en?.demoCredentials : tr?.ar?.demoCredentials) ||
+    (project.slug === 'university-management-system' ? 'phone: 967780791584\npassword: admin123' : null);
+
+  const parsedCreds = parseCredentialDetails(demoCredentials);
 
   const features =
     project.features && project.features.length > 0
@@ -182,8 +199,8 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
           </button>
         </div>
 
-        {/* Demo Credentials Card */}
-        {project.demoCredentials && (
+        {/* Demo Credentials Quick Highlight */}
+        {demoCredentials && (
           <div
             style={{
               marginTop: '22px',
@@ -217,36 +234,371 @@ export function ProjectDetailsClient({ project }: ProjectDetailsProps) {
               </div>
               <div>
                 <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600, marginBottom: '2px' }}>
-                  {lang === 'ar' ? 'بيانات تسجيل الدخول لتجربة المنصة' : 'Demo Login Credentials / Test Account'}
+                  {t.projectDetails.demoCredentialsBadge}
                 </div>
                 <div style={{ fontSize: '0.95rem', color: '#ffffff', fontWeight: 700, fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                  {project.demoCredentials}
+                  {parsedCreds?.phone && parsedCreds?.password ? (
+                    <span>
+                      <span style={{ color: '#38bdf8' }}>{lang === 'ar' ? 'الهاتف: ' : 'Phone: '}</span>{parsedCreds.phone}
+                      <span style={{ margin: '0 8px', color: '#64748b' }}>|</span>
+                      <span style={{ color: '#38bdf8' }}>{lang === 'ar' ? 'كلمة المرور: ' : 'Pass: '}</span>{parsedCreds.password}
+                    </span>
+                  ) : (
+                    demoCredentials
+                  )}
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(project.demoCredentials);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-              className="btn btn-secondary"
-              style={{
-                padding: '7px 16px',
-                fontSize: '0.85rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-              }}
-            >
-              {copied ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
-              <span>{copied ? (lang === 'ar' ? 'تم النسخ!' : 'Copied!') : (lang === 'ar' ? 'نسخ البيانات' : 'Copy Credentials')}</span>
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <a
+                href="#demo-section"
+                className="btn btn-secondary"
+                style={{
+                  padding: '7px 14px',
+                  fontSize: '0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  textDecoration: 'none',
+                }}
+              >
+                <span>{lang === 'ar' ? 'عرض قسم التجربة' : 'View Demo Section'}</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => handleCopy(demoCredentials, 'hero')}
+                className="btn btn-secondary"
+                style={{
+                  padding: '7px 16px',
+                  fontSize: '0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  background: copiedKey === 'hero' ? 'rgba(16, 185, 129, 0.2)' : undefined,
+                  borderColor: copiedKey === 'hero' ? '#10b981' : undefined,
+                }}
+              >
+                {copiedKey === 'hero' ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
+                <span>{copiedKey === 'hero' ? t.projectDetails.demoCopied : t.projectDetails.demoCopy}</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
+
+      {/* DEDICATED DEMO & SYSTEM TESTING SECTION (قسم التجربة) */}
+      {demoCredentials && (
+        <section
+          id="demo-section"
+          className="white-card"
+          style={{
+            padding: '36px',
+            marginBottom: '35px',
+            border: '1px solid rgba(56, 189, 248, 0.35)',
+            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%)',
+            boxShadow: '0 10px 30px -10px rgba(56, 189, 248, 0.25)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle glowing ambient background */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-60px',
+              right: dir === 'rtl' ? 'auto' : '-60px',
+              left: dir === 'rtl' ? '-60px' : 'auto',
+              width: '180px',
+              height: '180px',
+              background: 'radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '16px',
+              marginBottom: '24px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              paddingBottom: '20px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  background: 'rgba(56, 189, 248, 0.15)',
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#38bdf8',
+                  boxShadow: '0 0 16px rgba(56, 189, 248, 0.25)',
+                  flexShrink: 0,
+                }}
+              >
+                <Key size={22} />
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <h2
+                    style={{
+                      fontSize: '1.35rem',
+                      fontWeight: 800,
+                      color: '#ffffff',
+                      margin: 0,
+                    }}
+                  >
+                    {t.projectDetails.demoSectionTitle}
+                  </h2>
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      padding: '3px 10px',
+                      borderRadius: '20px',
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      color: '#34d399',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                    }}
+                  >
+                    {lang === 'ar' ? 'للتجربة المباشرة' : 'Active Demo Access'}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontSize: '0.92rem',
+                    color: '#94a3b8',
+                    marginTop: '5px',
+                    marginBottom: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {t.projectDetails.demoSectionSubtitle}
+                </p>
+              </div>
+            </div>
+
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{
+                  padding: '11px 24px',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(56, 189, 248, 0.35)',
+                }}
+              >
+                <span>{t.projectDetails.demoLaunchBtn}</span>
+                <ExternalLink size={16} />
+              </a>
+            )}
+          </div>
+
+          {/* Credential Cards Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '16px',
+              marginBottom: '20px',
+            }}
+          >
+            {(parsedCreds?.phone || parsedCreds?.username || parsedCreds?.email) && (
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                    {parsedCreds?.phone
+                      ? (lang === 'ar' ? 'رقم الهاتف / الحساب' : 'Phone / Account')
+                      : parsedCreds?.email
+                      ? (lang === 'ar' ? 'البريد الإلكتروني' : 'Email')
+                      : (lang === 'ar' ? 'اسم المستخدم' : 'Username')}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.1rem',
+                      color: '#38bdf8',
+                      fontWeight: 700,
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {parsedCreds?.phone || parsedCreds?.email || parsedCreds?.username}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy(parsedCreds?.phone || parsedCreds?.email || parsedCreds?.username || '', 'user')}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '7px 14px',
+                    fontSize: '0.85rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    background: copiedKey === 'user' ? 'rgba(16, 185, 129, 0.2)' : undefined,
+                    borderColor: copiedKey === 'user' ? '#10b981' : undefined,
+                  }}
+                >
+                  {copiedKey === 'user' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                  <span>{copiedKey === 'user' ? t.projectDetails.demoCopied : t.projectDetails.demoCopy}</span>
+                </button>
+              </div>
+            )}
+
+            {parsedCreds?.password && (
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                    {lang === 'ar' ? 'كلمة المرور (Password)' : 'Password'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.1rem',
+                      color: '#f8fafc',
+                      fontWeight: 700,
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {parsedCreds.password}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy(parsedCreds.password || '', 'pass')}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '7px 14px',
+                    fontSize: '0.85rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    background: copiedKey === 'pass' ? 'rgba(16, 185, 129, 0.2)' : undefined,
+                    borderColor: copiedKey === 'pass' ? '#10b981' : undefined,
+                  }}
+                >
+                  {copiedKey === 'pass' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                  <span>{copiedKey === 'pass' ? t.projectDetails.demoCopied : t.projectDetails.demoCopy}</span>
+                </button>
+              </div>
+            )}
+
+            {!parsedCreds?.phone && !parsedCreds?.username && !parsedCreds?.password && (
+              <div
+                style={{
+                  padding: '16px 20px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  gridColumn: '1 / -1',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>
+                    {t.projectDetails.demoCredentialsBadge}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.98rem',
+                      color: '#38bdf8',
+                      fontWeight: 700,
+                      fontFamily: 'monospace',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {demoCredentials}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopy(demoCredentials, 'raw')}
+                  className="btn btn-secondary"
+                  style={{
+                    padding: '7px 14px',
+                    fontSize: '0.85rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {copiedKey === 'raw' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                  <span>{copiedKey === 'raw' ? t.projectDetails.demoCopied : t.projectDetails.demoCopy}</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Notice footer */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              fontSize: '0.88rem',
+              color: '#94a3b8',
+              background: 'rgba(255, 255, 255, 0.02)',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+            }}
+          >
+            <ShieldCheck size={18} color="#38bdf8" style={{ flexShrink: 0 }} />
+            <span>{t.projectDetails.demoNotice}</span>
+          </div>
+        </section>
+      )}
+
 
       {/* Main Breakdown: Problem vs Solution */}
       {(problem || solution) && (
